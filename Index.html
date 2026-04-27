@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D&D 5e — Gestione Personaggi</title>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;1,400&family=Spectral+SC:wght@400;600&display=swap" rel="stylesheet">
+<style>
+
+:root {
+–bg:#f7f6f3;–surface:#fff;–surface2:#f2f1ee;–border:#e0ddd6;
+–text:#1a1916;–text-muted:#7a7670;
+–accent:#c0392b;–accent-light:#f9eded;
+–accent2:#2c5f8a;–accent2-light:#edf3f9;
+–gold:#b07d2a;–gold-light:#fdf6e8;
+–green:#2d7a4a;–green-light:#edf6f1;
+–radius:8px;–shadow:0 1px 4px rgba(0,0,0,.07),0 4px 16px rgba(0,0,0,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(–bg);font-family:‘Spectral’,serif;color:var(–text);min-height:100vh;font-size:15px;line-height:1.5}
+.app-header{background:var(–text);color:#fff;padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.app-title{font-family:‘Spectral SC’,serif;font-size:1rem;letter-spacing:2px;font-weight:600;color:#fff}
+.header-char-name{font-size:.8rem;color:rgba(255,255,255,.55);letter-spacing:1px;font-style:italic}
+.tab-bar{display:flex;gap:2px}
+.tab-btn{background:none;border:none;color:rgba(255,255,255,.55);font-family:‘Spectral SC’,serif;font-size:.72rem;letter-spacing:1.5px;padding:6px 10px;cursor:pointer;border-radius:4px;transition:all .15s}
+.tab-btn:hover{color:#fff;background:rgba(255,255,255,.1)}
+.tab-btn.active{color:#fff;background:var(–accent)}
+.app-body{padding:20px;max-width:1100px;margin:0 auto}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.card{background:var(–surface);border:1px solid var(–border);border-radius:var(–radius);padding:16px;box-shadow:var(–shadow)}
+.card-title{font-family:‘Spectral SC’,serif;font-size:.68rem;letter-spacing:2px;color:var(–text-muted);text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+label{font-size:.72rem;color:var(–text-muted);letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:3px}
+input[type=text],input[type=number],select,textarea{width:100%;border:1px solid var(–border);border-radius:5px;padding:7px 10px;font-family:‘Spectral’,serif;font-size:.95rem;color:var(–text);background:var(–bg);outline:none;transition:border-color .15s}
+input:focus,select:focus,textarea:focus{border-color:var(–accent2);background:#fff}
+textarea{resize:vertical;min-height:70px}
+.field{margin-bottom:10px}
+.field:last-child{margin-bottom:0}
+.section-gap{margin-bottom:16px}
+.separator{border:none;border-top:1px solid var(–border);margin:14px 0}
+.info-box{background:var(–surface2);border-left:3px solid var(–accent2);border-radius:0 5px 5px 0;padding:10px 12px;font-size:.82rem;color:var(–text-muted);line-height:1.6;margin-top:8px}
+.btn{background:var(–accent2);color:#fff;border:none;border-radius:5px;padding:7px 14px;font-family:‘Spectral’,serif;font-size:.88rem;cursor:pointer;transition:all .15s}
+.btn:hover{opacity:.85}
+.btn-sm{padding:5px 10px;font-size:.8rem}
+.btn-outline{background:none;border:1px solid var(–accent2);color:var(–accent2)}
+.btn-outline:hover{background:var(–accent2-light)}
+.badge{display:inline-block;background:var(–accent2-light);color:var(–accent2);border-radius:20px;padding:1px 8px;font-size:.72rem;font-family:‘Spectral SC’,serif;letter-spacing:1px}
+
+/* ABILITIES */
+.abilities-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.ability-box{background:var(–surface2);border:1px solid var(–border);border-radius:var(–radius);text-align:center;padding:10px 6px 8px}
+.ability-name{font-family:‘Spectral SC’,serif;font-size:.6rem;letter-spacing:2px;color:var(–text-muted);margin-bottom:4px}
+.ability-score{font-size:1.6rem;font-weight:600;line-height:1;cursor:text;outline:none}
+.ability-score:focus{color:var(–accent2)}
+.ability-mod{display:inline-block;margin-top:4px;font-size:.85rem;font-weight:600;color:var(–accent);background:var(–accent-light);border-radius:20px;padding:1px 8px;min-width:32px}
+
+/* HP */
+.hp-display{display:flex;align-items:center;justify-content:center;gap:8px;margin:10px 0}
+.hp-current{font-size:2.8rem;font-weight:600;line-height:1;color:var(–accent);cursor:text;outline:none;min-width:80px;text-align:center}
+.hp-current:focus{color:var(–accent2)}
+.hp-sep{font-size:1.5rem;color:var(–text-muted)}
+.hp-max{font-size:1.5rem;color:var(–text-muted);cursor:text;outline:none;min-width:50px;text-align:center}
+.hp-max:focus{color:var(–accent2)}
+.hp-buttons{display:flex;gap:6px;margin-top:10px}
+.hp-btn{flex:1;padding:7px;border:1px solid var(–border);border-radius:5px;background:var(–surface2);font-family:‘Spectral’,serif;font-size:.85rem;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:4px}
+.hp-btn.heal{border-color:var(–green);color:var(–green)}
+.hp-btn.heal:hover{background:var(–green-light)}
+.hp-btn.damage{border-color:var(–accent);color:var(–accent)}
+.hp-btn.damage:hover{background:var(–accent-light)}
+.hp-delta{width:60px;text-align:center;border:1px solid var(–border);border-radius:5px;padding:7px;font-family:‘Spectral’,serif;font-size:1rem;background:var(–bg);outline:none}
+.hp-delta:focus{border-color:var(–accent2)}
+
+/* DEATH SAVES */
+.death-saves{display:flex;gap:16px;margin-top:10px}
+.ds-group{flex:1}
+.ds-label{font-size:.68rem;color:var(–text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;text-align:center}
+.ds-circles{display:flex;gap:5px;justify-content:center}
+.ds-circle{width:22px;height:22px;border-radius:50%;border:2px solid var(–border);cursor:pointer;transition:all .15s;background:var(–bg)}
+.ds-circle.success.filled{background:var(–green);border-color:var(–green)}
+.ds-circle.failure.filled{background:var(–accent);border-color:var(–accent)}
+
+/* SKILLS */
+.skills-list{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.skill-row{display:flex;align-items:center;gap:8px;padding:4px 6px;border-radius:4px;cursor:pointer;transition:background .1s;font-size:.88rem}
+.skill-row:hover{background:var(–surface2)}
+.skill-prof{width:14px;height:14px;border-radius:50%;border:1.5px solid var(–border);flex-shrink:0;transition:all .15s;background:var(–bg)}
+.skill-prof.proficient{background:var(–accent2);border-color:var(–accent2)}
+.skill-prof.expertise{background:var(–gold);border-color:var(–gold)}
+.skill-name{flex:1}
+.skill-attr{font-size:.7rem;color:var(–text-muted)}
+.skill-bonus{font-weight:600;color:var(–accent2);min-width:28px;text-align:right}
+.saves-list{display:flex;flex-direction:column;gap:4px}
+.save-row{display:flex;align-items:center;gap:8px;padding:4px 6px;border-radius:4px;cursor:pointer;transition:background .1s;font-size:.88rem}
+.save-row:hover{background:var(–surface2)}
+.save-prof{width:14px;height:14px;border-radius:50%;border:1.5px solid var(–border);flex-shrink:0;background:var(–bg);transition:all .15s}
+.save-prof.proficient{background:var(–accent2);border-color:var(–accent2)}
+.save-bonus{font-weight:600;color:var(–accent2);min-width:28px;text-align:right}
+
+/* DICE */
+.dice-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.dice-btn{background:var(–surface2);border:1px solid var(–border);border-radius:var(–radius);padding:12px 6px;font-family:‘Spectral SC’,serif;font-size:.9rem;letter-spacing:1px;cursor:pointer;transition:all .15s;text-align:center}
+.dice-btn:hover{background:var(–accent);color:#fff;border-color:var(–accent)}
+.dice-btn:active{transform:scale(.95)}
+.dice-options{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.dice-options label{margin-bottom:0;font-size:.75rem}
+.roll-result{background:var(–text);color:#fff;border-radius:var(–radius);padding:14px 16px;min-height:70px}
+.roll-total{font-size:2.2rem;font-weight:600;color:#fff;line-height:1}
+.roll-detail{color:rgba(255,255,255,.55);font-size:.8rem;margin-top:4px}
+.roll-history{margin-top:10px;max-height:150px;overflow-y:auto}
+.roll-hist-item{font-size:.8rem;color:var(–text-muted);padding:3px 0;border-bottom:1px solid var(–border)}
+
+/* ATTACKS */
+.attack-table{width:100%;border-collapse:collapse;font-size:.88rem}
+.attack-table th{font-family:‘Spectral SC’,serif;font-size:.65rem;letter-spacing:1.5px;color:var(–text-muted);padding:4px 8px;text-align:left;border-bottom:1px solid var(–border)}
+.attack-table td{padding:6px 8px;border-bottom:1px solid var(–surface2);vertical-align:middle}
+.attack-table tr:hover td{background:var(–surface2)}
+.attack-table input{border:none;background:transparent;font-family:‘Spectral’,serif;font-size:.88rem;width:100%;outline:none;color:var(–text)}
+.attack-table input:focus{background:var(–accent2-light);border-radius:3px;padding:1px 4px}
+.roll-atk-btn{background:none;border:1px solid var(–border);border-radius:4px;padding:3px 8px;cursor:pointer;font-size:.8rem;transition:all .15s;color:var(–accent2)}
+.roll-atk-btn:hover{background:var(–accent2);color:#fff;border-color:var(–accent2)}
+
+/* CONDITIONS */
+.conditions-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.condition-btn{padding:7px 6px;border:1px solid var(–border);border-radius:5px;font-family:‘Spectral’,serif;font-size:.8rem;cursor:pointer;transition:all .15s;text-align:center;background:var(–bg)}
+.condition-btn:hover{border-color:var(–accent)}
+.condition-btn.active{background:var(–accent);color:#fff;border-color:var(–accent)}
+.condition-effects{margin-top:10px;font-size:.8rem;color:var(–text-muted);font-style:italic;background:var(–accent-light);border-radius:5px;padding:8px 10px;line-height:1.6;display:none}
+.condition-effects.visible{display:block}
+
+/* SPELL SLOTS */
+.spell-slots-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px}
+.slot-level{background:var(–surface2);border:1px solid var(–border);border-radius:var(–radius);padding:10px 6px;text-align:center}
+.slot-level-num{font-family:‘Spectral SC’,serif;font-size:.65rem;letter-spacing:1px;color:var(–text-muted);margin-bottom:6px}
+.slot-pips{display:flex;flex-wrap:wrap;gap:4px;justify-content:center}
+.slot-pip{width:18px;height:18px;border-radius:50%;border:1.5px solid var(–accent2);cursor:pointer;transition:all .15s;background:var(–bg)}
+.slot-pip.used{background:var(–accent2)}
+.slot-pip:hover{transform:scale(1.2)}
+.slot-controls{display:flex;gap:6px;align-items:center;margin-top:6px;flex-wrap:wrap}
+.slot-controls label{margin-bottom:0}
+
+/* SPELLS */
+.spell-item{display:flex;align-items:flex-start;gap:10px;padding:8px;border:1px solid var(–border);border-radius:5px;margin-bottom:6px;background:var(–surface2);font-size:.88rem}
+.spell-item.prepared{background:var(–accent2-light);border-color:#b8d0e8}
+.spell-prep-dot{width:10px;height:10px;border-radius:50%;border:1.5px solid var(–accent2);flex-shrink:0;margin-top:4px;cursor:pointer;transition:background .15s}
+.spell-prep-dot.prepared{background:var(–accent2)}
+.spell-info{flex:1}
+.spell-name{font-weight:600}
+.spell-meta{font-size:.75rem;color:var(–text-muted)}
+.spell-delete,.inv-delete{background:none;border:none;color:var(–text-muted);cursor:pointer;font-size:.9rem;padding:2px 4px;border-radius:3px}
+.spell-delete:hover,.inv-delete:hover{color:var(–accent);background:var(–accent-light)}
+.spell-add-form{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:6px;margin-top:10px;align-items:end}
+
+/* INVENTORY */
+.gold-inputs{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.gold-field{display:flex;align-items:center;gap:4px}
+.gold-field label{margin-bottom:0;white-space:nowrap}
+.gold-field input{width:60px}
+.coin-label{font-size:.72rem;font-weight:600;letter-spacing:1px}
+.coin-cp{color:#8b6914}.coin-sp{color:#8b8b8b}.coin-ep{color:#6b8b6b}.coin-gp{color:var(–gold)}.coin-pp{color:#7b6eb0}
+.inv-item{display:flex;align-items:center;gap:8px;padding:7px 8px;border:1px solid var(–border);border-radius:5px;margin-bottom:5px;background:var(–surface2);font-size:.88rem}
+.inv-qty{width:45px;text-align:center;border:1px solid var(–border);border-radius:4px;padding:3px 5px;font-family:‘Spectral’,serif;background:var(–bg);font-size:.88rem}
+.inv-name{flex:1}
+.inv-weight{width:50px;color:var(–text-muted);font-size:.8rem;text-align:right}
+.inv-add-form{display:grid;grid-template-columns:3fr 1fr 1fr auto;gap:6px;margin-top:8px;align-items:end}
+
+/* INSPIRATION */
+.inspiration-btn{width:100%;padding:14px;border:2px solid var(–gold);border-radius:var(–radius);background:var(–bg);font-family:‘Spectral SC’,serif;font-size:1rem;letter-spacing:2px;cursor:pointer;transition:all .2s;color:var(–gold)}
+.inspiration-btn.active{background:var(–gold-light)}
+.inspiration-btn:hover{background:var(–gold-light)}
+
+/* STAT BADGE */
+.stats-row{display:flex;gap:10px;flex-wrap:wrap}
+.stat-badge{flex:1;min-width:80px;background:var(–surface2);border:1px solid var(–border);border-radius:var(–radius);padding:10px 8px;text-align:center}
+.stat-val{font-size:1.5rem;font-weight:600;line-height:1;cursor:text;outline:none;color:var(–accent2)}
+.stat-val:focus{color:var(–accent)}
+
+/* TRAITS */
+.traits-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* CLASS FEATURES */
+.class-feature-panel{display:none}
+.class-feature-panel.visible{display:block}
+.smite-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.smite-btn{background:var(–gold-light);border:1px solid #e8c87a;border-radius:var(–radius);padding:12px 4px;font-family:‘Spectral SC’,serif;font-size:.78rem;cursor:pointer;text-align:center;transition:all .15s;line-height:1.3}
+.smite-btn:hover{background:var(–gold);color:#fff;border-color:var(–gold)}
+.smite-btn:active{transform:scale(.95)}
+.divine-smite-result{background:var(–gold-light);border:1px solid #e8c87a;border-radius:var(–radius);padding:12px 14px;min-height:60px}
+.smite-total{font-size:1.8rem;font-weight:600;color:var(–gold);line-height:1}
+.smite-detail{color:var(–text-muted);font-size:.8rem;margin-top:3px}
+.sneak-atk-display{display:flex;align-items:center;gap:12px;background:var(–surface2);border:1px solid var(–border);border-radius:var(–radius);padding:14px 16px;margin-bottom:10px}
+.sneak-atk-dice{font-size:2rem;font-weight:600;color:var(–accent);line-height:1}
+.sneak-atk-label{font-size:.78rem;color:var(–text-muted)}
+.sneak-roll-result{background:var(–accent-light);border:1px solid #e8b0aa;border-radius:var(–radius);padding:12px 14px;min-height:55px}
+.sneak-total{font-size:1.8rem;font-weight:600;color:var(–accent);line-height:1}
+.sneak-detail{color:var(–text-muted);font-size:.8rem;margin-top:3px}
+.subclass-pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.subclass-pill{padding:4px 12px;border:1px solid var(–border);border-radius:20px;font-size:.78rem;cursor:pointer;background:var(–bg);transition:all .15s}
+.subclass-pill:hover{border-color:var(–gold);color:var(–gold)}
+.subclass-pill.active{background:var(–gold);color:#fff;border-color:var(–gold)}
+.channel-divinity-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:10px}
+.cd-btn{padding:8px 6px;border:1px solid var(–border);border-radius:5px;font-family:‘Spectral’,serif;font-size:.8rem;cursor:pointer;transition:all .15s;text-align:center;background:var(–accent2-light);color:var(–accent2);line-height:1.3}
+.cd-btn:hover{background:var(–accent2);color:#fff;border-color:var(–accent2)}
+.cd-btn:active{transform:scale(.95)}
+.uses-tracker{display:flex;gap:6px;align-items:center;margin-bottom:8px}
+.use-pip{width:24px;height:24px;border-radius:50%;border:2px solid var(–accent2);cursor:pointer;background:var(–bg);transition:all .15s}
+.use-pip.used{background:var(–accent2)}
+.use-pip.gold{border-color:var(–gold)}
+.use-pip.gold.used{background:var(–gold)}
+.use-pip:hover{transform:scale(1.15)}
+.lay-on-hands-bar{background:var(–green-light);border:1px solid #a8d8b8;border-radius:var(–radius);padding:12px 14px;margin-bottom:10px}
+.loh-points{font-size:1.6rem;font-weight:600;color:var(–green)}
+.loh-btns{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.loh-btn{padding:5px 10px;border:1px solid var(–green);border-radius:5px;background:none;color:var(–green);font-family:‘Spectral’,serif;font-size:.82rem;cursor:pointer;transition:all .15s}
+.loh-btn:hover{background:var(–green);color:#fff}
+.toggle-btn{padding:5px 12px;border:1px solid var(–border);border-radius:20px;background:var(–bg);font-family:‘Spectral’,serif;font-size:.8rem;cursor:pointer;transition:all .15s}
+.toggle-btn.active{background:var(–text);color:#fff;border-color:var(–text)}
+.toggle-btn:hover:not(.active){border-color:var(–text-muted)}
+.sneak-bonus-toggle{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(–bg)}
+::-webkit-scrollbar-thumb{background:var(–border);border-radius:3px}
+
+@media(max-width:700px){
+.abilities-grid{grid-template-columns:repeat(3,1fr)}
+.grid-2,.grid-3{grid-template-columns:1fr}
+.dice-grid{grid-template-columns:repeat(4,1fr)}
+.spell-slots-grid{grid-template-columns:repeat(3,1fr)}
+.skills-list{grid-template-columns:1fr}
+.tab-btn{font-size:.65rem;padding:5px 7px}
+.inv-add-form,.spell-add-form{grid-template-columns:1fr 1fr}
+.traits-grid{grid-template-columns:1fr}
+.smite-grid{grid-template-columns:repeat(2,1fr)}
+.channel-divinity-grid{grid-template-columns:1fr}
+}
+
+/* ── HUB ── */
+.hub-screen { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; padding:40px 20px; background:var(–bg); }
+.hub-logo { font-family:‘Spectral SC’,serif; font-size:2rem; letter-spacing:4px; color:var(–text); margin-bottom:6px; }
+.hub-sub { font-size:.85rem; color:var(–text-muted); letter-spacing:2px; margin-bottom:40px; font-style:italic; }
+.hub-chars { display:flex; flex-wrap:wrap; gap:16px; justify-content:center; margin-bottom:32px; max-width:900px; width:100%; }
+.char-card {
+background:var(–surface); border:1px solid var(–border); border-radius:var(–radius);
+padding:20px; width:200px; cursor:pointer; transition:all .2s;
+box-shadow:var(–shadow); position:relative; text-align:center;
+}
+.char-card:hover { border-color:var(–accent2); transform:translateY(-2px); box-shadow:0 4px 20px rgba(44,95,138,.15); }
+.char-card .char-class-badge { font-size:.68rem; letter-spacing:2px; color:var(–text-muted); font-family:‘Spectral SC’,serif; text-transform:uppercase; margin-bottom:8px; }
+.char-card .char-name { font-size:1.1rem; font-weight:600; color:var(–text); margin-bottom:4px; font-family:‘Spectral SC’,serif; }
+.char-card .char-meta { font-size:.78rem; color:var(–text-muted); }
+.char-card .char-hp { margin-top:10px; font-size:.8rem; color:var(–accent); font-weight:600; }
+.char-card .char-delete {
+position:absolute; top:8px; right:8px; background:none; border:none;
+color:var(–text-muted); cursor:pointer; font-size:.85rem; border-radius:3px;
+padding:2px 5px; opacity:0; transition:opacity .15s;
+}
+.char-card:hover .char-delete { opacity:1; }
+.char-card .char-delete:hover { color:var(–accent); background:var(–accent-light); }
+.char-card-new {
+border:2px dashed var(–border); color:var(–text-muted);
+display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;
+}
+.char-card-new:hover { border-color:var(–accent2); color:var(–accent2); background:var(–accent2-light); }
+.char-card-new .plus { font-size:2rem; line-height:1; }
+.char-card-new .new-label { font-family:‘Spectral SC’,serif; font-size:.75rem; letter-spacing:2px; }
+
+/* CHAR SWITCHER BAR */
+.char-switcher { display:flex; align-items:center; gap:8px; overflow-x:auto; padding:0 12px; flex:1; }
+.char-switch-btn {
+background:none; border:none; color:rgba(255,255,255,.55); font-family:‘Spectral SC’,serif;
+font-size:.7rem; letter-spacing:1px; padding:5px 10px; cursor:pointer; border-radius:4px;
+transition:all .15s; white-space:nowrap; flex-shrink:0;
+}
+.char-switch-btn:hover { color:#fff; background:rgba(255,255,255,.1); }
+.char-switch-btn.active { color:#fff; background:var(–accent2); }
+.hub-btn { background:none; border:1px solid rgba(255,255,255,.25); color:rgba(255,255,255,.7); font-family:‘Spectral SC’,serif; font-size:.7rem; letter-spacing:1px; padding:5px 10px; cursor:pointer; border-radius:4px; transition:all .15s; white-space:nowrap; }
+.hub-btn:hover { color:#fff; border-color:rgba(255,255,255,.6); }
+.divider-v { width:1px; height:20px; background:rgba(255,255,255,.2); flex-shrink:0; }
+
+</style>
+</head>
+<body>
+
+<header class="app-header" id="app-header" style="display:none;">
+  <button class="hub-btn" onclick="goToHub()" title="Torna all'hub">&#8592; Hub</button>
+  <div class="divider-v"></div>
+  <div class="char-switcher" id="char-switcher"></div>
+  <div class="divider-v"></div>
+  <nav class="tab-bar" role="tablist">
+    <button class="tab-btn active" data-tab="tab-main">Scheda</button>
+    <button class="tab-btn" data-tab="tab-combat">Combattimento</button>
+    <button class="tab-btn" data-tab="tab-classe">Classe &#9889;</button>
+    <button class="tab-btn" data-tab="tab-magia">Magia</button>
+    <button class="tab-btn" data-tab="tab-inventario">Inventario</button>
+    <button class="tab-btn" data-tab="tab-note">Note</button>
+  </nav>
+</header>
+
+<div id="hub-screen" class="hub-screen">
+  <div class="hub-logo">&#9876; D&amp;D 5e</div>
+  <div class="hub-sub">Gestione Personaggi</div>
+  <div class="hub-chars" id="hub-chars-grid"></div>
+</div>
+<div id="sheet-screen" style="display:none;">
+<main class="app-body">
+
+<!-- TAB SCHEDA -->
+
+<div id="tab-main" class="tab-panel active">
+  <div class="grid-2 section-gap">
+    <div class="card">
+      <div class="card-title">&#129497; Identita</div>
+      <div class="grid-2">
+        <div class="field"><label>Nome</label><input type="text" id="char-name" placeholder="Nome personaggio"></div>
+        <div class="field"><label>Classe</label><input type="text" id="char-class" placeholder="es. Mago"></div>
+        <div class="field"><label>Livello</label><input type="number" id="char-level" min="1" max="20" value="1"></div>
+        <div class="field"><label>Razza</label><input type="text" id="char-race" placeholder="es. Elfo"></div>
+        <div class="field"><label>Sottoclasse</label><input type="text" id="char-subclass" placeholder="es. Evocazione"></div>
+        <div class="field"><label>Background</label><input type="text" id="char-background" placeholder="es. Eremita"></div>
+        <div class="field"><label>Allineamento</label>
+          <select id="char-alignment">
+            <option value="">---</option>
+            <option>Legale Buono</option><option>Neutrale Buono</option><option>Caotico Buono</option>
+            <option>Legale Neutrale</option><option>Neutrale Puro</option><option>Caotico Neutrale</option>
+            <option>Legale Malvagio</option><option>Neutrale Malvagio</option><option>Caotico Malvagio</option>
+          </select>
+        </div>
+        <div class="field"><label>XP</label><input type="number" id="char-xp" min="0" value="0"></div>
+      </div>
+    </div>
+    <div>
+      <div class="card section-gap">
+        <div class="card-title">&#128202; Statistiche principali</div>
+        <div class="stats-row">
+          <div class="stat-badge"><label>Bonus Comp.</label><div class="stat-val" id="prof-bonus" contenteditable="true">+2</div></div>
+          <div class="stat-badge"><label>CA</label><div class="stat-val" id="stat-ac" contenteditable="true">10</div></div>
+          <div class="stat-badge"><label>Iniziativa</label><div class="stat-val" id="stat-init" contenteditable="true">+0</div></div>
+          <div class="stat-badge"><label>Velocita</label><div class="stat-val" id="stat-speed" contenteditable="true">30</div></div>
+        </div>
+        <div class="info-box">Bonus competenza: Lv 1-4: +2 &middot; Lv 5-8: +3 &middot; Lv 9-12: +4 &middot; Lv 13-16: +5 &middot; Lv 17-20: +6</div>
+      </div>
+      <div class="card">
+        <div class="card-title">&#10024; Ispirazione</div>
+        <button class="inspiration-btn" id="inspiration-btn" onclick="toggleInspiration()">&#11088; Ispirazione</button>
+        <div class="info-box">Vantaggio a qualsiasi tiro di attacco, prova o tiro salvezza. Puoi cederla a un alleato.</div>
+      </div>
+    </div>
+  </div>
+  <div class="card section-gap">
+    <div class="card-title">&#127922; Punteggi di Caratteristica</div>
+    <div class="abilities-grid" id="abilities-grid"></div>
+    <div class="info-box">Modificatore = (Punteggio - 10) / 2 arrotondato per difetto. Es: 16 &rarr; +3, 8 &rarr; -1</div>
+  </div>
+  <div class="grid-2 section-gap">
+    <div class="card">
+      <div class="card-title">&#128737; Tiri Salvezza</div>
+      <div class="saves-list" id="saves-list"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">&#128218; Competenze <span style="margin-left:auto;font-size:.7rem;color:var(--text-muted);">&#9679; Comp &middot; &#9685; Esp</span></div>
+      <div class="skills-list" id="skills-list"></div>
+    </div>
+  </div>
+  <div class="card section-gap">
+    <div class="card-title">&#128220; Tratti &amp; Background</div>
+    <div class="traits-grid">
+      <div class="field"><label>Tratti della personalita</label><textarea id="trait-personality" placeholder="Come si comporta?"></textarea></div>
+      <div class="field"><label>Ideali</label><textarea id="trait-ideals" placeholder="In cosa crede?"></textarea></div>
+      <div class="field"><label>Legami</label><textarea id="trait-bonds" placeholder="A chi e legato?"></textarea></div>
+      <div class="field"><label>Difetti</label><textarea id="trait-flaws" placeholder="Punti deboli?"></textarea></div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB COMBATTIMENTO -->
+
+<div id="tab-combat" class="tab-panel">
+  <div class="grid-2 section-gap">
+    <div class="card">
+      <div class="card-title">&#10084;&#65039; Punti Ferita</div>
+      <div class="hp-display">
+        <div><div style="font-size:.7rem;color:var(--text-muted);text-align:center;margin-bottom:2px;">CORRENTI</div>
+          <div class="hp-current" id="hp-current" contenteditable="true">10</div></div>
+        <div class="hp-sep">/</div>
+        <div><div style="font-size:.7rem;color:var(--text-muted);text-align:center;margin-bottom:2px;">MASSIMI</div>
+          <div class="hp-max" id="hp-max" contenteditable="true">10</div></div>
+      </div>
+      <div style="font-size:.75rem;color:var(--text-muted);text-align:center;margin-bottom:4px;">PF Temporanei: <input type="number" id="hp-temp" class="hp-delta" value="0" min="0" style="display:inline-block;width:65px;"></div>
+      <div class="hp-buttons">
+        <input type="number" id="hp-delta" class="hp-delta" value="1" min="0">
+        <button class="hp-btn heal" onclick="changeHP(1)">+ Cura</button>
+        <button class="hp-btn damage" onclick="changeHP(-1)">- Danno</button>
+      </div>
+      <div class="info-box" style="margin-top:10px;">A 0 PF sei inconscio. Se subisci danno pari ai tuoi PF max mentre sei a 0, muori istantaneamente.</div>
+      <hr class="separator">
+      <div class="card-title" style="margin-bottom:8px;">&#128128; Tiri Salvezza sulla Morte</div>
+      <div class="death-saves">
+        <div class="ds-group">
+          <div class="ds-label">&#10003; Successi</div>
+          <div class="ds-circles">
+            <div class="ds-circle success" onclick="toggleDS('s',0)"></div>
+            <div class="ds-circle success" onclick="toggleDS('s',1)"></div>
+            <div class="ds-circle success" onclick="toggleDS('s',2)"></div>
+          </div>
+        </div>
+        <div class="ds-group">
+          <div class="ds-label">&#10007; Fallimenti</div>
+          <div class="ds-circles">
+            <div class="ds-circle failure" onclick="toggleDS('f',0)"></div>
+            <div class="ds-circle failure" onclick="toggleDS('f',1)"></div>
+            <div class="ds-circle failure" onclick="toggleDS('f',2)"></div>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-sm btn-outline" style="margin-top:8px;width:100%;" onclick="resetDS()">Reset tiri morte</button>
+      <div class="info-box" style="margin-top:8px;">d20 ogni turno. &ge;10 = successo, &lt;10 = fallimento. 3 successi &rarr; stabile. 3 fallimenti &rarr; morte. 20 naturale &rarr; recuperi 1 PF.</div>
+    </div>
+    <div>
+      <div class="card section-gap">
+        <div class="card-title">&#127922; Dado Vita</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <div class="field" style="margin:0;flex:1;"><label>Tipo</label>
+            <select id="hd-type"><option>d6</option><option>d8</option><option selected>d10</option><option>d12</option></select>
+          </div>
+          <div class="field" style="margin:0;"><label>Usati</label><input type="number" id="hd-used" value="0" min="0" style="width:60px;"></div>
+          <div class="field" style="margin:0;"><label>Totale</label><input type="number" id="hd-total" value="1" min="1" style="width:60px;"></div>
+        </div>
+        <div class="info-box" style="margin-top:8px;">Riposo breve: spendi dadi vita + mod COS per recuperare PF. Riposo lungo: recuperi meta dei dadi vita spesi.</div>
+      </div>
+      <div class="card section-gap">
+        <div class="card-title">&#9889; Azioni per round</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+          <div style="background:var(--green-light);border:1px solid var(--green);border-radius:5px;padding:8px;font-size:.82rem;"><strong style="color:var(--green);">Azione</strong><br>Attaccare, incantesimo, scattare, disimpegnarsi, schivare, aiutare, nascondersi, preparare, usare oggetto</div>
+          <div style="background:var(--accent2-light);border:1px solid #b8d0e8;border-radius:5px;padding:8px;font-size:.82rem;"><strong style="color:var(--accent2);">Azione Bonus</strong><br>Solo se una capacita specifica la concede.</div>
+          <div style="background:var(--gold-light);border:1px solid #e8c87a;border-radius:5px;padding:8px;font-size:.82rem;"><strong style="color:var(--gold);">Reazione</strong><br>Attacco opportunita, incantesimi specifici. 1 per round.</div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:8px;font-size:.82rem;"><strong>Movimento</strong><br>Fino alla tua velocita. Puoi spezzarlo prima/dopo un'azione.</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">&#129298; Condizioni</div>
+        <div class="conditions-grid" id="conditions-grid"></div>
+        <div class="condition-effects" id="condition-effects"></div>
+      </div>
+    </div>
+  </div>
+  <div class="card section-gap">
+    <div class="card-title">&#9876;&#65039; Attacchi &amp; Armi</div>
+    <table class="attack-table">
+      <thead><tr><th>Nome</th><th>Bonus attacco</th><th>Danno / Tipo</th><th>Gittata</th><th>Note</th><th>Tira</th><th></th></tr></thead>
+      <tbody id="attacks-tbody"></tbody>
+    </table>
+    <button class="btn btn-sm btn-outline" style="margin-top:10px;" onclick="addAttack()">+ Aggiungi arma</button>
+    <div class="info-box" style="margin-top:8px;">Tiro attacco = d20 + bonus. Corpo a corpo: FOR (o DES per armi Agili). Distanza: DES. Incantesimi: mod. caratteristica + bonus competenza.</div>
+  </div>
+  <div class="card">
+    <div class="card-title">&#127922; Dado Rapido</div>
+    <div class="dice-grid">
+      <button class="dice-btn" onclick="quickRoll(4)">d4</button>
+      <button class="dice-btn" onclick="quickRoll(6)">d6</button>
+      <button class="dice-btn" onclick="quickRoll(8)">d8</button>
+      <button class="dice-btn" onclick="quickRoll(10)">d10</button>
+      <button class="dice-btn" onclick="quickRoll(12)">d12</button>
+      <button class="dice-btn" onclick="quickRoll(20)">d20</button>
+      <button class="dice-btn" onclick="quickRoll(100)">d100</button>
+      <button class="dice-btn" onclick="rollFull()">Custom</button>
+    </div>
+    <div class="dice-options">
+      <label>N. dadi</label><input type="number" id="dice-num" value="1" min="1" max="20" style="width:55px;">
+      <label>Tipo</label><select id="dice-type"><option>4</option><option>6</option><option>8</option><option selected>10</option><option>12</option><option>20</option><option>100</option></select>
+      <label>Mod.</label><input type="number" id="dice-mod" value="0" style="width:55px;">
+      <button class="btn btn-sm" onclick="rollFull()">Tira</button>
+    </div>
+    <div class="roll-result" id="roll-result"><div style="color:rgba(255,255,255,.4);font-size:.85rem;">Premi un dado per tirare...</div></div>
+    <div class="roll-history" id="roll-history"></div>
+  </div>
+</div>
+
+<!-- TAB CLASSE -->
+
+<div id="tab-classe" class="tab-panel">
+  <div class="card section-gap">
+    <div class="card-title">&#9889; Capacita di Classe</div>
+    <div class="field">
+      <label>Classe principale</label>
+      <select id="class-selector" onchange="onClassChange()">
+        <option value="">--- Seleziona classe ---</option>
+        <option value="paladin">Paladino</option>
+        <option value="cleric">Chierico</option>
+        <option value="rogue">Ladro</option>
+        <option value="other">Altra classe</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- PALADINO -->
+
+  <div id="panel-paladin" class="class-feature-panel">
+    <div class="card section-gap">
+      <div class="card-title">&#128737; Giuramento (Sottoclasse)</div>
+      <div class="subclass-pills" id="paladin-pills"></div>
+      <div id="paladin-sub-info" class="info-box" style="display:none;margin-top:8px;"></div>
+    </div>
+    <div class="card section-gap">
+      <div class="card-title">&#10013;&#65039; Colpo Divino (Divine Smite)</div>
+      <div class="info-box" style="margin-bottom:10px;">Quando colpisci corpo a corpo, spendi uno slot per infliggere <strong>2d8 radianti</strong> (+1d8 per livello slot oltre il 1°, max 5d8). +1d8 se il bersaglio e non-morto o infernale. Decidi dopo aver visto il tiro.</div>
+      <label style="margin-bottom:6px;display:block;">Livello slot da spendere</label>
+      <div class="smite-grid" id="smite-grid"></div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">
+        <button class="toggle-btn" id="smite-undead-btn" onclick="toggleSmiteBonus('undead')">Non-morto / Infernale (+1d8)</button>
+        <button class="toggle-btn" id="smite-crit-btn" onclick="toggleSmiteBonus('crit')">Critico (dadi x2)</button>
+      </div>
+      <div class="divine-smite-result" id="smite-result"><div style="color:var(--text-muted);font-size:.85rem;">Premi un livello slot per tirare...</div></div>
+    </div>
+    <div class="card section-gap">
+      <div class="card-title">&#129306; Imposizione delle Mani</div>
+      <div class="lay-on-hands-bar">
+        <div style="font-size:.75rem;color:var(--text-muted);margin-bottom:2px;">PUNTI DISPONIBILI</div>
+        <span class="loh-points" id="loh-current">5</span><span style="color:var(--text-muted);"> / </span><span id="loh-max">5</span>
+        <div class="loh-btns">
+          <button class="loh-btn" onclick="lohChange(-1)">-1 Cura</button>
+          <button class="loh-btn" onclick="lohChange(-5)">-5 Malattia/Veleno</button>
+          <button class="loh-btn" onclick="lohChange(10)" style="border-color:var(--accent2);color:var(--accent2);">+10 Aggiungi</button>
+          <button class="loh-btn" onclick="lohReset()" style="border-color:var(--accent);color:var(--accent);">Riposo lungo</button>
+        </div>
+      </div>
+      <div class="info-box">5 x livello Paladino punti totali. 1 punto = 1 PF curato. 5 punti = rimozione malattia o veleno.</div>
+    </div>
+    <div class="card section-gap">
+      <div class="card-title">&#11088; Channel Divinity del Giuramento</div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">
+        <label style="margin:0;">Usi:</label>
+        <div class="uses-tracker" id="paladin-cd-tracker"></div>
+        <button class="btn btn-sm btn-outline" onclick="resetPaladinCD()">Riposo breve</button>
+      </div>
+      <div class="channel-divinity-grid" id="paladin-cd-abilities"></div>
+      <div id="paladin-cd-result" class="info-box" style="margin-top:8px;display:none;"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">&#128171; Aure del Paladino</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div style="background:var(--gold-light);border:1px solid #e8c87a;border-radius:6px;padding:10px;font-size:.82rem;"><strong style="color:var(--gold);">Aura di Protezione (lv 6)</strong><br>Tu e alleati entro 10 ft aggiungono mod CAR ai TS (min +1).</div>
+        <div style="background:var(--gold-light);border:1px solid #e8c87a;border-radius:6px;padding:10px;font-size:.82rem;"><strong style="color:var(--gold);">Aura di Coraggio (lv 10)</strong><br>Tu e alleati entro 10 ft non possono essere Spaventati.</div>
+      </div>
+      <div id="paladin-extra-auras" style="margin-top:8px;"></div>
+    </div>
+  </div>
+
+  <!-- CHIERICO -->
+
+  <div id="panel-cleric" class="class-feature-panel">
+    <div class="card section-gap">
+      <div class="card-title">&#9962; Dominio Divino (Sottoclasse)</div>
+      <div class="subclass-pills" id="cleric-pills"></div>
+      <div id="cleric-sub-info" class="info-box" style="display:none;margin-top:8px;"></div>
+    </div>
+    <div class="card section-gap">
+      <div class="card-title">&#11088; Channel Divinity</div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">
+        <label style="margin:0;">Usi:</label>
+        <div class="uses-tracker" id="cleric-cd-tracker"></div>
+        <button class="btn btn-sm btn-outline" onclick="resetClericCD()">Riposo breve/lungo</button>
+      </div>
+      <div class="info-box" style="margin-bottom:8px;">Lv 1-5: 1 uso &middot; Lv 6-17: 2 usi &middot; Lv 18+: 3 usi per riposo breve.</div>
+      <div class="channel-divinity-grid" id="cleric-cd-abilities"></div>
+      <div id="cleric-cd-result" class="info-box" style="margin-top:8px;display:none;"></div>
+    </div>
+    <div class="card section-gap">
+      <div class="card-title">&#128591; Intervento Divino (lv 10)</div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <div class="use-pip gold" id="divine-int-pip" onclick="toggleDivineIntervention()"></div>
+        <span id="divine-int-label">Disponibile</span>
+      </div>
+      <div class="info-box" style="margin-top:8px;">Azione: tira percentuale &le; livello Chierico = successo. Lv 20: riesce sempre. 1 uso a settimana.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">&#128161; Potenziamenti di Dominio</div>
+      <div id="cleric-domain-bonus" class="info-box">Seleziona un Dominio per vedere i bonus specifici.</div>
+    </div>
+  </div>
+
+  <!-- LADRO -->
+
+  <div id="panel-rogue" class="class-feature-panel">
+    <div class="card section-gap">
+      <div class="card-title">&#128329; Archetipo (Sottoclasse)</div>
+      <div class="subclass-pills" id="rogue-pills"></div>
+      <div id="rogue-sub-info" class="info-box" style="display:none;margin-top:8px;"></div>
+    </div>
+    <div class="card section-gap">
+      <div class="card-title">&#127919; Attacco Furtivo (Sneak Attack)</div>
+      <div class="sneak-atk-display">
+        <div>
+          <div class="sneak-atk-dice" id="sneak-dice-display">1d6</div>
+          <div class="sneak-atk-label">Danno extra</div>
+        </div>
+        <div style="flex:1;font-size:.82rem;color:var(--text-muted);">
+          Livello <strong id="sneak-lv-display">1</strong> &middot; Una volta per turno<br>
+          Condizione: vantaggio <em>oppure</em> alleato adiacente al bersaglio (senza svantaggio)
+        </div>
+      </div>
+      <div class="sneak-bonus-toggle">
+        <button class="toggle-btn" id="sneak-crit-btn" onclick="toggleSneakFlag('crit')">Critico (dadi x2)</button>
+        <button class="toggle-btn" id="sneak-psychic-btn" onclick="toggleSneakFlag('psychic')">Lama Anima (+psichico)</button>
+        <button class="toggle-btn" id="sneak-phantom-btn" onclick="toggleSneakFlag('phantom')">Fantasma (+necrotico)</button>
+      </div>
+      <button class="btn" onclick="rollSneakAttack()" style="width:100%;margin-bottom:10px;">&#127922; Tira Attacco Furtivo</button>
+      <div class="sneak-roll-result" id="sneak-result"><div style="color:var(--text-muted);font-size:.85rem;">Premi per tirare...</div></div>
+      <div class="info-box" style="margin-top:8px;"><strong>Dadi per livello:</strong> Lv 1-2: 1d6 &middot; Lv 3-4: 2d6 &middot; Lv 5-6: 3d6 &middot; Lv 7-8: 4d6 &middot; Lv 9-10: 5d6 &middot; Lv 11-12: 6d6 &middot; Lv 13-14: 7d6 &middot; Lv 15-16: 8d6 &middot; Lv 17-18: 9d6 &middot; Lv 19-20: 10d6</div>
+    </div>
+    <div class="card section-gap">
+      <div class="card-title">&#128168; Azione Scaltra (lv 2)</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:8px;font-size:.8rem;text-align:center;"><strong>Scattare</strong><br><span style="color:var(--text-muted);">Bonus action</span></div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:8px;font-size:.8rem;text-align:center;"><strong>Disimpegnarsi</strong><br><span style="color:var(--text-muted);">Bonus action</span></div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:8px;font-size:.8rem;text-align:center;"><strong>Nascondersi</strong><br><span style="color:var(--text-muted);">Bonus action</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">&#128737; Difese passive</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div style="background:var(--accent-light);border:1px solid #e8b0aa;border-radius:6px;padding:10px;font-size:.82rem;"><strong style="color:var(--accent);">Schivata Istintiva (lv 5)</strong><br>Reazione: dimezza il danno di un attacco visibile.</div>
+        <div style="background:var(--accent-light);border:1px solid #e8b0aa;border-radius:6px;padding:10px;font-size:.82rem;"><strong style="color:var(--accent);">Evasione (lv 7)</strong><br>TS DES riuscito = 0 danni da area. Fallito = meta.</div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:10px;font-size:.82rem;"><strong>Talento Affidabile (lv 11)</strong><br>Tiri con competenza: risultati &lt;10 diventano 10.</div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:10px;font-size:.82rem;"><strong>Mente Sfuggente (lv 15)</strong><br>Competenza nei TS di Saggezza.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALTRA CLASSE -->
+
+  <div id="panel-other" class="class-feature-panel">
+    <div class="card">
+      <div class="card-title">&#128203; Capacita personalizzate</div>
+      <div class="field"><label>Descrivi le tue capacita di classe</label>
+        <textarea id="other-class-features" rows="8" placeholder="Es. Furia del Barbaro: 2 usi, 1 min, vantaggio FOR/DES..."></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB MAGIA -->
+
+<div id="tab-magia" class="tab-panel">
+  <div class="grid-2 section-gap">
+    <div class="card">
+      <div class="card-title">&#128302; Statistiche Magia</div>
+      <div class="grid-2">
+        <div class="field"><label>Caratteristica</label>
+          <select id="spell-ability">
+            <option value="int">Intelligenza</option>
+            <option value="wis">Saggezza</option>
+            <option value="cha">Carisma</option>
+          </select>
+        </div>
+        <div class="field"><label>CD Incantesimo</label><div class="stat-val" id="spell-dc" style="font-size:1.4rem;color:var(--accent2);">---</div></div>
+        <div class="field"><label>Bonus Attacco</label><div class="stat-val" id="spell-atk" style="font-size:1.4rem;color:var(--accent2);">---</div></div>
+        <div class="field"><label>Incantesimi preparati</label><input type="number" id="spells-prepared" value="0" min="0"></div>
+      </div>
+      <div class="info-box">CD = 8 + bonus comp + mod. Bonus attacco = bonus comp + mod. Preparati tipici: mod + livello classe.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">&#128160; Slot Incantesimo</div>
+      <div class="spell-slots-grid" id="spell-slots-grid"></div>
+      <button class="btn btn-sm btn-outline" style="margin-top:6px;" onclick="restoreAllSlots()">Riposo lungo (ripristina slot)</button>
+    </div>
+  </div>
+  <div class="card section-gap">
+    <div class="card-title">&#128214; Trucchetti (Cantrip)</div>
+    <div id="cantrips-list"></div>
+    <div style="display:flex;gap:6px;margin-top:8px;">
+      <input type="text" id="cantrip-input" placeholder="Nome trucchetto..." style="flex:1;">
+      <button class="btn btn-sm" onclick="addCantrip()">+</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">&#10024; Lista Incantesimi</div>
+    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+      <select id="spell-filter-level" onchange="renderSpells()">
+        <option value="">Tutti i livelli</option>
+        <option value="1">Livello 1</option><option value="2">Livello 2</option><option value="3">Livello 3</option>
+        <option value="4">Livello 4</option><option value="5">Livello 5</option><option value="6">Livello 6</option>
+        <option value="7">Livello 7</option><option value="8">Livello 8</option><option value="9">Livello 9</option>
+      </select>
+      <select id="spell-filter-prepared" onchange="renderSpells()">
+        <option value="">Tutti</option><option value="prepared">Solo preparati</option>
+      </select>
+    </div>
+    <div id="spells-list"></div>
+    <hr class="separator">
+    <div class="card-title" style="margin-bottom:8px;">Aggiungi incantesimo</div>
+    <div class="spell-add-form">
+      <div class="field" style="margin:0;"><label>Nome</label><input type="text" id="new-spell-name" placeholder="Nome incantesimo"></div>
+      <div class="field" style="margin:0;"><label>Livello</label>
+        <select id="new-spell-level"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option></select>
+      </div>
+      <div class="field" style="margin:0;"><label>Componenti</label><input type="text" id="new-spell-comp" placeholder="V,S,M"></div>
+      <button class="btn btn-sm" style="align-self:flex-end;" onclick="addSpell()">+</button>
+    </div>
+    <div style="display:flex;gap:6px;margin-top:6px;">
+      <div class="field" style="margin:0;flex:1;"><label>Tempo lancio</label><input type="text" id="new-spell-cast" placeholder="1 azione"></div>
+      <div class="field" style="margin:0;flex:1;"><label>Gittata</label><input type="text" id="new-spell-range" placeholder="60 ft"></div>
+      <div class="field" style="margin:0;flex:1;"><label>Durata</label><input type="text" id="new-spell-dur" placeholder="Concentrazione 1 min"></div>
+    </div>
+    <div class="field" style="margin-top:6px;"><label>Descrizione</label><textarea id="new-spell-desc" rows="2" placeholder="Effetti, dadi danno..."></textarea></div>
+  </div>
+</div>
+
+<!-- TAB INVENTARIO -->
+
+<div id="tab-inventario" class="tab-panel">
+  <div class="card section-gap">
+    <div class="card-title">&#128176; Monete</div>
+    <div class="gold-inputs">
+      <div class="gold-field"><label class="coin-label coin-cp">RP</label><input type="number" id="coin-cp" value="0" min="0"></div>
+      <div class="gold-field"><label class="coin-label coin-sp">MA</label><input type="number" id="coin-sp" value="0" min="0"></div>
+      <div class="gold-field"><label class="coin-label coin-ep">ME</label><input type="number" id="coin-ep" value="0" min="0"></div>
+      <div class="gold-field"><label class="coin-label coin-gp">MO</label><input type="number" id="coin-gp" value="0" min="0"></div>
+      <div class="gold-field"><label class="coin-label coin-pp">MP</label><input type="number" id="coin-pp" value="0" min="0"></div>
+    </div>
+    <div class="info-box" style="margin-top:8px;">1 MP = 10 MO = 100 ME = 200 MA = 1000 RP</div>
+  </div>
+  <div class="card">
+    <div class="card-title">&#127920; Zaino <span id="total-weight-badge" class="badge" style="margin-left:auto;">0 lbs</span></div>
+    <div id="inventory-list"></div>
+    <div class="info-box" style="margin-top:8px;">Capacita di carico = Forza x 15 lbs. Carico massimo = Forza x 30 lbs.</div>
+    <hr class="separator">
+    <div class="card-title" style="margin-bottom:8px;">Aggiungi oggetto</div>
+    <div class="inv-add-form">
+      <div class="field" style="margin:0;"><label>Nome</label><input type="text" id="inv-name-input" placeholder="Nome oggetto"></div>
+      <div class="field" style="margin:0;"><label>Qta</label><input type="number" id="inv-qty-input" value="1" min="1" style="width:60px;"></div>
+      <div class="field" style="margin:0;"><label>Peso (lbs)</label><input type="number" id="inv-weight-input" value="0" min="0" step="0.5"></div>
+      <button class="btn btn-sm" style="align-self:flex-end;" onclick="addInventoryItem()">+</button>
+    </div>
+    <div class="field" style="margin-top:6px;"><label>Note oggetto</label><input type="text" id="inv-notes-input" placeholder="es. attrezzo, magico, consumabile..."></div>
+  </div>
+</div>
+
+<!-- TAB NOTE -->
+
+<div id="tab-note" class="tab-panel">
+  <div class="grid-2 section-gap">
+    <div class="card"><div class="card-title">&#128203; Note di Sessione</div><textarea id="notes-session" placeholder="Appunti della sessione..." style="min-height:200px;"></textarea></div>
+    <div class="card"><div class="card-title">&#128506; PNG &amp; Luoghi</div><textarea id="notes-npcs" placeholder="Personaggi incontrati, luoghi visitati..." style="min-height:200px;"></textarea></div>
+    <div class="card"><div class="card-title">&#128220; Abilita di Classe</div><textarea id="notes-abilities" placeholder="Capacita speciali, usi giornalieri..." style="min-height:200px;"></textarea></div>
+    <div class="card">
+      <div class="card-title">&#9881;&#65039; Competenze &amp; Lingue</div>
+      <div class="field"><label>Lingue</label><textarea id="notes-langs" placeholder="es. Comune, Elfico..." rows="3"></textarea></div>
+      <div class="field"><label>Competenze strumenti/armi</label><textarea id="notes-proficiencies" placeholder="es. Strumenti da ladro, Archi..." rows="4"></textarea></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px;">
+    <div class="card-title">&#128190; Salvataggio</div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <button class="btn" onclick="exportData()">Esporta JSON</button>
+      <label class="btn btn-outline" style="cursor:pointer;">Importa JSON<input type="file" accept=".json" style="display:none;" onchange="importData(event)"></label>
+      <span style="font-size:.8rem;color:var(--text-muted);">I dati vengono salvati automaticamente nel browser.</span>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+<script>
+
+// ── DATA ──────────────────────────────────────────────────────────────
+const ABILITIES = [“FOR”,“DES”,“COS”,“INT”,“SAG”,“CAR”];
+const ABILITY_FULL = {FOR:“Forza”,DES:“Destrezza”,COS:“Costituzione”,INT:“Intelligenza”,SAG:“Saggezza”,CAR:“Carisma”};
+
+const SKILLS_DATA = [
+{name:“Acrobazia”,attr:“DES”},{name:“Addestrare Animali”,attr:“SAG”},
+{name:“Arcano”,attr:“INT”},{name:“Atletica”,attr:“FOR”},
+{name:“Furtivita”,attr:“DES”},{name:“Indagare”,attr:“INT”},
+{name:“Inganno”,attr:“CAR”},{name:“Intimidire”,attr:“CAR”},
+{name:“Intrattenere”,attr:“CAR”},{name:“Medicina”,attr:“SAG”},
+{name:“Natura”,attr:“INT”},{name:“Percezione”,attr:“SAG”},
+{name:“Persuasione”,attr:“CAR”},{name:“Prestidigitazione”,attr:“DES”},
+{name:“Religione”,attr:“INT”},{name:“Sopravvivenza”,attr:“SAG”},
+{name:“Storia”,attr:“INT”},
+];
+
+const CONDITIONS_DATA = {
+“Accecato”: “Gli attacchi verso di lui con vantaggio. Suoi attacchi con svantaggio. Non puo vedere.”,
+“Affascinato”: “Non puo attaccare il fascinatore. Il fascinatore ha vantaggio ai tiri di Carisma.”,
+“Assordato”: “Non puo sentire. Fallisce automaticamente tiri che richiedono l’udito.”,
+“Avvelenato”: “Svantaggio a tiri d’attacco e prove di caratteristica.”,
+“Esausto”: “1:Svantaggio prove. 2:Velocita dimezzata. 3:Svan. attacchi+TS. 4:Max PF/2. 5:Velocita 0. 6:Morte.”,
+“Grappled”: “Velocita 0. Si scioglie se il grappler e incapacitato o allontanato.”,
+“Incapacitato”: “Non puo compiere azioni ne reazioni.”,
+“Invisibile”: “Attacchi verso lui con svantaggio. Suoi attacchi con vantaggio.”,
+“Paralizzato”: “Incapacitato, non puo muoversi o parlare. Fallisce TS FOR e DES. Critici da meno di 5 ft.”,
+“Pietrificato”: “Trasformato in pietra. Incapacitato. Resistenza a tutti i danni. Immune a veleno.”,
+“Prono”: “Puo solo strisciare. Svantaggio agli attacchi. Attacchi c.c. ricevuti con vantaggio.”,
+“Spaventato”: “Svantaggio a prove e attacchi mentre la fonte e visibile. Non puo avvicinarsi.”,
+};
+
+const SLOT_TABLE = [
+[2,0,0,0,0,0,0,0,0],[3,0,0,0,0,0,0,0,0],[4,2,0,0,0,0,0,0,0],[4,3,0,0,0,0,0,0,0],
+[4,3,2,0,0,0,0,0,0],[4,3,3,0,0,0,0,0,0],[4,3,3,1,0,0,0,0,0],[4,3,3,2,0,0,0,0,0],
+[4,3,3,3,1,0,0,0,0],[4,3,3,3,2,0,0,0,0],[4,3,3,3,2,1,0,0,0],[4,3,3,3,2,1,0,0,0],
+[4,3,3,3,2,1,1,0,0],[4,3,3,3,2,1,1,0,0],[4,3,3,3,2,1,1,1,0],[4,3,3,3,2,1,1,1,0],
+[4,3,3,3,2,1,1,1,1],[4,3,3,3,3,1,1,1,1],[4,3,3,3,3,2,1,1,1],[4,3,3,3,3,2,2,1,1],
+];
+
+const SNEAK_ATTACK_TABLE = [1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10];
+
+const PALADIN_SUBS = {
+devotion:   { label:“Giuramento di Devozione”,    cd:[“Arma Sacra (+mod CAR ai tiri attacco, 1 min)”,“Volto Sacro (CD 8+PB+CAR, creature si allontanano)”],        aura:“Aura di Devozione (lv 7): tu e alleati entro 10 ft siete immuni ad Ammaliamento.”,             info:“Proteggere i deboli, onesta, punire il male. Ottimo contro non-morti.” },
+ancients:   { label:“Giuramento degli Antichi”,   cd:[“Freccia di Natura (radica il bersaglio)”,“Protezione Fatata (vantaggio vs Ammaliamento/Paura per 1 min)”], aura:“Aura della Salvaguardia (lv 7): resistenza ai danni da incantesimi entro 10 ft.”,            info:“Forte resistenza alla magia. Ottimo tank contro caster nemici.” },
+vengeance:  { label:“Giuramento di Vendetta”,     cd:[“Anatema (vantaggio vs 1 bersaglio, non puo fuggire 1 min)”,“Misty Step gratis (teletrasporto 30 ft)”],       aura:“Aura della Vendetta (lv 7): reazione per attaccare chi colpisce alleati entro 5 ft.”,        info:“Cacciatore. Eccellente DPS single-target.” },
+conquest:   { label:“Giuramento di Conquista”,    cd:[“Presenza Conquistante (Spaventato 1 min, CD CAR)”,“Aura di Conquista (Spaventati entro 10 ft paralizzati)”],  aura:“Aura di Conquista (lv 7): creature Spaventate entro 10 ft hanno velocita 0.”,             info:“Controllore del campo. Forte contro creature con bassa SAG.” },
+redemption: { label:“Giuramento di Redenzione”,   cd:[“Mano Emissaria (trasferisce danno da alleati a te)”,“Influenza Pacifica (ferma creature ostili)”],           aura:“Aura della Guardia (lv 7): reazione per subire il danno di un alleato entro 10 ft.”,       info:“Protettore. Meno offensivo, eccellente difensivamente.” },
+glory:      { label:“Giuramento di Gloria”,       cd:[“Ispira i Compagni (+10ft veloc, vantaggio attacchi alleati 30ft)”,“Radiance of Dawn (cura + radiante in area)”], aura:“Aura del Tutore (lv 7): creature amiche entro 10 ft usano il tuo mod CAR per TS.”,     info:“Supporto e mobilita. Eccellente in gruppo.” },
+watchers:   { label:“Giuramento dei Vigilanti”,   cd:[“Occhi di Notte (visione del buio per alleati 1 ora)”,“Volere dei Vigilanti (svantaggio ai tiri contro te 1 min)”], aura:“Aura delle Sentinelle (lv 7): non puoi essere sorpreso, vantaggio all’iniziativa.”,   info:“Anti-extraplanare. Eccellente contro demoni, diavoli, fate.” },
+oathbreaker:{ label:“Rompigiuramento”,             cd:[“Controllo Non-Morti (controlli un non-morto entro 30 ft)”,“Terrore del Rompigiuramento (creature fuggono 1 min)”], aura:“Aura di Odio (lv 7): tu e non-morti amici +mod CAR ai danni con armi.”,           info:“I danni da Colpo Divino diventano necrotici anziche radianti.” },
+};
+
+const CLERIC_SUBS = {
+life:      { label:“Dominio della Vita”,      cd:[“Preservare la Vita (cura 5x livello PF tra creature entro 30 ft)”],                                          bonus:“Discepolo della Vita: cure = 2+livello slot PF extra. Guaritore Beato (lv6): cure senza concentrazione.”, info:“Il miglior guaritore del gioco.” },
+light:     { label:“Dominio della Luce”,      cd:[“Radiance of Dawn (danneggia non-morti, acceca entro 30 ft)”],                                                bonus:“Guardiano della Luce: reazione per svantaggio su attacco vs te. Potente Incantesimo: +mod SAG ai cantrip.”, info:“Buon damage dealer. Warding Flare eccellente.” },
+war:       { label:“Dominio della Guerra”,    cd:[“Colpo Guidato (+10 a un tiro attacco dopo aver visto il risultato)”,“Prete Guerriero (attacco extra come azione bonus)”], bonus:“Guerra: attacco extra come azione bonus. Usi = mod SAG per lungo riposo. Attacco Divino (lv8): +1d8 arma.”, info:“Chierico da mischia. Ottimo DPS.” },
+knowledge: { label:“Dominio della Conoscenza”,cd:[“Conoscenza delle Epoche (competenza temp. in abilita)”,“Leggere i Pensieri (leggi mente poi Suggestiona gratis)”], bonus:“Benedizione della Conoscenza: competenza doppia in 2 abilita INT/SAG/CAR.”,              info:“Esperto di skill e utilita fuori dal combattimento.” },
+trickery:  { label:“Dominio dell’Inganno”,    cd:[“Invocazione di Duplice (duplicato illusorio per incantesimi)”,“Benedizione del Briccone (vantaggio Furtivita)”],    bonus:“Presenza Sfuggente (lv17): invisibile come azione bonus.”,                              info:“Supporto stealth. Ottimo per party furtivi.” },
+nature:    { label:“Dominio della Natura”,    cd:[“Calmare Animali e Piante (CD SAG)”],                                                                            bonus:“Acolito della Natura: trucchetto druido + competenza Natura/Sopravvivenza. Attacco Divino (lv8): +1d8.”,  info:“Versatile. Resistenza agli elementi al lv6.” },
+tempest:   { label:“Dominio della Tempesta”,  cd:[“Furia Distruttiva (massimizza danni fulmine o tuono)”],                                                         bonus:“Ira del Temporale: 2d8 fulmine/tuono a chi ti colpisce (reazione). Attacco Divino (lv8): +1d8.”,   info:“Altissimo danno burst. Eccellente in area.” },
+death:     { label:“Dominio della Morte”,     cd:[“Tocco di Morte (5 + 2x livello chierico danni necrotici)”],                                                     bonus:“Mietitore: cantrip necrotici colpiscono 2 bersagli. Attacco Divino (lv8): +1d8 necrotico.”,       info:“Solo personaggi malvagi. Molto offensivo.” },
+arcana:    { label:“Dominio Arcano”,          cd:[“Potere Arcano (Dispel Magic gratuito su una creatura)”],                                                        bonus:“Conoscenza Arcana: 2 trucchetti da mago. Simbolo Arcano (lv17): evocazioni ignorano resistenze.”,  info:“Anti-magia. Funziona bene con multi-classe mago.” },
+forge:     { label:“Dominio della Forgia”,    cd:[“Benedizione della Forgia (+1 a un’arma o armatura non magica)”],                                                bonus:“Artigiano Benedetto: crea oggetti magici. Anima della Forgia (lv6): resistenza fuoco, +1 CA.”,     info:“Artigiano e tank. CA altissima.” },
+grave:     { label:“Dominio della Tomba”,     cd:[“Occhi per la Tomba (percepisci non-morti entro 60 ft)”,“Portiere della Soglia (nega un critico entro 30 ft, reazione)”], bonus:“Cerchio della Mortalita: cure a 0 PF tirano il massimo. Toccato dalla Morte (lv6): +2x livello a Infliggere Ferite.”, info:“Anti non-morto. Portiere della Soglia e la migliore reazione.” },
+order:     { label:“Dominio dell’Ordine”,     cd:[“Voce dell’Autorita (alleato attacca come reazione quando lanci su di lui)”],                                     bonus:“Sapere Dottrina: 2 competenze extra. Incarnazione dell’Ordine (lv17): svantaggio ai TS su fallimento.”, info:“Controllo e comando. Ottimo in gruppi coordinati.” },
+peace:     { label:“Dominio della Pace”,      cd:[“Legame di Pace (6 creature entro 30 ft distribuiscono il danno ricevuto)”],                                     bonus:“Implemento della Pace: +bonus comp a Persuasione, Acrobazia, Medicina. Protettore di Pace (lv6): teletrasportati al posto di un alleato.”, info:“Supporto difensivo eccezionale.” },
+twilight:  { label:“Dominio del Crepuscolo”,  cd:[“Santuario del Crepuscolo (sfera 30ft, resistenza psichica, immune Spaventato 1 min)”],                          bonus:“Eyes of Night: visione buio 300ft. Vigilant Blessing: vantaggio iniziativa. Steps of Night (lv6): volo in dim light.”, info:“Ottimo protettore notturno.” },
+};
+
+const ROGUE_SUBS = {
+thief:       { label:“Ladro”,             info:“Fast Hands (lv3): usa oggetti/strumenti come azione bonus. Uso rapido di pozioni. Second-Story Work: arrampicata doppia, salti basati su DES.”,                                    sneak_extra:”” },
+assassin:    { label:“Assassino”,         info:“Assassinato (lv3): vantaggio vs creature che non hanno ancora agito. Critici garantiti in sorpresa. Morte Improvvisa (lv17): se la creatura ha piu di meta PF, lo Sneak Attack la porta a 0.”, sneak_extra:“In sorpresa = critico garantito! Attiva il toggle Critico.” },
+arcane:      { label:“Ingannatore Arcano”,info:“Lancio incantesimi da Mago (INT). Mano Magica Larcenosa: controllo telecinetrico. Incantatore Mimetico (lv9): lancia qualsiasi incantesimo come reazione.”,                       sneak_extra:”” },
+inquisitive: { label:“Inquisitore”,       info:“Occhio Astuto (lv3): azione bonus per trovare punti deboli, applichi Sneak Attack anche senza vantaggio ne alleati adiacenti.”,                                                   sneak_extra:“Occhio Astuto: Sneak Attack senza vantaggio ne alleati!” },
+mastermind:  { label:“Mastermind”,        info:“Aiuta come azione bonus entro 30 ft. Insight Tattico (lv9): rimuovi svantaggio. Mente del Burattinaio (lv13): charm come azione.”,                                               sneak_extra:”” },
+scout:       { label:“Esploratore”,       info:“Avanguardia (lv3): non puoi essere sorpreso, vantaggio iniziativa, muoviti meta velocita come reazione dopo un nemico.”,                                                         sneak_extra:”” },
+swashbuckler:{ label:“Spadaccino”,        info:“Grazia Fanfarona (lv3): Sneak Attack su bersaglio 1v1 senza bisogno di alleati adiacenti. Fascino Sfacciato: azione bonus per affascinare. Disimpegnarsi come azione bonus.”,    sneak_extra:“Sneak Attack 1v1 garantito! Nessun alleato necessario.” },
+soulknife:   { label:“Lama dell’Anima”,   info:“Dado Psichico (lv3): pool di d6 psichici pari al bonus comp per riposo breve. Aggiungili a attacchi, danni, TS, prove. Lame Psioniche: armi da mischia invisibili.”,            sneak_extra:“Lama Anima: aggiungi 1 dado psichico ai danni!” },
+phantom:     { label:“Fantasma”,          info:“Brivido della Morte (lv3): quando uccidi qualcuno guadagni dadi fantasma (d6 necrotici). Trottola Spettrale: velocita di volo. Danni necrotici extra allo Sneak Attack.”,        sneak_extra:“Dado Spettrale: aggiungi 1d6 necrotico allo Sneak Attack!” },
+};
+
+// ── STATE ──────────────────────────────────────────────────────────────
+let state_DISABLED = {
+charName_DISABLED:””,charClass:””,charLevel:1,charRace:””,charSubclass:””,charBackground:””,charAlignment:””,charXP:0,
+profBonus:”+2”,statAC:“10”,statInit:”+0”,statSpeed:“30”,
+abilities:{FOR:10,DES:10,COS:10,INT:10,SAG:10,CAR:10},
+saves:{FOR:false,DES:false,COS:false,INT:false,SAG:false,CAR:false},
+skills:{},inspiration:false,
+hpCurrent:10,hpMax:10,hpTemp:0,
+deathSaves:{s:[false,false,false],f:[false,false,false]},
+hdType:“d10”,hdUsed:0,hdTotal:1,
+attacks:[],conditions:{},
+spellAbility:“int”,spellsPrepared:0,spellSlots:{},cantrips:[],spells:[],
+coins:{cp:0,sp:0,ep:0,gp:0,pp:0},inventory:[],
+traits:{personality:””,ideals:””,bonds:””,flaws:””},
+notes:{session:””,npcs:””,abilities:””,langs:””,proficiencies:””},
+rollHistory:[],
+cf:{
+selectedClass:””,paladinSub:””,clericSub:””,rogueSub:””,
+lohCurrent:5,lohMax:5,paladinCDUsed:0,clericCDUsed:0,divineIntUsed:false,
+smiteUndead:false,smiteCrit:false,
+sneakCrit:false,sneakPsychic:false,sneakPhantom:false,
+}
+};
+
+// ── PERSISTENCE ───────────────────────────────────────────────────────
+// saveState and loadState replaced by hub system
+
+// ── UTILS ────────────────────────────────────────────────────────────
+function mod(s){return Math.floor((s-10)/2);}
+function modStr(s){const m=mod(s);return(m>=0?”+”:””)+m;}
+function getPB(){return parseInt(state.profBonus)||2;}
+function getAM(attr){return mod(state.abilities[attr]||10);}
+
+// ── INIT ─────────────────────────────────────────────────────────────
+function init(){
+loadState();
+buildAbilities();buildSaves();buildSkills();buildConditions();
+buildSpellSlots();bindInputs();restoreFields();
+renderAttacks();renderSpells();renderCantrips();renderInventory();
+updateSpellStats();updateHeaderName();
+buildClassPills();restoreClassPanel();
+renderRollHistory();
+}
+
+function bindInputs(){
+const map=[
+[“char-name”,“charName”],[“char-class”,“charClass”],[“char-level”,“charLevel”],
+[“char-race”,“charRace”],[“char-subclass”,“charSubclass”],[“char-background”,“charBackground”],
+[“char-alignment”,“charAlignment”],[“char-xp”,“charXP”],
+[“hp-temp”,“hpTemp”],[“hd-used”,“hdUsed”],[“hd-total”,“hdTotal”],[“hd-type”,“hdType”],
+[“spells-prepared”,“spellsPrepared”],[“spell-ability”,“spellAbility”],
+[“coin-cp”,“coins.cp”],[“coin-sp”,“coins.sp”],[“coin-ep”,“coins.ep”],[“coin-gp”,“coins.gp”],[“coin-pp”,“coins.pp”],
+[“notes-session”,“notes.session”],[“notes-npcs”,“notes.npcs”],[“notes-abilities”,“notes.abilities”],
+[“notes-langs”,“notes.langs”],[“notes-proficiencies”,“notes.proficiencies”],
+[“trait-personality”,“traits.personality”],[“trait-ideals”,“traits.ideals”],
+[“trait-bonds”,“traits.bonds”],[“trait-flaws”,“traits.flaws”],
+[“other-class-features”,“cf.otherFeatures”],
+];
+map.forEach(([id,key])=>{
+const el=document.getElementById(id);if(!el)return;
+el.addEventListener(“input”,()=>{
+const val=el.type===“number”?(parseFloat(el.value)||0):el.value;
+setKey(state,key,val);
+if(id===“char-name”)updateHeaderName();
+if(id===“char-level”){autoFillSlots();updateSneakDisplay();buildLohBar();}
+if([“spell-ability”,“char-level”].includes(id))updateSpellStats();
+if(id===“prof-bonus”){buildSaves();buildSkills();updateSpellStats();}
+saveState();
+});
+});
+[“hp-current”,“hp-max”,“prof-bonus”,“stat-ac”,“stat-init”,“stat-speed”].forEach(id=>{
+const el=document.getElementById(id);if(!el)return;
+el.addEventListener(“blur”,()=>{
+const v=el.textContent.trim();
+if(id===“hp-current”)state.hpCurrent=parseInt(v)||0;
+else if(id===“hp-max”)state.hpMax=parseInt(v)||0;
+else if(id===“prof-bonus”){state.profBonus=v;buildSaves();buildSkills();updateSpellStats();}
+else if(id===“stat-ac”)state.statAC=v;
+else if(id===“stat-init”)state.statInit=v;
+else if(id===“stat-speed”)state.statSpeed=v;
+saveState();
+});
+});
+document.getElementById(“spell-ability”).addEventListener(“change”,()=>{
+state.spellAbility=document.getElementById(“spell-ability”).value;
+updateSpellStats();saveState();
+});
+}
+
+function setKey(obj,key,val){
+const p=key.split(”.”);let c=obj;
+for(let i=0;i<p.length-1;i++)c=c[p[i]];
+c[p[p.length-1]]=val;
+}
+
+function restoreFields(){
+const m={
+“char-name”:state.charName,“char-class”:state.charClass,“char-level”:state.charLevel,
+“char-race”:state.charRace,“char-subclass”:state.charSubclass,“char-background”:state.charBackground,
+“char-alignment”:state.charAlignment,“char-xp”:state.charXP,
+“hp-temp”:state.hpTemp,“hd-used”:state.hdUsed,“hd-total”:state.hdTotal,“hd-type”:state.hdType,
+“spells-prepared”:state.spellsPrepared,“spell-ability”:state.spellAbility,
+“coin-cp”:state.coins.cp,“coin-sp”:state.coins.sp,“coin-ep”:state.coins.ep,
+“coin-gp”:state.coins.gp,“coin-pp”:state.coins.pp,
+“notes-session”:state.notes.session,“notes-npcs”:state.notes.npcs,
+“notes-abilities”:state.notes.abilities,“notes-langs”:state.notes.langs,
+“notes-proficiencies”:state.notes.proficiencies,
+“trait-personality”:state.traits.personality,“trait-ideals”:state.traits.ideals,
+“trait-bonds”:state.traits.bonds,“trait-flaws”:state.traits.flaws,
+};
+Object.entries(m).forEach(([id,val])=>{const el=document.getElementById(id);if(el&&val!==undefined)el.value=val;});
+document.getElementById(“hp-current”).textContent=state.hpCurrent;
+document.getElementById(“hp-max”).textContent=state.hpMax;
+document.getElementById(“prof-bonus”).textContent=state.profBonus;
+document.getElementById(“stat-ac”).textContent=state.statAC;
+document.getElementById(“stat-init”).textContent=state.statInit;
+document.getElementById(“stat-speed”).textContent=state.statSpeed;
+if(state.inspiration)document.getElementById(“inspiration-btn”).classList.add(“active”);
+restoreDeathSaves();restoreConditions();
+}
+
+function updateHeaderName(){document.getElementById(“header-name”).textContent=state.charName||“Personaggio”;}
+
+// ── ABILITIES ─────────────────────────────────────────────────────────
+function buildAbilities(){
+const g=document.getElementById(“abilities-grid”);g.innerHTML=””;
+ABILITIES.forEach(attr=>{
+const s=state.abilities[attr]||10;
+const div=document.createElement(“div”);div.className=“ability-box”;
+div.innerHTML=`<div class="ability-name">${attr}</div><div class="ability-score" contenteditable="true" id="score-${attr}">${s}</div><div class="ability-mod" id="mod-${attr}">${modStr(s)}</div>`;
+g.appendChild(div);
+div.querySelector(”.ability-score”).addEventListener(“blur”,()=>{
+const v=parseInt(div.querySelector(”.ability-score”).textContent)||10;
+state.abilities[attr]=v;
+document.getElementById(“mod-”+attr).textContent=modStr(v);
+buildSaves();buildSkills();updateSpellStats();saveState();
+});
+});
+}
+
+// ── SAVES ─────────────────────────────────────────────────────────────
+function buildSaves(){
+const l=document.getElementById(“saves-list”);l.innerHTML=””;
+ABILITIES.forEach(attr=>{
+const p=state.saves[attr]||false,pb=getPB(),m=getAM(attr),t=m+(p?pb:0);
+const row=document.createElement(“div”);row.className=“save-row”;
+row.onclick=()=>{state.saves[attr]=!state.saves[attr];buildSaves();saveState();};
+row.innerHTML=`<div class="save-prof ${p?"proficient":""}"></div><span>${ABILITY_FULL[attr]}</span><span class="save-bonus" style="margin-left:auto;">${t>=0?"+":""}${t}</span>`;
+l.appendChild(row);
+});
+}
+
+// ── SKILLS ────────────────────────────────────────────────────────────
+function buildSkills(){
+const l=document.getElementById(“skills-list”);l.innerHTML=””;
+SKILLS_DATA.forEach(s=>{
+const pl=state.skills[s.name]||“none”,pb=getPB(),m=getAM(s.attr);
+const b=m+(pl===“expertise”?pb*2:pl===“proficient”?pb:0);
+const row=document.createElement(“div”);row.className=“skill-row”;
+row.onclick=()=>{
+const c=state.skills[s.name]||“none”;
+state.skills[s.name]=c===“none”?“proficient”:c===“proficient”?“expertise”:“none”;
+buildSkills();saveState();
+};
+row.innerHTML=`<div class="skill-prof ${pl!=="none"?pl:""}"></div><span class="skill-name">${s.name}</span><span class="skill-attr">${s.attr}</span><span class="skill-bonus">${b>=0?"+":""}${b}</span>`;
+l.appendChild(row);
+});
+}
+
+// ── CONDITIONS ───────────────────────────────────────────────────────
+function buildConditions(){
+const g=document.getElementById(“conditions-grid”);g.innerHTML=””;
+Object.keys(CONDITIONS_DATA).forEach(name=>{
+const btn=document.createElement(“button”);
+btn.className=“condition-btn”+(state.conditions[name]?” active”:””);
+btn.textContent=name;
+btn.onclick=()=>{state.conditions[name]=!state.conditions[name];btn.classList.toggle(“active”,state.conditions[name]);showConditionInfo();saveState();};
+g.appendChild(btn);
+});
+}
+function restoreConditions(){buildConditions();showConditionInfo();}
+function showConditionInfo(){
+const active=Object.entries(state.conditions).filter(([,v])=>v).map(([k])=>k);
+const el=document.getElementById(“condition-effects”);
+if(!active.length){el.classList.remove(“visible”);el.innerHTML=””;return;}
+el.classList.add(“visible”);
+el.innerHTML=active.map(n=>`<strong>${n}:</strong> ${CONDITIONS_DATA[n]}`).join(”<br><br>”);
+}
+
+// ── HP ────────────────────────────────────────────────────────────────
+function changeHP(sign){
+const d=parseInt(document.getElementById(“hp-delta”).value)||0;
+let hp=parseInt(document.getElementById(“hp-current”).textContent)||0;
+const max=parseInt(document.getElementById(“hp-max”).textContent)||0;
+hp=Math.max(0,Math.min(max,hp+sign*d));
+document.getElementById(“hp-current”).textContent=hp;state.hpCurrent=hp;saveState();
+}
+
+// ── DEATH SAVES ───────────────────────────────────────────────────────
+function toggleDS(type,idx){
+const arr=type===“s”?state.deathSaves.s:state.deathSaves.f;
+arr[idx]=!arr[idx];restoreDeathSaves();saveState();
+}
+function restoreDeathSaves(){
+document.querySelectorAll(”.ds-circle.success”).forEach((c,i)=>c.classList.toggle(“filled”,state.deathSaves.s[i]||false));
+document.querySelectorAll(”.ds-circle.failure”).forEach((c,i)=>c.classList.toggle(“filled”,state.deathSaves.f[i]||false));
+}
+function resetDS(){state.deathSaves={s:[false,false,false],f:[false,false,false]};restoreDeathSaves();saveState();}
+function toggleInspiration(){state.inspiration=!state.inspiration;document.getElementById(“inspiration-btn”).classList.toggle(“active”,state.inspiration);saveState();}
+
+// ── ATTACKS ───────────────────────────────────────────────────────────
+function addAttack(){state.attacks.push({name:“Nuova arma”,bonus:”+5”,damage:“1d8+3”,type:“Tagl.”,range:“5 ft”,notes:””});renderAttacks();saveState();}
+function renderAttacks(){
+const tb=document.getElementById(“attacks-tbody”);tb.innerHTML=””;
+state.attacks.forEach((a,i)=>{
+const tr=document.createElement(“tr”);
+tr.innerHTML=`<td><input value="${a.name}" oninput="state.attacks[${i}].name=this.value;saveState();"></td> <td><input value="${a.bonus}" oninput="state.attacks[${i}].bonus=this.value;saveState();" style="width:65px;"></td> <td><input value="${a.damage}" oninput="state.attacks[${i}].damage=this.value;saveState();" style="width:85px;"></td> <td><input value="${a.range}" oninput="state.attacks[${i}].range=this.value;saveState();" style="width:60px;"></td> <td><input value="${a.notes}" oninput="state.attacks[${i}].notes=this.value;saveState();"></td> <td><button class="roll-atk-btn" onclick="rollAttack(${i})">&#127922;</button></td> <td><button class="spell-delete" onclick="state.attacks.splice(${i},1);renderAttacks();saveState();">&#10005;</button></td>`;
+tb.appendChild(tr);
+});
+}
+function rollAttack(i){
+const a=state.attacks[i],bonus=parseInt(a.bonus)||0,d20=Math.ceil(Math.random()*20),total=d20+bonus;
+const crit=d20===20,fumble=d20===1;
+let res=`${a.name}: d20(${d20})${bonus>=0?"+":""}${bonus} = ${total}`;
+if(crit)res+=” CRITICO!”;if(fumble)res+=” FUMBLE”;
+const dm=a.damage.match(/(\d+)d(\d+)([+-]\d+)?/);
+if(dm){const n=parseInt(dm[1]),d=parseInt(dm[2]),m2=parseInt(dm[3]||0);
+const rolls=Array.from({length:crit?n*2:n},()=>Math.ceil(Math.random()*d));
+const dt=rolls.reduce((a,b)=>a+b,0)+m2;
+res+=` | Danno: [${rolls.join(",")}]${m2?m2>0?"+"+m2:m2:""} = ${dt}`;
+}
+showRollResult(res,total);
+}
+
+// ── DICE ─────────────────────────────────────────────────────────────
+function quickRoll(s){const r=Math.ceil(Math.random()*s);showRollResult(“d”+s+” = “+r,r);}
+function rollFull(){
+const n=parseInt(document.getElementById(“dice-num”).value)||1;
+const d=parseInt(document.getElementById(“dice-type”).value)||20;
+const m=parseInt(document.getElementById(“dice-mod”).value)||0;
+const rolls=Array.from({length:n},()=>Math.ceil(Math.random()*d));
+const total=rolls.reduce((a,b)=>a+b,0)+m;
+showRollResult(`${n}d${d}${m?m>0?"+"+m:m:""}: [${rolls.join(",")}] = ${total}`,total);
+}
+function showRollResult(text,total){
+document.getElementById(“roll-result”).innerHTML=`<div class="roll-total">${total}</div><div class="roll-detail">${text}</div>`;
+state.rollHistory.unshift({text,ts:new Date().toLocaleTimeString(“it”)});
+if(state.rollHistory.length>20)state.rollHistory.pop();
+renderRollHistory();saveState();
+}
+function renderRollHistory(){
+document.getElementById(“roll-history”).innerHTML=state.rollHistory.map(r=>`<div class="roll-hist-item">${r.ts} &mdash; ${r.text}</div>`).join(””);
+}
+
+// ── SPELL SLOTS ───────────────────────────────────────────────────────
+function buildSpellSlots(){
+const g=document.getElementById(“spell-slots-grid”);if(!g)return;g.innerHTML=””;
+for(let lv=1;lv<=9;lv++){
+const slot=state.spellSlots[lv]||{max:0,used:0};
+const div=document.createElement(“div”);div.className=“slot-level”;div.id=“slot-lv-”+lv;
+div.innerHTML=`<div class="slot-level-num">${lv}&#176; Lv</div><div class="slot-pips" id="slot-pips-${lv}"></div><div class="slot-controls"><label>Max</label><input type="number" id="slot-max-${lv}" value="${slot.max}" min="0" max="4" style="width:42px;" oninput="setSlotMax(${lv},this.value)"></div>`;
+g.appendChild(div);renderSlotPips(lv);
+}
+}
+function renderSlotPips(lv){
+const pe=document.getElementById(“slot-pips-”+lv);if(!pe)return;
+const slot=state.spellSlots[lv]||{max:0,used:0};pe.innerHTML=””;
+for(let i=0;i<slot.max;i++){
+const pip=document.createElement(“div”);pip.className=“slot-pip”+(i<slot.used?” used”:””);
+pip.onclick=()=>toggleSlot(lv,i);pe.appendChild(pip);
+}
+}
+function toggleSlot(lv,i){
+const slot=state.spellSlots[lv]||{max:0,used:0};
+slot.used=i<slot.used?i:i+1;slot.used=Math.max(0,Math.min(slot.max,slot.used));
+state.spellSlots[lv]=slot;renderSlotPips(lv);saveState();
+}
+function setSlotMax(lv,val){
+const max=Math.max(0,parseInt(val)||0);const slot=state.spellSlots[lv]||{max:0,used:0};
+slot.max=max;slot.used=Math.min(slot.used,max);state.spellSlots[lv]=slot;renderSlotPips(lv);saveState();
+}
+function autoFillSlots(){
+const lv=Math.max(1,Math.min(20,parseInt(state.charLevel)||1));
+const row=SLOT_TABLE[lv-1];
+for(let i=0;i<9;i++){
+const slot=state.spellSlots[i+1]||{max:0,used:0};
+slot.max=row[i];slot.used=Math.min(slot.used,slot.max);state.spellSlots[i+1]=slot;
+const inp=document.getElementById(“slot-max-”+(i+1));if(inp)inp.value=slot.max;
+renderSlotPips(i+1);
+}saveState();
+}
+function restoreAllSlots(){for(let lv=1;lv<=9;lv++){if(state.spellSlots[lv])state.spellSlots[lv].used=0;renderSlotPips(lv);}saveState();}
+function updateSpellStats(){
+const attrMap={int:“INT”,wis:“SAG”,cha:“CAR”};
+const m=getAM(attrMap[state.spellAbility||“int”]);const pb=getPB();
+document.getElementById(“spell-dc”).textContent=8+pb+m;
+document.getElementById(“spell-atk”).textContent=(pb+m>=0?”+”:””)+(pb+m);
+}
+
+// ── CANTRIPS ──────────────────────────────────────────────────────────
+function addCantrip(){const i=document.getElementById(“cantrip-input”);const n=i.value.trim();if(!n)return;state.cantrips.push(n);i.value=””;renderCantrips();saveState();}
+function renderCantrips(){
+const el=document.getElementById(“cantrips-list”);el.innerHTML=””;
+state.cantrips.forEach((c,i)=>{
+const d=document.createElement(“div”);d.className=“inv-item”;
+d.innerHTML=`<span class="inv-name">${c}</span><button class="spell-delete" onclick="state.cantrips.splice(${i},1);renderCantrips();saveState();">&#10005;</button>`;
+el.appendChild(d);
+});
+}
+
+// ── SPELLS ───────────────────────────────────────────────────────────
+function addSpell(){
+const name=document.getElementById(“new-spell-name”).value.trim();if(!name)return;
+state.spells.push({name,level:parseInt(document.getElementById(“new-spell-level”).value)||1,
+components:document.getElementById(“new-spell-comp”).value,
+castTime:document.getElementById(“new-spell-cast”).value,
+range:document.getElementById(“new-spell-range”).value,
+duration:document.getElementById(“new-spell-dur”).value,
+description:document.getElementById(“new-spell-desc”).value,prepared:false});
+[“new-spell-name”,“new-spell-comp”,“new-spell-cast”,“new-spell-range”,“new-spell-dur”,“new-spell-desc”].forEach(id=>document.getElementById(id).value=””);
+renderSpells();saveState();
+}
+function renderSpells(){
+const el=document.getElementById(“spells-list”);
+const fl=document.getElementById(“spell-filter-level”).value;
+const fp=document.getElementById(“spell-filter-prepared”).value;
+el.innerHTML=””;
+const filtered=state.spells.filter(s=>(!fl||s.level==fl)&&(!fp||s.prepared));
+if(!filtered.length){el.innerHTML=”<div style='color:var(--text-muted);font-size:.85rem;padding:8px;'>Nessun incantesimo.</div>”;return;}
+filtered.forEach(s=>{
+const ri=state.spells.indexOf(s);const d=document.createElement(“div”);
+d.className=“spell-item”+(s.prepared?” prepared”:””);
+d.innerHTML=`<div class="spell-prep-dot ${s.prepared?"prepared":""}" onclick="state.spells[${ri}].prepared=!state.spells[${ri}].prepared;renderSpells();saveState();"></div> <div class="spell-info"><div class="spell-name">${s.name} <span class="badge">${s.level}</span></div> <div class="spell-meta">${[s.castTime?"&#9201; "+s.castTime:"",s.range?"&#128207; "+s.range:"",s.duration?"&#8987; "+s.duration:""].filter(Boolean).join(" &middot; ")}${s.components?"<br>"+s.components:""}${s.description?"<br><em>"+s.description+"</em>":""}</div></div> <button class="spell-delete" onclick="state.spells.splice(${ri},1);renderSpells();saveState();">&#10005;</button>`;
+el.appendChild(d);
+});
+}
+
+// ── INVENTORY ────────────────────────────────────────────────────────
+function addInventoryItem(){
+const name=document.getElementById(“inv-name-input”).value.trim();if(!name)return;
+state.inventory.push({name,qty:parseInt(document.getElementById(“inv-qty-input”).value)||1,weight:parseFloat(document.getElementById(“inv-weight-input”).value)||0,notes:document.getElementById(“inv-notes-input”).value});
+document.getElementById(“inv-name-input”).value=””;document.getElementById(“inv-notes-input”).value=””;
+renderInventory();saveState();
+}
+function renderInventory(){
+const el=document.getElementById(“inventory-list”);el.innerHTML=””;let tw=0;
+state.inventory.forEach((item,i)=>{
+tw+=(item.qty||1)*(item.weight||0);
+const d=document.createElement(“div”);d.className=“inv-item”;
+d.innerHTML=`<input type="number" class="inv-qty" value="${item.qty}" min="1" oninput="state.inventory[${i}].qty=parseInt(this.value)||1;renderInventory();saveState();"> <div class="inv-name">${item.name}${item.notes?"<br><span style='font-size:.75rem;color:var(--text-muted);'>"+item.notes+"</span>":""}</div> <div class="inv-weight">${item.weight?item.weight*item.qty+" lb":""}</div> <button class="inv-delete" onclick="state.inventory.splice(${i},1);renderInventory();saveState();">&#10005;</button>`;
+el.appendChild(d);
+});
+document.getElementById(“total-weight-badge”).textContent=tw.toFixed(1)+” lbs”;
+}
+
+// ── EXPORT / IMPORT ──────────────────────────────────────────────────
+function exportData(){const b=new Blob([JSON.stringify(state,null,2)],{type:“application/json”});const a=document.createElement(“a”);a.href=URL.createObjectURL(b);a.download=(state.charName||“personaggio”)+”_dnd5e.json”;a.click();}
+function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{state=Object.assign(state,JSON.parse(ev.target.result));saveState();location.reload();}catch(err){alert(“File JSON non valido.”);}};r.readAsText(f);}
+
+// ── CLASS FEATURES ────────────────────────────────────────────────────
+function cf(){return state.cf;}
+
+function buildClassPills(){
+buildPills(“paladin-pills”,PALADIN_SUBS,“paladin”);
+buildPills(“cleric-pills”,CLERIC_SUBS,“cleric”);
+buildPills(“rogue-pills”,ROGUE_SUBS,“rogue”);
+}
+function buildPills(containerId,data,cls){
+const g=document.getElementById(containerId);if(!g)return;g.innerHTML=””;
+Object.entries(data).forEach(([key,sub])=>{
+const btn=document.createElement(“div”);btn.className=“subclass-pill”;
+btn.textContent=sub.label;
+btn.onclick=()=>selectSub(cls,key,btn);
+if(cf()[cls+“Sub”]===key)btn.classList.add(“active”);
+g.appendChild(btn);
+});
+}
+
+function selectSub(cls,key,el){
+cf()[cls+“Sub”]=key;
+document.querySelectorAll(”#”+cls+”-pills .subclass-pill”).forEach(p=>p.classList.remove(“active”));
+el.classList.add(“active”);
+const data={paladin:PALADIN_SUBS,cleric:CLERIC_SUBS,rogue:ROGUE_SUBS}[cls][key];
+const info=document.getElementById(cls+”-sub-info”);
+if(info&&data){
+info.style.display=“block”;
+if(cls===“paladin”)info.innerHTML=`<strong>${data.label}</strong><br>${data.info}<br><br><em>Aura:</em> ${data.aura}`;
+else if(cls===“cleric”){info.innerHTML=`<strong>${data.label}</strong><br>${data.info}`;
+const db=document.getElementById(“cleric-domain-bonus”);
+if(db)db.innerHTML=`<strong>Bonus di Dominio:</strong><br>${data.bonus}`;
+}
+else info.innerHTML=`<strong>${data.label}</strong><br>${data.info}${data.sneak_extra?"<br><br><strong>In sessione: "+data.sneak_extra+"</strong>":""}`;
+}
+if(cls===“paladin”)buildPaladinCD();
+if(cls===“cleric”)buildClericCD();
+updateSneakDisplay();saveState();
+}
+
+function onClassChange(){
+const sel=document.getElementById(“class-selector”).value;cf().selectedClass=sel;
+document.querySelectorAll(”.class-feature-panel”).forEach(p=>p.classList.remove(“visible”));
+if(sel){const p=document.getElementById(“panel-”+sel);if(p)p.classList.add(“visible”);}
+if(sel===“paladin”){buildSmiteGrid();buildPaladinCD();buildLohBar();}
+if(sel===“cleric”)buildClericCD();
+updateSneakDisplay();saveState();
+}
+
+function restoreClassPanel(){
+const sel=cf().selectedClass;
+if(!sel)return;
+document.getElementById(“class-selector”).value=sel;
+document.querySelectorAll(”.class-feature-panel”).forEach(p=>p.classList.remove(“visible”));
+const p=document.getElementById(“panel-”+sel);if(p)p.classList.add(“visible”);
+if(sel===“paladin”){buildSmiteGrid();buildPaladinCD();buildLohBar();}
+if(sel===“cleric”)buildClericCD();
+// restore sub info
+if(cf().paladinSub&&PALADIN_SUBS[cf().paladinSub]){
+const el=document.querySelector(”#paladin-pills .subclass-pill.active”);
+// already marked by buildClassPills
+const d=PALADIN_SUBS[cf().paladinSub];
+const info=document.getElementById(“paladin-sub-info”);
+if(info){info.style.display=“block”;info.innerHTML=`<strong>${d.label}</strong><br>${d.info}<br><br><em>Aura:</em> ${d.aura}`;}
+}
+if(cf().clericSub&&CLERIC_SUBS[cf().clericSub]){
+const d=CLERIC_SUBS[cf().clericSub];
+const info=document.getElementById(“cleric-sub-info”);
+if(info){info.style.display=“block”;info.innerHTML=`<strong>${d.label}</strong><br>${d.info}`;}
+const db=document.getElementById(“cleric-domain-bonus”);
+if(db)db.innerHTML=`<strong>Bonus di Dominio:</strong><br>${d.bonus}`;
+}
+if(cf().rogueSub&&ROGUE_SUBS[cf().rogueSub]){
+const d=ROGUE_SUBS[cf().rogueSub];
+const info=document.getElementById(“rogue-sub-info”);
+if(info){info.style.display=“block”;info.innerHTML=`<strong>${d.label}</strong><br>${d.info}${d.sneak_extra?"<br><br><strong>In sessione: "+d.sneak_extra+"</strong>":""}`;}
+}
+// restore toggles
+if(document.getElementById(“smite-undead-btn”))document.getElementById(“smite-undead-btn”).classList.toggle(“active”,!!cf().smiteUndead);
+if(document.getElementById(“smite-crit-btn”))document.getElementById(“smite-crit-btn”).classList.toggle(“active”,!!cf().smiteCrit);
+if(document.getElementById(“sneak-crit-btn”))document.getElementById(“sneak-crit-btn”).classList.toggle(“active”,!!cf().sneakCrit);
+if(document.getElementById(“sneak-psychic-btn”))document.getElementById(“sneak-psychic-btn”).classList.toggle(“active”,!!cf().sneakPsychic);
+if(document.getElementById(“sneak-phantom-btn”))document.getElementById(“sneak-phantom-btn”).classList.toggle(“active”,!!cf().sneakPhantom);
+if(document.getElementById(“divine-int-pip”)){
+document.getElementById(“divine-int-pip”).classList.toggle(“used”,!!cf().divineIntUsed);
+document.getElementById(“divine-int-label”).textContent=cf().divineIntUsed?“Usato (recupera la prossima settimana)”:“Disponibile”;
+}
+updateSneakDisplay();
+}
+
+// SMITE
+function buildSmiteGrid(){
+const g=document.getElementById(“smite-grid”);if(!g)return;g.innerHTML=””;
+[[“1 (2d8)”,2],[“2 (3d8)”,3],[“3 (4d8)”,4],[“4+ (5d8)”,5]].forEach(([label,dice])=>{
+const b=document.createElement(“button”);b.className=“smite-btn”;b.textContent=label;
+b.onclick=()=>rollSmite(dice);g.appendChild(b);
+});
+}
+function toggleSmiteBonus(flag){
+const key=“smite”+flag[0].toUpperCase()+flag.slice(1);
+cf()[key]=!cf()[key];
+document.getElementById(“smite-”+flag+”-btn”).classList.toggle(“active”,cf()[key]);saveState();
+}
+function rollSmite(base){
+let n=cf().smiteCrit?base*2:base;if(cf().smiteUndead)n+=cf().smiteCrit?2:1;
+const rolls=Array.from({length:n},()=>Math.ceil(Math.random()*8));
+const total=rolls.reduce((a,b)=>a+b,0);
+document.getElementById(“smite-result”).innerHTML=`<div class="smite-total">${total}</div><div class="smite-detail">${n}d8 radianti${cf().smiteUndead?" +1d8 spec.":""}${cf().smiteCrit?" [CRITICO]":""}<br>[${rolls.join(", ")}]</div>`;
+state.rollHistory.unshift({text:“Divine Smite: “+n+“d8 = “+total,ts:new Date().toLocaleTimeString(“it”)});
+if(state.rollHistory.length>20)state.rollHistory.pop();renderRollHistory();saveState();
+}
+
+// PALADIN CD
+function buildPaladinCD(){
+const g=document.getElementById(“paladin-cd-abilities”);
+const t=document.getElementById(“paladin-cd-tracker”);if(!g||!t)return;
+const sub=PALADIN_SUBS[cf().paladinSub];
+t.innerHTML=””;
+const pip=document.createElement(“div”);pip.className=“use-pip gold”+(cf().paladinCDUsed?” used”:””);
+pip.onclick=()=>{cf().paladinCDUsed=cf().paladinCDUsed?0:1;buildPaladinCD();saveState();};t.appendChild(pip);
+if(!sub){g.innerHTML=”<div style='color:var(--text-muted);font-size:.85rem;'>Seleziona un Giuramento.</div>”;return;}
+g.innerHTML=””;
+[“Respingi Non-Morti (TS SAG o fuggono 1 min)”,…sub.cd].forEach(ability=>{
+const b=document.createElement(“button”);b.className=“cd-btn”;b.textContent=ability;
+b.onclick=()=>{
+const r=document.getElementById(“paladin-cd-result”);r.style.display=“block”;
+r.innerHTML=”<strong>Channel Divinity:</strong><br>”+ability;
+};g.appendChild(b);
+});
+}
+function resetPaladinCD(){cf().paladinCDUsed=0;buildPaladinCD();saveState();}
+
+// LAY ON HANDS
+function buildLohBar(){
+const lv=Math.max(1,Math.min(20,parseInt(state.charLevel)||1));
+cf().lohMax=lv*5;if(cf().lohCurrent>cf().lohMax)cf().lohCurrent=cf().lohMax;
+const c=document.getElementById(“loh-current”);const m=document.getElementById(“loh-max”);
+if(c)c.textContent=cf().lohCurrent;if(m)m.textContent=cf().lohMax;
+}
+function lohChange(d){cf().lohCurrent=Math.max(0,Math.min(cf().lohMax,cf().lohCurrent+d));const c=document.getElementById(“loh-current”);if(c)c.textContent=cf().lohCurrent;saveState();}
+function lohReset(){buildLohBar();cf().lohCurrent=cf().lohMax;const c=document.getElementById(“loh-current”);if(c)c.textContent=cf().lohCurrent;saveState();}
+
+// CLERIC CD
+function buildClericCD(){
+const g=document.getElementById(“cleric-cd-abilities”);
+const t=document.getElementById(“cleric-cd-tracker”);if(!g||!t)return;
+const lv=Math.max(1,Math.min(20,parseInt(state.charLevel)||1));
+const total=lv>=18?3:lv>=6?2:1;
+t.innerHTML=””;
+for(let i=0;i<total;i++){
+const pip=document.createElement(“div”);pip.className=“use-pip”+(i<cf().clericCDUsed?” used”:””);
+pip.onclick=(idx=>()=>{cf().clericCDUsed=cf().clericCDUsed===idx+1?idx:idx+1;buildClericCD();saveState();})(i);
+t.appendChild(pip);
+}
+const sub=CLERIC_SUBS[cf().clericSub];
+g.innerHTML=””;
+[“Respingi Non-Morti (TS SAG o fuggono 1 min)”,…(sub?sub.cd:[])].forEach(ability=>{
+const b=document.createElement(“button”);b.className=“cd-btn”;b.textContent=ability;
+b.onclick=()=>{const r=document.getElementById(“cleric-cd-result”);r.style.display=“block”;r.innerHTML=”<strong>Channel Divinity:</strong><br>”+ability;};
+g.appendChild(b);
+});
+}
+function resetClericCD(){cf().clericCDUsed=0;buildClericCD();saveState();}
+function toggleDivineIntervention(){
+cf().divineIntUsed=!cf().divineIntUsed;
+const pip=document.getElementById(“divine-int-pip”);const l=document.getElementById(“divine-int-label”);
+if(pip)pip.classList.toggle(“used”,cf().divineIntUsed);
+if(l)l.textContent=cf().divineIntUsed?“Usato (recupera la prossima settimana)”:“Disponibile”;
+saveState();
+}
+
+// SNEAK ATTACK
+function updateSneakDisplay(){
+const lv=Math.max(1,Math.min(20,parseInt(state.charLevel)||1));
+const n=SNEAK_ATTACK_TABLE[lv-1];
+const el=document.getElementById(“sneak-dice-display”);const lEl=document.getElementById(“sneak-lv-display”);
+if(el)el.textContent=n+“d6”;if(lEl)lEl.textContent=lv;
+}
+function toggleSneakFlag(flag){
+const key=“sneak”+flag[0].toUpperCase()+flag.slice(1);cf()[key]=!cf()[key];
+const btn=document.getElementById(“sneak-”+flag+”-btn”);if(btn)btn.classList.toggle(“active”,cf()[key]);saveState();
+}
+function rollSneakAttack(){
+const lv=Math.max(1,Math.min(20,parseInt(state.charLevel)||1));
+let n=SNEAK_ATTACK_TABLE[lv-1];if(cf().sneakCrit)n*=2;
+const rolls=Array.from({length:n},()=>Math.ceil(Math.random()*6));
+let total=rolls.reduce((a,b)=>a+b,0);let extras=[];
+if(cf().sneakPsychic){const d=Math.ceil(Math.random()*6);extras.push(”+”+d+” psichico”);total+=d;}
+if(cf().sneakPhantom){const d=Math.ceil(Math.random()*6);extras.push(”+”+d+” necrotico”);total+=d;}
+const el=document.getElementById(“sneak-result”);
+el.innerHTML=`<div class="sneak-total">${total}</div><div class="sneak-detail">${n}d6 furtivo${cf().sneakCrit?" [CRITICO]":""}<br>[${rolls.join(", ")}]${extras.length?"<br>"+extras.join(", "):""}</div>`;
+state.rollHistory.unshift({text:“Sneak Attack: “+n+“d6 = “+total,ts:new Date().toLocaleTimeString(“it”)});
+if(state.rollHistory.length>20)state.rollHistory.pop();renderRollHistory();saveState();
+}
+
+// ── TABS ─────────────────────────────────────────────────────────────
+// tabs and init handled by hub system
+
+// ── MULTI-CHARACTER SYSTEM ────────────────────────────────────────────
+
+const DEFAULT_CHAR_STATE = () => ({
+charName:””,charClass:””,charLevel:1,charRace:””,charSubclass:””,charBackground:””,charAlignment:””,charXP:0,
+profBonus:”+2”,statAC:“10”,statInit:”+0”,statSpeed:“30”,
+abilities:{FOR:10,DES:10,COS:10,INT:10,SAG:10,CAR:10},
+saves:{FOR:false,DES:false,COS:false,INT:false,SAG:false,CAR:false},
+skills:{},inspiration:false,
+hpCurrent:10,hpMax:10,hpTemp:0,
+deathSaves:{s:[false,false,false],f:[false,false,false]},
+hdType:“d10”,hdUsed:0,hdTotal:1,
+attacks:[],conditions:{},
+spellAbility:“int”,spellsPrepared:0,spellSlots:{},cantrips:[],spells:[],
+coins:{cp:0,sp:0,ep:0,gp:0,pp:0},inventory:[],
+traits:{personality:””,ideals:””,bonds:””,flaws:””},
+notes:{session:””,npcs:””,abilities:””,langs:””,proficiencies:””},
+rollHistory:[],
+cf:{
+selectedClass:””,paladinSub:””,clericSub:””,rogueSub:””,
+lohCurrent:5,lohMax:5,paladinCDUsed:0,clericCDUsed:0,divineIntUsed:false,
+smiteUndead:false,smiteCrit:false,
+sneakCrit:false,sneakPsychic:false,sneakPhantom:false,
+}
+});
+
+let appData = {
+characters: [],   // array of char state objects
+activeId: null,   // index of currently open char
+};
+
+let state = DEFAULT_CHAR_STATE(); // current active char (pointer into appData.characters)
+
+function saveAll() {
+try { localStorage.setItem(“dnd5e_hub_v1”, JSON.stringify(appData)); } catch(e) {}
+}
+function loadAll() {
+try {
+const s = localStorage.getItem(“dnd5e_hub_v1”);
+if (s) appData = JSON.parse(s);
+// migrate old single-char save
+const old = localStorage.getItem(“dnd5e_v2”);
+if (old && appData.characters.length === 0) {
+const oldState = JSON.parse(old);
+if (oldState.charName) {
+appData.characters.push(oldState);
+}
+}
+} catch(e) {}
+}
+
+function createCharacter() {
+const newChar = DEFAULT_CHAR_STATE();
+newChar.charName = “Nuovo Personaggio”;
+appData.characters.push(newChar);
+saveAll();
+openCharacter(appData.characters.length - 1);
+}
+
+function openCharacter(idx) {
+appData.activeId = idx;
+state = appData.characters[idx];
+saveAll();
+
+// Hide hub, show sheet
+document.getElementById(“hub-screen”).style.display = “none”;
+document.getElementById(“sheet-screen”).style.display = “block”;
+document.getElementById(“app-header”).style.display = “flex”;
+
+// Rebuild everything with this char’s state
+buildAbilities(); buildSaves(); buildSkills(); buildConditions();
+buildSpellSlots(); restoreFields();
+renderAttacks(); renderSpells(); renderCantrips(); renderInventory();
+updateSpellStats(); updateHeaderName();
+buildClassPills(); restoreClassPanel();
+renderRollHistory();
+buildCharSwitcher();
+
+// Reset to first tab
+document.querySelectorAll(”.tab-btn”).forEach(b => b.classList.remove(“active”));
+document.querySelectorAll(”.tab-panel”).forEach(p => p.classList.remove(“active”));
+document.querySelector(”.tab-btn[data-tab=‘tab-main’]”).classList.add(“active”);
+document.getElementById(“tab-main”).classList.add(“active”);
+}
+
+function goToHub() {
+saveAll();
+document.getElementById(“hub-screen”).style.display = “flex”;
+document.getElementById(“sheet-screen”).style.display = “none”;
+document.getElementById(“app-header”).style.display = “none”;
+buildHubGrid();
+}
+
+function deleteCharacter(idx, e) {
+e.stopPropagation();
+const name = appData.characters[idx].charName || “Personaggio”;
+if (!confirm(“Eliminare “ + name + “? Questa azione non puo essere annullata.”)) return;
+appData.characters.splice(idx, 1);
+saveAll();
+buildHubGrid();
+}
+
+function buildHubGrid() {
+const grid = document.getElementById(“hub-chars-grid”);
+grid.innerHTML = “”;
+
+appData.characters.forEach((char, idx) => {
+const card = document.createElement(“div”);
+card.className = “char-card”;
+card.onclick = () => openCharacter(idx);
+
+```
+const cls = char.charClass || "---";
+const race = char.charRace || "";
+const lv = char.charLevel || 1;
+const hp = char.hpCurrent + "/" + char.hpMax;
+const sub = char.charSubclass ? " \u00b7 " + char.charSubclass : "";
+
+card.innerHTML =
+  "<button class='char-delete' onclick='deleteCharacter(" + idx + ", event)'>&#10005;</button>" +
+  "<div class='char-class-badge'>" + cls + " lv " + lv + "</div>" +
+  "<div class='char-name'>" + (char.charName || "Senza nome") + "</div>" +
+  "<div class='char-meta'>" + race + sub + "</div>" +
+  "<div class='char-hp'>&#10084; " + hp + " PF</div>";
+
+grid.appendChild(card);
+```
+
+});
+
+// New character button
+const newCard = document.createElement(“div”);
+newCard.className = “char-card char-card-new”;
+newCard.onclick = createCharacter;
+newCard.innerHTML = “<div class='plus'>+</div><div class='new-label'>Nuovo Personaggio</div>”;
+grid.appendChild(newCard);
+}
+
+function buildCharSwitcher() {
+const sw = document.getElementById(“char-switcher”);
+sw.innerHTML = “”;
+appData.characters.forEach((char, idx) => {
+const btn = document.createElement(“button”);
+btn.className = “char-switch-btn” + (idx === appData.activeId ? “ active” : “”);
+btn.textContent = (char.charName || “Personaggio “ + (idx + 1));
+btn.onclick = () => openCharacter(idx);
+sw.appendChild(btn);
+});
+// Add new char button in switcher
+const addBtn = document.createElement(“button”);
+addBtn.className = “char-switch-btn”;
+addBtn.textContent = “+ Nuovo”;
+addBtn.onclick = createCharacter;
+sw.appendChild(addBtn);
+}
+
+// Override saveState to save into appData
+function saveState() {
+if (appData.activeId !== null && appData.characters[appData.activeId]) {
+appData.characters[appData.activeId] = state;
+}
+saveAll();
+// update switcher names live
+buildCharSwitcher();
+// update header name
+updateHeaderName();
+}
+
+function init() {
+loadAll();
+
+// Setup tabs
+document.querySelectorAll(”.tab-btn”).forEach(btn => {
+btn.addEventListener(“click”, () => {
+document.querySelectorAll(”.tab-btn”).forEach(b => b.classList.remove(“active”));
+document.querySelectorAll(”.tab-panel”).forEach(p => p.classList.remove(“active”));
+btn.classList.add(“active”);
+document.getElementById(btn.dataset.tab).classList.add(“active”);
+});
+});
+
+document.addEventListener(“input”, () => saveState());
+
+if (appData.characters.length === 0) {
+// Show hub with empty state
+buildHubGrid();
+} else if (appData.activeId !== null && appData.characters[appData.activeId]) {
+// Re-open last character
+openCharacter(appData.activeId);
+} else {
+buildHubGrid();
+}
+}
+
+init();
+
+</script>
+</body>
+</html>
