@@ -25,6 +25,9 @@ body{background:var(--bg);font-family:'Spectral',serif;color:var(--text);min-hei
 .tab-btn{background:none;border:none;color:rgba(255,255,255,.55);font-family:'Spectral SC',serif;font-size:.72rem;letter-spacing:1.5px;padding:6px 10px;cursor:pointer;border-radius:4px;transition:all .15s}
 .tab-btn:hover{color:#fff;background:rgba(255,255,255,.1)}
 .tab-btn.active{color:#fff;background:var(--accent)}
+.header-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.header-actions .btn{font-size:.76rem;padding:5px 9px}
+.save-local-note{font-size:.74rem;color:rgba(255,255,255,.55)}
 .app-body{padding:20px;max-width:1100px;margin:0 auto}
 .tab-panel{display:none}.tab-panel.active{display:block}
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
@@ -202,6 +205,7 @@ textarea{resize:vertical;min-height:70px}
   .cloud-row{grid-template-columns:1fr}.cloud-row.npoint{grid-template-columns:1fr}
   .app-header{align-items:flex-start;flex-direction:column;padding:12px 16px}
   .tab-bar{justify-content:flex-start}
+  .header-actions{width:100%}
 }
 @media(max-width:700px){
   .abilities-grid{grid-template-columns:repeat(3,1fr)}
@@ -256,7 +260,11 @@ textarea{resize:vertical;min-height:70px}
     </div>
   </div>
 
-<div style="display:flex;justify-content:center;margin:18px 0 22px;">
+  <div style="display:flex;justify-content:center;margin:18px 0 22px;">
+    <button class="btn btn-green" onclick="openNewCharModal()">+ Crea nuovo personaggio</button>
+  </div>
+
+  <div style="display:flex;justify-content:center;margin:18px 0 22px;">
   <button class="btn btn-green" onclick="openNewCharModal()">+ Crea nuovo personaggio</button>
 </div>
 
@@ -281,6 +289,10 @@ textarea{resize:vertical;min-height:70px}
     <button class="tab-btn" data-tab="tab-inventario">Inventario</button>
     <button class="tab-btn" data-tab="tab-note">Note</button>
   </nav>
+  <div class="header-actions">
+    <button class="btn btn-sm btn-green" onclick="forceSaveCurrentCharacter()">💾 Salva scheda</button>
+    <button class="btn btn-sm btn-outline" onclick="forceLoadCloudFromHeader()">☁ Carica cloud</button>
+  </div>
 </header>
 
 <main class="app-body">
@@ -721,6 +733,56 @@ function setCloudStatus(message, isError=false){
   el.style.color = isError ? "var(--accent)" : "var(--text-muted)";
 }
 
+function collectCurrentCharacterFromUI(){
+  if(!currentCharId || !characters[currentCharId]) return;
+  const c = state();
+
+  const ids = {
+    "char-name":"charName", "char-class":"charClass", "char-level":"charLevel", "char-race":"charRace",
+    "char-subclass":"charSubclass", "char-background":"charBackground", "char-alignment":"charAlignment", "char-xp":"charXP",
+    "hp-temp":"hpTemp", "hd-used":"hdUsed", "hd-total":"hdTotal", "armor-select":"armorEquipped",
+    "shield-select":"shieldEquipped", "ac-custom":"acCustom", "spell-ability":"spellAbility",
+    "coin-cp":"coins.cp", "coin-sp":"coins.sp", "coin-ep":"coins.ep", "coin-gp":"coins.gp", "coin-pp":"coins.pp",
+    "notes-session":"notes.session", "notes-npcs":"notes.npcs", "notes-abilities":"notes.abilities",
+    "notes-langs":"notes.langs", "notes-proficiencies":"notes.proficiencies",
+    "trait-personality":"traits.personality", "trait-ideals":"traits.ideals", "trait-bonds":"traits.bonds", "trait-flaws":"traits.flaws"
+  };
+
+  Object.entries(ids).forEach(([id,key])=>{
+    const el=document.getElementById(id);
+    if(!el) return;
+    const val=el.type==="number" ? (parseFloat(el.value)||0) : el.value;
+    setKey(c,key,val);
+  });
+
+  const hpCur=document.getElementById("hp-current");
+  const hpMax=document.getElementById("hp-max");
+  const init=document.getElementById("stat-init");
+  if(hpCur) c.hpCurrent=parseInt(hpCur.textContent)||0;
+  if(hpMax) c.hpMax=parseInt(hpMax.textContent)||0;
+  if(init) c.statInit=init.textContent.trim() || "+0";
+
+  updateHitDiceFromClassAndLevel();
+  updateAC();
+  updateProfBonus();
+  updateSpeed();
+  updateSpellStats();
+}
+
+async function forceSaveCurrentCharacter(){
+  if(!currentCharId){
+    alert("Apri o crea prima un personaggio.");
+    return;
+  }
+  collectCurrentCharacterFromUI();
+  saveCharacters();
+  setCloudStatus("Salvato in locale. Provo ora il salvataggio cloud...");
+  const ok = await performCloudSave(false);
+  if(!ok){
+    setCloudStatus("Salvato solo in locale. Il cloud non e stato aggiornato: controlla token, Gist ID e permessi.", true);
+  }
+}
+
 function queueCloudSave(){
   const tokenEl = document.getElementById("github-token");
   if(!tokenEl) return;
@@ -887,11 +949,19 @@ async function performCloudSave(silent){
   }
 }
 
-async function cloudLoad(){
+async function cloudLoad(options={}){
+  const silent = options.silent === true;
+  const skipConfirm = options.skipConfirm === true;
   const token=document.getElementById("github-token").value.trim();
   const gistId=document.getElementById("github-gist-id").value.trim();
-  if(!token || !gistId){ alert("Inserisci GitHub token e Gist ID."); return; }
+  if(!token || !gistId){
+    const msg = "Inserisci GitHub token e Gist ID.";
+    setCloudStatus(msg, true);
+    if(!silent) alert(msg);
+    return false;
+  }
   saveCloudConfig(token,gistId);
+  setCloudStatus("Caricamento cloud in corso...");
   try{
     const res=await fetch("https://api.github.com/gists/"+gistId,{
       headers:{
@@ -901,19 +971,47 @@ async function cloudLoad(){
       }
     });
     const data=await res.json();
-    if(!res.ok){ alert("Errore GitHub: "+res.status+"\\n"+(data.message||"")); return; }
+    if(!res.ok){
+      const msg = "Errore GitHub: "+res.status+" "+(data.message||"");
+      setCloudStatus(msg, true);
+      if(!silent) alert(msg);
+      return false;
+    }
     const file=data.files?.[GITHUB_FILE_NAME] || Object.values(data.files||{})[0];
-    if(!file){ alert("Nessun file JSON trovato nel Gist."); return; }
+    if(!file){
+      const msg = "Nessun file JSON trovato nel Gist.";
+      setCloudStatus(msg, true);
+      if(!silent) alert(msg);
+      return false;
+    }
     let content=file.content;
     if(file.truncated && file.raw_url){
       const raw=await fetch(file.raw_url);
       content=await raw.text();
     }
     const remoteChars=normalizeCloudPayload(JSON.parse(content));
-    if(Object.keys(characters).length && !confirm("Sostituire i personaggi locali con quelli del cloud?")) return;
-    characters=remoteChars; saveCharacters(); renderCharSelector(); alert("Personaggi caricati dal cloud: "+Object.keys(characters).length);
-  }catch(e){ alert("Errore caricamento cloud: "+e.message); }
+    if(!skipConfirm && Object.keys(characters).length && !confirm("Sostituire i personaggi locali con quelli del cloud?")){
+      setCloudStatus("Caricamento cloud annullato. Personaggi locali mantenuti.");
+      return false;
+    }
+    characters=remoteChars;
+    saveCharacters();
+    renderCharSelector();
+    setCloudStatus("Cloud caricato alle "+new Date().toLocaleTimeString("it")+" · Personaggi: "+Object.keys(characters).length);
+    if(!silent) alert("Personaggi caricati dal cloud: "+Object.keys(characters).length);
+    return true;
+  }catch(e){
+    const msg = "Errore caricamento cloud: "+e.message;
+    setCloudStatus(msg, true);
+    if(!silent) alert(msg);
+    return false;
+  }
 }
+
+async function forceLoadCloudFromHeader(){
+  await cloudLoad({silent:false, skipConfirm:false});
+}
+
 
 async function importFromNpoint(){
   const url=document.getElementById("npoint-url").value.trim();
@@ -1308,7 +1406,30 @@ document.querySelectorAll(".tab-btn").forEach(btn=>{
 function escapeHtml(v){ return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m])); }
 function escapeAttr(v){ return escapeHtml(v).replace(/`/g,"&#096;"); }
 
-function init(){ loadCharacters(); loadCloudConfig(); renderCharSelector(); }
+async function autoLoadCloudOnStart(){
+  const token=document.getElementById("github-token")?.value.trim();
+  const gistId=document.getElementById("github-gist-id")?.value.trim();
+  const localCount=Object.keys(characters).length;
+
+  if(!token || !gistId){
+    setCloudStatus("Locale: "+localCount+" personaggi. Cloud non caricato: manca token o Gist ID salvato nel browser.");
+    return;
+  }
+
+  if(localCount === 0){
+    setCloudStatus("Config cloud trovata. Carico automaticamente il Gist...");
+    await cloudLoad({silent:true, skipConfirm:true});
+  }else{
+    setCloudStatus("Locale: "+localCount+" personaggi. Cloud configurato. Usa 'Carica cloud' per sovrascrivere dal Gist o 'Salva cloud' per aggiornarlo.");
+  }
+}
+
+async function init(){
+  loadCharacters();
+  loadCloudConfig();
+  renderCharSelector();
+  await autoLoadCloudOnStart();
+}
 init();
 </script>
 </body>
