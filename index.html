@@ -201,6 +201,32 @@ textarea{resize:vertical;min-height:70px}
 .modal h2{font-family:'Spectral SC',serif;font-size:1.1rem;letter-spacing:1.5px;margin-bottom:16px}
 .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
 
+
+
+/* ROGUE CLASS TAB */
+.rogue-top{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;margin-bottom:16px}
+.rogue-summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.rogue-kpi{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 8px;text-align:center}
+.rogue-kpi-val{font-size:1.35rem;font-weight:600;color:var(--accent2);line-height:1}
+.rogue-kpi-label{font-size:.68rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+.rogue-progress-list{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.rogue-feature{border:1px solid var(--border);border-radius:var(--radius);padding:9px 10px;background:var(--surface);font-size:.86rem;position:relative}
+.rogue-feature.unlocked{background:var(--green-light);border-color:#b8d8c2}
+.rogue-feature.future{opacity:.58;background:var(--surface2)}
+.rogue-feature-lv{font-family:'Spectral SC',serif;font-size:.62rem;letter-spacing:1.2px;color:var(--text-muted);margin-bottom:3px}
+.rogue-feature-name{font-weight:600;color:var(--text)}
+.rogue-feature-desc{font-size:.78rem;color:var(--text-muted);margin-top:3px}
+.rogue-tools{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.rogue-tool-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px}
+.rogue-tool-title{font-weight:600;margin-bottom:5px;color:var(--text)}
+.rogue-tool-body{font-size:.82rem;color:var(--text-muted);line-height:1.45}
+.rogue-resource{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px}
+.rogue-pip{width:22px;height:22px;border-radius:50%;border:2px solid var(--accent2);background:var(--bg);cursor:pointer;transition:all .15s}
+.rogue-pip.used{background:var(--accent2)}
+.rogue-sub-box{background:var(--gold-light);border:1px solid #ead29b;border-radius:var(--radius);padding:12px;font-size:.86rem;color:#624615}
+.rogue-pill-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.rogue-mini-pill{font-size:.72rem;border:1px solid var(--border);background:var(--bg);border-radius:18px;padding:3px 8px;color:var(--text-muted)}
+
 @media(max-width:850px){
   .cloud-row{grid-template-columns:1fr}.cloud-row.npoint{grid-template-columns:1fr}
   .app-header{align-items:flex-start;flex-direction:column;padding:12px 16px}
@@ -220,6 +246,9 @@ textarea{resize:vertical;min-height:70px}
   .spell-slots-grid{grid-template-columns:repeat(3,1fr)}
   .spell-add-form,.inv-add-form{grid-template-columns:1fr}
   .conditions-grid{grid-template-columns:repeat(2,1fr)}
+  .rogue-top{grid-template-columns:1fr}
+  .rogue-summary-grid{grid-template-columns:repeat(2,1fr)}
+  .rogue-progress-list,.rogue-tools{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -281,6 +310,7 @@ textarea{resize:vertical;min-height:70px}
   <nav class="tab-bar" role="tablist">
     <button class="tab-btn active" data-tab="tab-main">Scheda</button>
     <button class="tab-btn" data-tab="tab-combat">Combattimento</button>
+    <button class="tab-btn" data-tab="tab-classe">Classe</button>
     <button class="tab-btn" data-tab="tab-magia">Magia</button>
     <button class="tab-btn" data-tab="tab-inventario">Inventario</button>
     <button class="tab-btn" data-tab="tab-note">Note</button>
@@ -477,6 +507,49 @@ textarea{resize:vertical;min-height:70px}
     </div>
     <div class="roll-result" id="roll-result"><div style="color:rgba(255,255,255,.4);font-size:.85rem;">Premi un dado per tirare...</div></div>
     <div class="roll-history" id="roll-history"></div>
+  </div>
+</div>
+
+
+<div id="tab-classe" class="tab-panel">
+  <div class="rogue-top">
+    <div class="card">
+      <div class="card-title">🗡 Classe: Ladro</div>
+      <div id="rogue-class-notice" class="info-box warning-box" style="display:none;margin-top:0;margin-bottom:10px;">
+        Questa tab e pensata per il Ladro. Puoi impostare rapidamente la classe con il pulsante sotto.
+      </div>
+      <div class="grid-2">
+        <div class="field">
+          <label>Sottoclasse / Archetipo ladresco</label>
+          <select id="rogue-subclass-select" onchange="selectRogueSubclass(this.value)"></select>
+        </div>
+        <div class="field">
+          <label>Azioni rapide</label>
+          <button class="btn btn-sm btn-outline" onclick="setCurrentClassToRogue()">Imposta classe Ladro</button>
+        </div>
+      </div>
+      <div id="rogue-summary" class="rogue-summary-grid"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">📌 Eredita da classe e sottoclasse</div>
+      <div id="rogue-inherited-features"></div>
+    </div>
+  </div>
+
+  <div class="card section-gap">
+    <div class="card-title">📈 Progressione sintetica del Ladro</div>
+    <div id="rogue-class-progress" class="rogue-progress-list"></div>
+  </div>
+
+  <div class="grid-2 section-gap">
+    <div class="card">
+      <div class="card-title">🎭 Caratteristiche della sottoclasse</div>
+      <div id="rogue-subclass-features"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🧰 Strumenti rapidi sottoclasse</div>
+      <div id="rogue-tools-panel"></div>
+    </div>
   </div>
 </div>
 
@@ -705,7 +778,8 @@ function emptyChar(name){
     inventory:[],
     traits:{personality:"",ideals:"",bonds:"",flaws:""},
     notes:{session:"",npcs:"",abilities:"",langs:"",proficiencies:""},
-    rollHistory:[]
+    rollHistory:[],
+    rogue:{subclass:"", insightful:false, steadyAim:false, psychicUsed:0, wailsUsed:0}
   };
 }
 
@@ -1087,7 +1161,7 @@ function loadCurrentCharIntoUI(){
   document.getElementById("header-name").textContent=c.charName||"Personaggio";
   buildAbilities(); buildSaves(); buildSkills(); buildConditions(); buildSpellSlots(); bindAllInputs();
   renderAttacks(); renderEquipment(); renderSpells(); renderCantrips(); renderInventory();
-  updateClassDefaults(); updateRaceInfo(); updateClassInfo(); updateProfBonus(); updateSpeed(); updateSpellStats(); updateAC(); updateInspirationUI(); restoreDeathSaves(); showConditionInfo(); renderRollHistory(); saveState();
+  updateClassDefaults(); updateRaceInfo(); updateClassInfo(); updateProfBonus(); updateSpeed(); updateSpellStats(); updateAC(); updateInspirationUI(); restoreDeathSaves(); showConditionInfo(); renderRollHistory(); renderRogueTab(); saveState();
 }
 function migrateChar(c){
   c.id ||= "char_" + Date.now() + "_" + Math.random().toString(36).slice(2,7);
@@ -1233,9 +1307,10 @@ function bindAllInputs(){
       const c=state(); const val=el.type==="number" ? (parseFloat(el.value)||0) : el.value;
       setKey(c,key,val);
       if(id==="char-name") document.getElementById("header-name").textContent=val||"Personaggio";
-      if(id==="char-level"){ autoFillSlots(); updateProfBonus(); updateHitDiceFromClassAndLevel(); buildSaves(); buildSkills(); updateSpellStats(); }
+      if(id==="char-level"){ autoFillSlots(); updateProfBonus(); updateHitDiceFromClassAndLevel(); buildSaves(); buildSkills(); updateSpellStats(); renderRogueTab(); }
       if(id==="char-race"){ updateRaceInfo(); updateSpeed(); }
-      if(id==="char-class"){ updateClassDefaults(); applyClassDefaults(true); updateClassInfo(); updateSpellStats(); }
+      if(id==="char-class"){ updateClassDefaults(); applyClassDefaults(true); updateClassInfo(); updateSpellStats(); renderRogueTab(); }
+      if(id==="char-subclass"){ syncRogueSubclassFromText(); renderRogueTab(); }
       if(id==="spell-ability") updateSpellStats();
       saveState();
     });
@@ -1442,6 +1517,135 @@ function renderInventory(){
 }
 function toggleInvUsed(i){ const c=state(); c.inventory[i].used=!c.inventory[i].used; renderInventory(); saveState(); }
 function toggleInvKey(i){ const c=state(); c.inventory[i].isKey=!c.inventory[i].isKey; renderInventory(); saveState(); }
+
+
+// ═══════════════════════════════════════════════════════════════════
+// ROGUE CLASS TAB
+// ═══════════════════════════════════════════════════════════════════
+function rogueState(){ const c=state(); c.rogue ||= {subclass:"", insightful:false, steadyAim:false, psychicUsed:0, wailsUsed:0}; return c.rogue; }
+function getRogueLevel(){ return Math.max(1, Math.min(20, parseInt(state().charLevel)||1)); }
+function getSneakDice(){ return ROGUE_SNEAK_ATTACK_TABLE[getRogueLevel()-1] + "d6"; }
+function getRogueSubclassKey(){
+  const r=rogueState();
+  if(r.subclass && ROGUE_SUBCLASSES[r.subclass]) return r.subclass;
+  const txt=(state().charSubclass||"").toLowerCase();
+  const found=Object.entries(ROGUE_SUBCLASSES).find(([k,v]) => txt.includes(k) || txt.includes(v.label.toLowerCase().split(" /")[0]));
+  return found ? found[0] : "";
+}
+function syncRogueSubclassFromText(){
+  const key=getRogueSubclassKey();
+  if(key) rogueState().subclass=key;
+}
+function renderRogueTab(){
+  if(!document.getElementById("rogue-subclass-select") || !currentCharId) return;
+  const c=state(), r=rogueState(), lv=getRogueLevel(), pb=getPB();
+  const notice=document.getElementById("rogue-class-notice");
+  if(notice) notice.style.display = c.charClass === "ladro" ? "none" : "block";
+
+  const sel=document.getElementById("rogue-subclass-select");
+  const current=getRogueSubclassKey();
+  sel.innerHTML='<option value="">--- Seleziona sottoclasse Ladro ---</option>';
+  Object.entries(ROGUE_SUBCLASSES).forEach(([key,sub])=>{
+    const opt=document.createElement("option"); opt.value=key; opt.textContent=sub.label+" ("+sub.source+")"; sel.appendChild(opt);
+  });
+  sel.value=current;
+
+  document.getElementById("rogue-summary").innerHTML = [
+    ["Livello", lv], ["Competenza", (pb>=0?"+":"")+pb], ["Furtivo", getSneakDice()], ["Dadi psi/Wails", pb*2+" / "+pb]
+  ].map(([label,val])=>`<div class="rogue-kpi"><div class="rogue-kpi-val">${val}</div><div class="rogue-kpi-label">${label}</div></div>`).join("");
+
+  renderRogueInherited(current);
+  renderRogueProgress(lv);
+  renderRogueSubclassFeatures(current, lv);
+  renderRogueTools(current, lv, pb);
+}
+function renderRogueInherited(subKey){
+  const sub=ROGUE_SUBCLASSES[subKey];
+  const baseTools=["Armature leggere", "Armi semplici + alcune armi agili/distanza", "Strumenti da ladro", "Gergo ladresco", "Expertise", "Attacco furtivo", "Azione scaltra"];
+  const subTools=sub ? sub.tools : [];
+  document.getElementById("rogue-inherited-features").innerHTML = `
+    <div class="rogue-sub-box"><strong>Classe base</strong><div class="rogue-pill-row">${baseTools.map(t=>`<span class="rogue-mini-pill">${escapeHtml(t)}</span>`).join("")}</div></div>
+    <div class="rogue-sub-box" style="margin-top:10px;"><strong>Sottoclasse</strong><br>${sub ? escapeHtml(sub.label)+" · "+escapeHtml(sub.source) : "Seleziona una sottoclasse"}
+      <div class="rogue-pill-row">${subTools.map(t=>`<span class="rogue-mini-pill">${escapeHtml(t)}</span>`).join("")}</div>
+    </div>`;
+}
+function renderRogueProgress(lv){
+  document.getElementById("rogue-class-progress").innerHTML = ROGUE_PROGRESS.map(f=>{
+    const unlocked=lv>=f.lv;
+    return `<div class="rogue-feature ${unlocked?"unlocked":"future"}"><div class="rogue-feature-lv">Livello ${f.lv} ${unlocked?"· sbloccato":""}</div><div class="rogue-feature-name">${escapeHtml(f.name)}</div><div class="rogue-feature-desc">${escapeHtml(f.desc)}</div></div>`;
+  }).join("");
+}
+function renderRogueSubclassFeatures(subKey, lv){
+  const el=document.getElementById("rogue-subclass-features");
+  const sub=ROGUE_SUBCLASSES[subKey];
+  if(!sub){ el.innerHTML='<div class="info-box" style="margin-top:0;">Seleziona una sottoclasse per vedere la progressione specifica.</div>'; return; }
+  el.innerHTML = `<div class="rogue-sub-box" style="margin-bottom:10px;"><strong>${escapeHtml(sub.label)}</strong><br>Fonte: ${escapeHtml(sub.source)}. Descrizioni sintetiche per consultazione rapida.</div>` +
+    sub.features.map(f=>`<div class="rogue-feature ${lv>=f.lv?"unlocked":"future"}"><div class="rogue-feature-lv">Livello ${f.lv} ${lv>=f.lv?"· sbloccato":""}</div><div class="rogue-feature-name">${escapeHtml(f.name)}</div><div class="rogue-feature-desc">${escapeHtml(f.desc)}</div></div>`).join("");
+}
+function renderRogueTools(subKey, lv, pb){
+  const r=rogueState();
+  const el=document.getElementById("rogue-tools-panel");
+  if(!subKey){ el.innerHTML='<div class="info-box" style="margin-top:0;">Gli strumenti appariranno dopo aver scelto una sottoclasse.</div>'; return; }
+  const common = `<div class="rogue-tool-card"><div class="rogue-tool-title">Attacco furtivo</div><div class="rogue-tool-body">Danno attuale: <strong>${getSneakDice()}</strong>. Usabile 1 volta per turno se hai vantaggio o condizione valida.</div></div>
+    <div class="rogue-tool-card"><div class="rogue-tool-title">Azione scaltra</div><div class="rogue-tool-body">Azione bonus: Scatto, Disimpegno o Nascondersi.</div></div>`;
+  let specific="";
+  if(subKey==="thief") specific = `<div class="rogue-tool-card"><div class="rogue-tool-title">Mani veloci</div><div class="rogue-tool-body">Promemoria bonus action: usare oggetto, strumenti da ladro, aprire serrature/disinnescare se permesso.</div></div><div class="rogue-tool-card"><div class="rogue-tool-title">Kit consigliati</div><div class="rogue-tool-body"><button class="btn btn-sm btn-outline" onclick="rogueAppendProficiencies('Strumenti da ladro; oggetti magici; arrampicata/furto acrobatico')">Aggiungi alle note</button></div></div>`;
+  if(subKey==="assassin") specific = `<div class="rogue-tool-card"><div class="rogue-tool-title">Assassinare</div><div class="rogue-tool-body">Checklist: bersaglio non ha ancora agito? hai vantaggio. Bersaglio sorpreso? colpo critico se colpisci.</div></div><div class="rogue-tool-card"><div class="rogue-tool-title">Competenze bonus</div><div class="rogue-tool-body"><button class="btn btn-sm btn-outline" onclick="rogueAppendProficiencies('Kit da travestimento; kit da avvelenatore')">Aggiungi kit</button></div></div>`;
+  if(subKey==="arcane") specific = `<div class="rogue-tool-card"><div class="rogue-tool-title">Spellcasting INT</div><div class="rogue-tool-body">CD/Attacco incantesimi usano INT. <button class="btn btn-sm btn-outline" onclick="rogueSetArcaneTricksterMagic()">Imposta INT + Mano Magica</button></div></div><div class="rogue-tool-card"><div class="rogue-tool-title">Imboscata magica</div><div class="rogue-tool-body">Da lv 9: se sei nascosto, il bersaglio ha svantaggio al TS contro il tuo incantesimo.</div></div>`;
+  if(subKey==="inquisitive") specific = `<div class="rogue-tool-card"><div class="rogue-tool-title">Combattimento perspicace</div><div class="rogue-tool-body">Stato: <strong>${r.insightful?"attivo":"non attivo"}</strong><br><button class="btn btn-sm btn-outline" onclick="rogueToggle('insightful')">Toggle bersaglio studiato</button></div></div><div class="rogue-tool-card"><div class="rogue-tool-title">Occhio per i dettagli</div><div class="rogue-tool-body">Promemoria: Cercare/Indagare o leggere creature come azione bonus.</div></div>`;
+  if(subKey==="mastermind") specific = `<div class="rogue-tool-card"><div class="rogue-tool-title">Aiutare a 30 ft</div><div class="rogue-tool-body">Usa Aiutare come azione bonus. Ottimo per dare vantaggio all'alleato giusto.</div></div><div class="rogue-tool-card"><div class="rogue-tool-title">Intrigo</div><div class="rogue-tool-body"><button class="btn btn-sm btn-outline" onclick="rogueAppendProficiencies('Kit da travestimento; kit da falsificazione; un set da gioco; due lingue extra')">Aggiungi prof.</button></div></div>`;
+  if(subKey==="scout") specific = `<div class="rogue-tool-card"><div class="rogue-tool-title">Schermagliatore</div><div class="rogue-tool-body">Reazione: se un nemico finisce il turno entro 5 ft, puoi muoverti di meta velocita senza AdO da lui.</div></div><div class="rogue-tool-card"><div class="rogue-tool-title">Survivalist</div><div class="rogue-tool-body"><button class="btn btn-sm btn-outline" onclick="rogueApplyScoutExpertise()">Imposta Natura/Sopravvivenza</button></div></div>`;
+  if(subKey==="swashbuckler") specific = `<div class="rogue-tool-card"><div class="rogue-tool-title">Audacia spavalda</div><div class="rogue-tool-body">Somma CAR all'iniziativa manualmente se serve. Furtivo 1v1 in mischia se rispetti le condizioni.</div></div><div class="rogue-tool-card"><div class="rogue-tool-title">Gioco di gambe</div><div class="rogue-tool-body">Se attacchi una creatura, non subisci AdO da lei per quel turno.</div></div>`;
+  if(subKey==="soulknife") specific = `<div class="rogue-tool-card"><div class="rogue-tool-title">Dadi psionici</div><div class="rogue-tool-body">Dado: <strong>${roguePsionicDie(lv)}</strong> · usi: ${r.psychicUsed}/${pb*2}${renderRoguePips('psychicUsed', pb*2, r.psychicUsed)}</div></div><div class="rogue-tool-card"><div class="rogue-tool-title">Lame psichiche</div><div class="rogue-tool-body">Promemoria attacco: lama principale + possibile seconda lama come bonus action.</div></div>`;
+  if(subKey==="phantom") specific = `<div class="rogue-tool-card"><div class="rogue-tool-title">Wails from the Grave</div><div class="rogue-tool-body">Usi: ${r.wailsUsed}/${pb}${renderRoguePips('wailsUsed', pb, r.wailsUsed)}</div></div><div class="rogue-tool-card"><div class="rogue-tool-title">Sussurri dei morti</div><div class="rogue-tool-body">Dopo riposo, scegli una competenza flessibile temporanea.</div></div>`;
+  el.innerHTML = `<div class="rogue-tools">${common}${specific}</div><div style="margin-top:10px;"><button class="btn btn-sm btn-outline" onclick="rogueResetResources()">Reset risorse sottoclasse</button></div>`;
+}
+function renderRoguePips(resource, max, used){
+  let html='<div class="rogue-resource">';
+  for(let i=0;i<max;i++) html += `<span class="rogue-pip ${i<used?"used":""}" onclick="rogueSetResource('${resource}',${i+1})"></span>`;
+  return html+'</div>';
+}
+function selectRogueSubclass(key){
+  const c=state(), r=rogueState();
+  r.subclass=key;
+  if(key && ROGUE_SUBCLASSES[key]){
+    c.charSubclass=ROGUE_SUBCLASSES[key].label;
+    const subInput=document.getElementById("char-subclass"); if(subInput) subInput.value=c.charSubclass;
+  }
+  renderRogueTab(); saveState();
+}
+function setCurrentClassToRogue(){
+  const c=state(); c.charClass="ladro";
+  const el=document.getElementById("char-class"); if(el) el.value="ladro";
+  applyClassDefaults(true); updateClassDefaults(); updateClassInfo(); renderRogueTab(); saveState();
+}
+function rogueToggle(key){ rogueState()[key]=!rogueState()[key]; renderRogueTab(); saveState(); }
+function rogueSetResource(resource, value){
+  const r=rogueState();
+  r[resource] = r[resource] === value ? value-1 : value;
+  renderRogueTab(); saveState();
+}
+function rogueResetResources(){ const r=rogueState(); r.psychicUsed=0; r.wailsUsed=0; r.insightful=false; r.steadyAim=false; renderRogueTab(); saveState(); }
+function roguePsionicDie(lv){ return lv>=17 ? "d12" : lv>=11 ? "d10" : lv>=5 ? "d8" : "d6"; }
+function rogueAppendProficiencies(text){
+  const c=state();
+  const existing=c.notes.proficiencies||"";
+  if(!existing.includes(text)) c.notes.proficiencies = existing ? existing + "\n" + text : text;
+  const el=document.getElementById("notes-proficiencies"); if(el) el.value=c.notes.proficiencies;
+  saveState(); alert("Aggiunto nelle note competenze/strumenti.");
+}
+function rogueApplyScoutExpertise(){
+  const c=state();
+  c.skills["Natura"]="expertise";
+  c.skills["Sopravvivenza"]="expertise";
+  buildSkills(); saveState(); alert("Natura e Sopravvivenza impostate come Expertise.");
+}
+function rogueSetArcaneTricksterMagic(){
+  const c=state(); c.spellAbility="int";
+  if(!c.cantrips.includes("Mano Magica")) c.cantrips.push("Mano Magica");
+  const el=document.getElementById("spell-ability"); if(el) el.value="int";
+  renderCantrips(); updateSpellStats(); saveState(); alert("Impostata INT come caratteristica magica e aggiunta Mano Magica ai trucchetti.");
+}
 
 document.querySelectorAll(".tab-btn").forEach(btn=>{
   btn.addEventListener("click",()=>{ document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active")); document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active")); btn.classList.add("active"); document.getElementById(btn.dataset.tab).classList.add("active"); });
