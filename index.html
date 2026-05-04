@@ -674,87 +674,68 @@ const GITHUB_FILE_NAME = "dnd5e_characters.json";
 const ABILITIES = ["FOR","DES","COS","INT","SAG","CAR"];
 const ABILITY_FULL = {FOR:"Forza",DES:"Destrezza",COS:"Costituzione",INT:"Intelligenza",SAG:"Saggezza",CAR:"Carisma"};
 
-const CLASSES_DATA = {
-  "barbaro":   { hd:12, saves:["FOR","COS"], speed:30, spellAbility:null, skills:["Addestrare Animali","Atletica","Intimidire","Natura","Percezione","Sopravvivenza"] },
-  "bardo":     { hd:8,  saves:["DES","CAR"], speed:30, spellAbility:"cha", skills:"any" },
-  "chierico":  { hd:8,  saves:["SAG","CAR"], speed:30, spellAbility:"wis", skills:["Storia","Indagare","Medicina","Persuasione","Religione"] },
-  "druido":    { hd:8,  saves:["INT","SAG"], speed:30, spellAbility:"wis", skills:["Arcano","Addestrare Animali","Indagare","Medicina","Natura","Percezione","Religione","Sopravvivenza"] },
-  "guerriero": { hd:10, saves:["FOR","COS"], speed:30, spellAbility:null, skills:["Acrobazia","Addestrare Animali","Atletica","Storia","Intuizione","Intimidire","Percezione","Sopravvivenza"] },
-  "ladro":     { hd:8,  saves:["DES","INT"], speed:30, spellAbility:null, skills:["Acrobazia","Atletica","Inganno","Indagare","Intimidire","Percezione","Persuasione","Prestidigitazione","Furtivita"] },
-  "mago":      { hd:6,  saves:["INT","SAG"], speed:30, spellAbility:"int", skills:["Arcano","Storia","Indagare","Medicina","Religione","Intuizione"] },
-  "monaco":    { hd:8,  saves:["FOR","DES"], speed:30, spellAbility:null, skills:["Acrobazia","Atletica","Storia","Intuizione","Religione","Furtivita"] },
-  "paladino":  { hd:10, saves:["SAG","CAR"], speed:30, spellAbility:"cha", skills:["Atletica","Intuizione","Intimidire","Medicina","Persuasione","Religione"] },
-  "ranger":    { hd:10, saves:["FOR","DES"], speed:30, spellAbility:"wis", skills:["Addestrare Animali","Atletica","Intuizione","Indagare","Natura","Percezione","Furtivita","Sopravvivenza"] },
-  "stregone":  { hd:6,  saves:["COS","CAR"], speed:30, spellAbility:"cha", skills:["Arcano","Inganno","Intuizione","Intimidire","Persuasione","Religione"] },
-  "warlock":   { hd:8,  saves:["SAG","CAR"], speed:30, spellAbility:"cha", skills:["Arcano","Inganno","Storia","Intimidire","Indagare","Natura","Religione"] },
-  "artefice":  { hd:8,  saves:["COS","INT"], speed:30, spellAbility:"int", skills:["Arcano","Storia","Indagare","Medicina","Natura","Percezione","Prestidigitazione"] }
-};
+let CLASSES_DATA = {};
+let RACES_DATA = {};
+let ARMOR_DATA = {};
+let SKILLS_DATA = [];
+let CONDITIONS_DATA = {};
+let SLOT_TABLE = [];
 
-const RACES_DATA = {
-  "umano":           { label:"Umano", speed:30, asi:"+1 a tutte le caratteristiche", traits:"Versatile. Lingua extra.", source:"PHB" },
-  "umano_var":       { label:"Umano variante", speed:30, asi:"+1 a 2 caratteristiche a scelta", traits:"Talento al lv 1, competenza in 1 abilita.", source:"PHB" },
-  "elfo_alto":       { label:"Elfo alto", speed:30, asi:"+2 DES, +1 INT", traits:"Visione del buio 60 ft. Trance. Vantaggio vs Ammaliamento. Trucchetto da Mago.", source:"PHB" },
-  "elfo_silvano":    { label:"Elfo silvano", speed:35, asi:"+2 DES, +1 SAG", traits:"Visione del buio 60 ft. Mascherarsi nella natura. Velocita 35 ft.", source:"PHB" },
-  "drow":            { label:"Drow", speed:30, asi:"+2 DES, +1 CAR", traits:"Scurovisione superiore 120 ft. Sensibilita alla luce solare. Magia Drow.", source:"PHB" },
-  "nano_collina":    { label:"Nano delle colline", speed:25, asi:"+2 COS, +1 SAG", traits:"Visione del buio. Resistenza al veleno. +1 PF per livello.", source:"PHB" },
-  "nano_montagna":   { label:"Nano delle montagne", speed:25, asi:"+2 COS, +2 FOR", traits:"Visione del buio. Resistenza al veleno. Competenza armature leggere/medie.", source:"PHB" },
-  "halfling":        { label:"Halfling", speed:25, asi:"+2 DES", traits:"Fortunato. Coraggioso. Agile.", source:"PHB" },
-  "gnomo":           { label:"Gnomo", speed:25, asi:"+2 INT", traits:"Visione del buio. Astuzia gnomica.", source:"PHB" },
-  "mezzelfo":        { label:"Mezzelfo", speed:30, asi:"+2 CAR, +1 a 2 altre", traits:"Visione del buio. Vantaggio vs Ammaliamento. 2 abilita a scelta.", source:"PHB" },
-  "mezzorco":        { label:"Mezzorco", speed:30, asi:"+2 FOR, +1 COS", traits:"Visione del buio. Tenacia. Critico brutale.", source:"PHB" },
-  "tiefling":        { label:"Tiefling", speed:30, asi:"+2 CAR, +1 INT", traits:"Visione del buio. Resistenza al fuoco. Discendenza infernale.", source:"PHB" },
-  "dragonide":       { label:"Dragonide", speed:30, asi:"+2 FOR, +1 CAR", traits:"Soffio draconico. Resistenza al danno del retaggio.", source:"PHB" },
-  "tabaxi":          { label:"Tabaxi", speed:30, asi:"+2 DES, +1 CAR", traits:"Visione del buio. Andatura felina. Arrampicata.", source:"VGtM" },
-  "goliath":         { label:"Goliath", speed:30, asi:"+2 FOR, +1 COS", traits:"Resilienza pietrosa. Adatto alla montagna.", source:"VGtM" }
-};
+async function loadGameData() {
+  const packs = [
+    "data/races.json",
+    "data/classes.json",
+    "data/equipment.json",
+    "data/skills.json",
+    "data/conditions.json",
+    "data/spell-slots.json",
+    "data/rogue.json"
+  ];
 
-const ARMOR_DATA = {
-  "Nessuna armatura": { type:"none", ac:10, dexCap:Infinity, stealth:false, str:0 },
-  "Imbottita": { type:"light", ac:11, dexCap:Infinity, stealth:true, str:0 },
-  "Cuoio": { type:"light", ac:11, dexCap:Infinity, stealth:false, str:0 },
-  "Cuoio borchiato": { type:"light", ac:12, dexCap:Infinity, stealth:false, str:0 },
-  "Pelliccia": { type:"medium", ac:12, dexCap:2, stealth:false, str:0 },
-  "Camaglio": { type:"medium", ac:13, dexCap:2, stealth:false, str:0 },
-  "Corazza": { type:"medium", ac:14, dexCap:2, stealth:false, str:0 },
-  "Pelle di drago": { type:"medium", ac:14, dexCap:2, stealth:false, str:0 },
-  "Squame": { type:"medium", ac:14, dexCap:2, stealth:true, str:0 },
-  "Mezzapiastra": { type:"medium", ac:15, dexCap:2, stealth:true, str:0 },
-  "Anelli": { type:"heavy", ac:14, dexCap:0, stealth:true, str:0 },
-  "Maglia": { type:"heavy", ac:16, dexCap:0, stealth:true, str:13 },
-  "Striscia": { type:"heavy", ac:17, dexCap:0, stealth:true, str:15 },
-  "Piastre": { type:"heavy", ac:18, dexCap:0, stealth:true, str:15 },
-  "Scudo": { type:"shield", ac:2, dexCap:Infinity, stealth:false, str:0 }
-};
+  const errors = [];
 
-const SKILLS_DATA = [
-  {name:"Acrobazia",attr:"DES"},{name:"Addestrare Animali",attr:"SAG"},{name:"Arcano",attr:"INT"},{name:"Atletica",attr:"FOR"},
-  {name:"Furtivita",attr:"DES"},{name:"Indagare",attr:"INT"},{name:"Inganno",attr:"CAR"},{name:"Intimidire",attr:"CAR"},
-  {name:"Intuizione",attr:"SAG"},{name:"Medicina",attr:"SAG"},{name:"Natura",attr:"INT"},{name:"Percezione",attr:"SAG"},
-  {name:"Persuasione",attr:"CAR"},{name:"Prestidigitazione",attr:"DES"},{name:"Religione",attr:"INT"},{name:"Sopravvivenza",attr:"SAG"},{name:"Storia",attr:"INT"}
-];
+  for (const url of packs) {
+    try {
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) throw new Error(res.status + " " + res.statusText);
+      const pack = await res.json();
+      mergeGameData(pack);
+    } catch (err) {
+      errors.push(url + ": " + err.message);
+      console.warn("Data pack non caricato:", url, err);
+    }
+  }
 
-const CONDITIONS_DATA = {
-  "Accecato":"Attacchi contro di lui con vantaggio. Suoi attacchi con svantaggio.",
-  "Affascinato":"Non puo attaccare il fascinatore. Vantaggio prove sociali del fascinatore.",
-  "Assordato":"Non puo sentire. Fallisce prove basate sull'udito.",
-  "Avvelenato":"Svantaggio ad attacchi e prove caratteristica.",
-  "Esausto":"1:Svan prove. 2:Vel/2. 3:Svan att+TS. 4:Max PF/2. 5:Vel 0. 6:Morte.",
-  "Grappled":"Velocita 0.",
-  "Incapacitato":"Niente azioni o reazioni.",
-  "Invisibile":"Attacchi contro di lui con svantaggio. Suoi attacchi con vantaggio.",
-  "Paralizzato":"Incapacitato. Fallisce TS FOR/DES. Critici da meno 5 ft.",
-  "Prono":"Solo strisciare. Svantaggio attacchi. Attacchi in mischia contro di lui con vantaggio.",
-  "Spaventato":"Svantaggio a prove e attacchi. Non puo avvicinarsi alla fonte.",
-  "Stordito":"Incapacitato, non puo muoversi, parla a fatica. Fallisce TS FOR/DES."
-};
+  window.DND_DATA_LOAD_ERRORS = errors;
 
-const SLOT_TABLE = [
-  [2,0,0,0,0,0,0,0,0],[3,0,0,0,0,0,0,0,0],[4,2,0,0,0,0,0,0,0],[4,3,0,0,0,0,0,0,0],
-  [4,3,2,0,0,0,0,0,0],[4,3,3,0,0,0,0,0,0],[4,3,3,1,0,0,0,0,0],[4,3,3,2,0,0,0,0,0],
-  [4,3,3,3,1,0,0,0,0],[4,3,3,3,2,0,0,0,0],[4,3,3,3,2,1,0,0,0],[4,3,3,3,2,1,0,0,0],
-  [4,3,3,3,2,1,1,0,0],[4,3,3,3,2,1,1,0,0],[4,3,3,3,2,1,1,1,0],[4,3,3,3,2,1,1,1,0],
-  [4,3,3,3,2,1,1,1,1],[4,3,3,3,3,1,1,1,1],[4,3,3,3,3,2,1,1,1],[4,3,3,3,3,2,2,1,1]
-];
+  if (errors.length) {
+    console.warn("Alcuni data pack non sono stati caricati. Se stai aprendo il file come file://, pubblicalo su GitHub Pages o usa un server locale.", errors);
+  }
+}
+
+function normalizeArmorData() {
+  Object.values(ARMOR_DATA || {}).forEach(a => {
+    if (a.dexCap === "Infinity") a.dexCap = Infinity;
+  });
+}
+
+function mergeGameData(pack) {
+  if (!pack || typeof pack !== "object") return;
+
+  if (pack.races) Object.assign(RACES_DATA, pack.races);
+  if (pack.classes) Object.assign(CLASSES_DATA, pack.classes);
+  if (pack.armor) Object.assign(ARMOR_DATA, pack.armor);
+  if (pack.skills) SKILLS_DATA = pack.skills;
+  if (pack.conditions) Object.assign(CONDITIONS_DATA, pack.conditions);
+  if (pack.spellSlotTable) SLOT_TABLE = pack.spellSlotTable;
+
+  if (pack.rogueSneakAttackTable) ROGUE_SNEAK_ATTACK_TABLE = pack.rogueSneakAttackTable;
+  if (pack.rogueProgress) ROGUE_PROGRESS = pack.rogueProgress;
+  if (pack.rogueSubclasses) Object.assign(ROGUE_SUBCLASSES, pack.rogueSubclasses);
+
+  normalizeArmorData();
+}
+
 
 let characters = {};
 let currentCharId = null;
@@ -1520,145 +1501,9 @@ function toggleInvKey(i){ const c=state(); c.inventory[i].isKey=!c.inventory[i].
 
 
 
-const ROGUE_SNEAK_ATTACK_TABLE = [1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10];
-
-const ROGUE_PROGRESS = [
-  {lv:1, name:"Expertise", desc:"Scegli 2 competenze/strumenti in cui raddoppiare il bonus competenza."},
-  {lv:1, name:"Attacco furtivo", desc:"Danno extra una volta per turno se hai vantaggio o una condizione valida."},
-  {lv:1, name:"Gergo ladresco", desc:"Codice segreto per comunicare con altri ladri."},
-  {lv:2, name:"Azione scaltra", desc:"Azione bonus per Scatto, Disimpegno o Nascondersi."},
-  {lv:3, name:"Archetipo ladresco", desc:"Scegli la sottoclasse del Ladro."},
-  {lv:4, name:"Incremento caratteristica / talento", desc:"Aumenti caratteristiche o scegli un talento."},
-  {lv:5, name:"Schivata prodigiosa", desc:"Reazione per dimezzare un danno da attacco che ti colpisce."},
-  {lv:6, name:"Expertise", desc:"Scegli altre 2 competenze/strumenti da raddoppiare."},
-  {lv:7, name:"Elusione", desc:"Sui TS DES per dimezzare: successo = 0 danni, fallimento = meta."},
-  {lv:8, name:"Incremento caratteristica / talento", desc:"Aumenti caratteristiche o scegli un talento."},
-  {lv:9, name:"Caratteristica di archetipo", desc:"Ottieni una capacita della sottoclasse."},
-  {lv:10, name:"Incremento caratteristica / talento", desc:"Aumenti caratteristiche o scegli un talento."},
-  {lv:11, name:"Talento affidabile", desc:"Con competenza, ogni tiro d20 sotto 10 conta come 10."},
-  {lv:12, name:"Incremento caratteristica / talento", desc:"Aumenti caratteristiche o scegli un talento."},
-  {lv:13, name:"Caratteristica di archetipo", desc:"Ottieni una capacita della sottoclasse."},
-  {lv:14, name:"Senso cieco", desc:"Percepisci creature nascoste/invisibili entro breve distanza se puoi sentire."},
-  {lv:15, name:"Mente sfuggente", desc:"Ottieni competenza nei tiri salvezza su Saggezza."},
-  {lv:16, name:"Incremento caratteristica / talento", desc:"Aumenti caratteristiche o scegli un talento."},
-  {lv:17, name:"Caratteristica di archetipo", desc:"Ottieni la capacita finale della sottoclasse."},
-  {lv:18, name:"Inafferrabile", desc:"Nessun attacco contro di te ha vantaggio, se non sei incapacitato."},
-  {lv:19, name:"Incremento caratteristica / talento", desc:"Aumenti caratteristiche o scegli un talento."},
-  {lv:20, name:"Colpo di fortuna", desc:"Puoi trasformare un fallimento importante in successo una volta per riposo."}
-];
-
-const ROGUE_SUBCLASSES = {
-  thief: {
-    label:"Thief / Ladro",
-    source:"PHB",
-    tools:["Mani veloci", "Arrampicata migliorata", "Uso oggetti magici", "Riflessi da ladro"],
-    features:[
-      {lv:3, name:"Mani veloci", desc:"Azione bonus per usare oggetti, strumenti da ladro o interazioni rapide."},
-      {lv:3, name:"Lavoro al secondo piano", desc:"Arrampicata piu facile e salti migliorati."},
-      {lv:9, name:"Furtivita suprema", desc:"Se ti muovi lentamente, diventi molto piu difficile da individuare."},
-      {lv:13, name:"Usare oggetti magici", desc:"Ignori varie restrizioni di classe/razza/livello per gli oggetti magici."},
-      {lv:17, name:"Riflessi da ladro", desc:"Ottieni un turno extra nel primo round di combattimento."}
-    ]
-  },
-  assassin: {
-    label:"Assassin / Assassino",
-    source:"PHB",
-    tools:["Kit da travestimento", "Kit da avvelenatore", "Assassinare", "Identita false"],
-    features:[
-      {lv:3, name:"Competenze bonus", desc:"Ottieni kit da travestimento e kit da avvelenatore."},
-      {lv:3, name:"Assassinare", desc:"Vantaggio contro creature che non hanno ancora agito; critico contro creature sorprese."},
-      {lv:9, name:"Esperto infiltratore", desc:"Puoi costruire identita false credibili nel tempo."},
-      {lv:13, name:"Impostore", desc:"Puoi imitare parlata, scrittura e comportamento di altri."},
-      {lv:17, name:"Colpo mortale", desc:"Contro creature sorprese puoi raddoppiare i danni se falliscono il TS."}
-    ]
-  },
-  arcane: {
-    label:"Arcane Trickster / Ingannatore Arcano",
-    source:"PHB",
-    tools:["Spellcasting INT", "Mano magica", "Imboscata magica", "Furto incantesimo"],
-    features:[
-      {lv:3, name:"Incantesimi", desc:"Ottieni spellcasting da Mago basato su Intelligenza."},
-      {lv:3, name:"Mano magica furtiva", desc:"La tua Mano Magica diventa invisibile e puo fare azioni ladresche."},
-      {lv:9, name:"Imboscata magica", desc:"Se sei nascosto, le creature hanno svantaggio ai TS contro i tuoi incantesimi."},
-      {lv:13, name:"Ingannatore versatile", desc:"Puoi usare Mano Magica per ottenere vantaggio contro un nemico."},
-      {lv:17, name:"Furto incantesimo", desc:"Puoi rubare temporaneamente un incantesimo lanciato contro di te."}
-    ]
-  },
-  inquisitive: {
-    label:"Inquisitive / Inquisitore",
-    source:"XGtE",
-    tools:["Occhio per dettagli", "Combattimento perspicace", "Individuare inganni", "Furtivo senza vantaggio"],
-    features:[
-      {lv:3, name:"Orecchio per la menzogna", desc:"Ottimo nel capire quando qualcuno sta mentendo."},
-      {lv:3, name:"Occhio per i dettagli", desc:"Usi azione bonus per cercare dettagli o scoprire creature nascoste."},
-      {lv:3, name:"Combattimento perspicace", desc:"Studi un nemico per usare furtivo anche senza vantaggio."},
-      {lv:9, name:"Occhio saldo", desc:"Vantaggio a Percezione/Indagare se ti muovi poco."},
-      {lv:13, name:"Occhio infallibile", desc:"Percepisci illusioni, metamorfosi o inganni magici vicini."},
-      {lv:17, name:"Occhio per la debolezza", desc:"Contro bersagli studiati aggiungi danno furtivo extra."}
-    ]
-  },
-  mastermind: {
-    label:"Mastermind",
-    source:"XGtE",
-    tools:["Kit travestimento", "Kit falsificazione", "Aiutare a 30 ft", "Intrigo"],
-    features:[
-      {lv:3, name:"Maestro dell'intrigo", desc:"Ottieni kit, lingue e capacita sociali utili a infiltrazione e inganno."},
-      {lv:3, name:"Maestro della tattica", desc:"Puoi usare Aiutare come azione bonus a distanza aumentata."},
-      {lv:9, name:"Manipolatore intuitivo", desc:"Studi una creatura per capirne capacita e statistiche generali."},
-      {lv:13, name:"Depistaggio", desc:"Puoi far colpire un'altra creatura vicina al posto tuo in certe situazioni."},
-      {lv:17, name:"Anima dell'inganno", desc:"La tua mente e identita sono estremamente difficili da leggere o forzare."}
-    ]
-  },
-  scout: {
-    label:"Scout / Esploratore",
-    source:"XGtE",
-    tools:["Natura expertise", "Sopravvivenza expertise", "Schermagliatore", "Mobilita"],
-    features:[
-      {lv:3, name:"Schermagliatore", desc:"Reazione per muoverti quando un nemico finisce il turno vicino a te."},
-      {lv:3, name:"Survivalist", desc:"Competenza/expertise in Natura e Sopravvivenza."},
-      {lv:9, name:"Mobilita superiore", desc:"Velocita aumentata."},
-      {lv:13, name:"Maestro dell'imboscata", desc:"Bonus iniziativa e vantaggi tattici nel primo round."},
-      {lv:17, name:"Colpo improvviso", desc:"Puoi effettuare un attacco extra come azione bonus e applicare furtivo a bersagli diversi."}
-    ]
-  },
-  swashbuckler: {
-    label:"Swashbuckler / Spadaccino",
-    source:"XGtE",
-    tools:["Carisma iniziativa", "Furtivo 1v1", "No AdO dal bersaglio", "Duellante"],
-    features:[
-      {lv:3, name:"Gioco di gambe elegante", desc:"Se attacchi una creatura, non subisci AdO da lei per quel turno."},
-      {lv:3, name:"Audacia spavalda", desc:"Aggiungi CAR all'iniziativa e puoi fare furtivo in duello 1v1."},
-      {lv:9, name:"Panache", desc:"Usi fascino/provocazione per controllare il comportamento dei bersagli."},
-      {lv:13, name:"Manovra elegante", desc:"Azione bonus per vantaggio ad Acrobazia o Atletica."},
-      {lv:17, name:"Maestro duellante", desc:"Puoi ritirare un attacco mancato con vantaggio."}
-    ]
-  },
-  soulknife: {
-    label:"Soulknife / Lama dell'Anima",
-    source:"TCoE",
-    tools:["Dadi psionici", "Lame psichiche", "Telepatia", "Teletrasporto"],
-    features:[
-      {lv:3, name:"Potere psionico", desc:"Ottieni dadi psionici per skill e comunicazione mentale."},
-      {lv:3, name:"Lame psichiche", desc:"Crei lame mentali per attaccare, anche come azione bonus."},
-      {lv:9, name:"Lame dell'anima", desc:"Migliori precisione e mobilita delle lame psichiche."},
-      {lv:13, name:"Velo psichico", desc:"Diventi invisibile temporaneamente."},
-      {lv:17, name:"Squarciare la mente", desc:"Puoi stordire o disorientare con attacchi psichici."}
-    ]
-  },
-  phantom: {
-    label:"Phantom / Fantasma",
-    source:"TCoE",
-    tools:["Competenza flessibile", "Danno necrotico secondario", "Token anime", "Forma spettrale"],
-    features:[
-      {lv:3, name:"Sussurri dei morti", desc:"Ottieni una competenza temporanea dopo ogni riposo."},
-      {lv:3, name:"Lamenti dalla tomba", desc:"Dopo furtivo puoi danneggiare una seconda creatura con energia necrotica."},
-      {lv:9, name:"Token dei defunti", desc:"Ottieni token spirituali con effetti difensivi e offensivi."},
-      {lv:13, name:"Passeggiata spettrale", desc:"Assumi forma spettrale e migliori movimento/difesa."},
-      {lv:17, name:"Amico della morte", desc:"Potenzia i Lamenti e recuperi piu facilmente risorse."}
-    ]
-  }
-};
-
+let ROGUE_SNEAK_ATTACK_TABLE = [];
+let ROGUE_PROGRESS = [];
+let ROGUE_SUBCLASSES = {};
 
 // ═══════════════════════════════════════════════════════════════════
 // ROGUE CLASS TAB
@@ -1814,6 +1659,7 @@ async function autoLoadCloudOnStart(){
 }
 
 async function init(){
+  await loadGameData();
   loadCharacters();
   loadCloudConfig();
   renderCharSelector();
