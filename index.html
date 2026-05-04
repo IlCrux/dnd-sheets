@@ -244,6 +244,7 @@ textarea{resize:vertical;min-height:70px}
       I dati vengono salvati anche nel browser come copia locale. Per usare il cloud: crea un token GitHub con permesso Gist, incollalo qui, poi premi “Salva cloud”.
       Il token resta salvato solo nel browser in uso. Non pubblicare questo file con il token gia inserito.
     </div>
+    <div id="cloud-status" style="font-size:.78rem;color:var(--text-muted);margin-top:8px;">Cloud non ancora sincronizzato in questa sessione.</div>
     <hr class="separator">
     <div class="cloud-bar-title">Import da npoint.io, solo lettura</div>
     <div class="cloud-row npoint">
@@ -255,11 +256,8 @@ textarea{resize:vertical;min-height:70px}
     </div>
   </div>
 
-<div style="display:flex;justify-content:center;margin:18px 0 22px;">
-  <button class="btn btn-green" onclick="openNewCharModal()">+ Crea nuovo personaggio</button>
-</div>
+  <div class="char-card-grid" id="char-card-grid"></div>
 
-<div class="char-card-grid" id="char-card-grid"></div>
   <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px;">
     <button class="btn" onclick="exportAllChars()">⬇ Esporta tutti JSON</button>
     <label class="btn btn-outline" style="cursor:pointer;">⬆ Importa JSON<input type="file" accept=".json" style="display:none;" onchange="importAllChars(event)"></label>
@@ -702,7 +700,37 @@ function emptyChar(name){
 function state(){ return characters[currentCharId]; }
 function saveCharacters(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(characters)); }
 function loadCharacters(){ try{ characters = JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}") || {}; }catch(e){ characters={}; } }
-function saveState(){ saveCharacters(); }
+
+let cloudSaveTimer = null;
+let cloudSaveInProgress = false;
+let cloudSaveQueued = false;
+
+function saveState(){
+  saveCharacters();
+  queueCloudSave();
+}
+
+function setCloudStatus(message, isError=false){
+  const el = document.getElementById("cloud-status");
+  if(!el) return;
+  el.textContent = message;
+  el.style.color = isError ? "var(--accent)" : "var(--text-muted)";
+}
+
+function queueCloudSave(){
+  const tokenEl = document.getElementById("github-token");
+  if(!tokenEl) return;
+  const token = tokenEl.value.trim();
+  if(!token) {
+    setCloudStatus("Salvato in locale. Per il cloud inserisci il GitHub Token e premi Salva cloud almeno una volta.");
+    return;
+  }
+
+  clearTimeout(cloudSaveTimer);
+  cloudSaveTimer = setTimeout(() => {
+    performCloudSave(true);
+  }, 900);
+}
 
 function mod(s){ return Math.floor(((parseInt(s)||10)-10)/2); }
 function modStr(s){ const m=mod(s); return (m>=0?"+":"")+m; }
@@ -742,9 +770,9 @@ function openNewCharModal(){ document.getElementById("new-char-name").value=""; 
 function closeNewCharModal(){ document.getElementById("new-char-modal").classList.remove("visible"); }
 function createNewChar(){
   const name=document.getElementById("new-char-name").value.trim() || "Nuovo personaggio";
-  const c=emptyChar(name); characters[c.id]=c; saveCharacters(); closeNewCharModal(); openCharacter(c.id);
+  const c=emptyChar(name); characters[c.id]=c; saveCharacters(); queueCloudSave(); closeNewCharModal(); openCharacter(c.id);
 }
-function deleteCharacter(id){ if(!confirm("Eliminare definitivamente questo personaggio?")) return; delete characters[id]; saveCharacters(); renderCharSelector(); }
+function deleteCharacter(id){ if(!confirm("Eliminare definitivamente questo personaggio?")) return; delete characters[id]; saveCharacters(); queueCloudSave(); renderCharSelector(); }
 function openCharacter(id){ currentCharId=id; document.getElementById("char-selector").style.display="none"; document.getElementById("main-app").style.display="block"; loadCurrentCharIntoUI(); }
 function goToCharSelector(){ currentCharId=null; document.getElementById("main-app").style.display="none"; document.getElementById("char-selector").style.display="block"; renderCharSelector(); }
 
@@ -758,7 +786,7 @@ function importAllChars(e){
   r.onload=ev=>{
     try{
       const imported=normalizeCloudPayload(JSON.parse(ev.target.result));
-      if(confirm("Importare "+Object.keys(imported).length+" personaggi?")){ Object.assign(characters, imported); saveCharacters(); renderCharSelector(); }
+      if(confirm("Importare "+Object.keys(imported).length+" personaggi?")){ Object.assign(characters, imported); saveCharacters(); queueCloudSave(); renderCharSelector(); }
     }catch(err){ alert("File JSON non valido."); }
   };
   r.readAsText(f);
@@ -786,10 +814,27 @@ function normalizeCloudPayload(data){
 }
 
 async function cloudCreateOrSave(){
+  await performCloudSave(false);
+}
+
+async function performCloudSave(silent){
   const token=document.getElementById("github-token").value.trim();
   let gistId=document.getElementById("github-gist-id").value.trim();
-  if(!token){ alert("Inserisci un GitHub token con permesso Gist."); return; }
+
+  if(!token){
+    if(!silent) alert("Inserisci un GitHub token con permesso Gist.");
+    setCloudStatus("Cloud non attivo: manca il GitHub Token.", true);
+    return false;
+  }
+
+  if(cloudSaveInProgress){
+    cloudSaveQueued = true;
+    return false;
+  }
+
   saveCloudConfig(token,gistId);
+  cloudSaveInProgress = true;
+  setCloudStatus("Salvataggio cloud in corso...");
 
   const body = gistId ? {
     files: {[GITHUB_FILE_NAME]: {content: JSON.stringify(cloudPayload(), null, 2)}}
@@ -810,13 +855,32 @@ async function cloudCreateOrSave(){
       },
       body:JSON.stringify(body)
     });
+
     const data=await res.json();
-    if(!res.ok){ alert("Errore GitHub: "+res.status+"\\n"+(data.message||"")); return; }
+    if(!res.ok){
+      const message = "Errore GitHub: "+res.status+" "+(data.message||"");
+      setCloudStatus(message, true);
+      if(!silent) alert(message);
+      return false;
+    }
+
     gistId=data.id;
     document.getElementById("github-gist-id").value=gistId;
     saveCloudConfig(token,gistId);
-    alert("Salvato nel cloud. Gist ID: "+gistId);
-  }catch(e){ alert("Errore di rete: "+e.message); }
+    setCloudStatus("Cloud sincronizzato alle "+new Date().toLocaleTimeString("it")+" · Gist ID: "+gistId);
+    if(!silent) alert("Salvato nel cloud. Gist ID: "+gistId);
+    return true;
+  }catch(e){
+    setCloudStatus("Errore di rete cloud: "+e.message, true);
+    if(!silent) alert("Errore di rete: "+e.message);
+    return false;
+  }finally{
+    cloudSaveInProgress = false;
+    if(cloudSaveQueued){
+      cloudSaveQueued = false;
+      setTimeout(() => performCloudSave(true), 600);
+    }
+  }
 }
 
 async function cloudLoad(){
