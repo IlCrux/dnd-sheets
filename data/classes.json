@@ -1,1 +1,241 @@
-
+{
+  "classes": {
+    "barbaro": {
+      "label": "Barbaro",
+      "hd": 12,
+      "saves": [
+        "FOR",
+        "COS"
+      ],
+      "speed": 30,
+      "spellAbility": null,
+      "skills": [
+        "Addestrare Animali",
+        "Atletica",
+        "Intimidire",
+        "Natura",
+        "Percezione",
+        "Sopravvivenza"
+      ]
+    },
+    "bardo": {
+      "label": "Bardo",
+      "hd": 8,
+      "saves": [
+        "DES",
+        "CAR"
+      ],
+      "speed": 30,
+      "spellAbility": "cha",
+      "skills": "any"
+    },
+    "chierico": {
+      "label": "Chierico",
+      "hd": 8,
+      "saves": [
+        "SAG",
+        "CAR"
+      ],
+      "speed": 30,
+      "spellAbility": "wis",
+      "skills": [
+        "Storia",
+        "Indagare",
+        "Medicina",
+        "Persuasione",
+        "Religione"
+      ]
+    },
+    "druido": {
+      "label": "Druido",
+      "hd": 8,
+      "saves": [
+        "INT",
+        "SAG"
+      ],
+      "speed": 30,
+      "spellAbility": "wis",
+      "skills": [
+        "Arcano",
+        "Addestrare Animali",
+        "Indagare",
+        "Medicina",
+        "Natura",
+        "Percezione",
+        "Religione",
+        "Sopravvivenza"
+      ]
+    },
+    "guerriero": {
+      "label": "Guerriero",
+      "hd": 10,
+      "saves": [
+        "FOR",
+        "COS"
+      ],
+      "speed": 30,
+      "spellAbility": null,
+      "skills": [
+        "Acrobazia",
+        "Addestrare Animali",
+        "Atletica",
+        "Storia",
+        "Intuizione",
+        "Intimidire",
+        "Percezione",
+        "Sopravvivenza"
+      ]
+    },
+    "ladro": {
+      "label": "Ladro",
+      "hd": 8,
+      "saves": [
+        "DES",
+        "INT"
+      ],
+      "speed": 30,
+      "spellAbility": null,
+      "skills": [
+        "Acrobazia",
+        "Atletica",
+        "Inganno",
+        "Indagare",
+        "Intimidire",
+        "Percezione",
+        "Persuasione",
+        "Prestidigitazione",
+        "Furtivita"
+      ]
+    },
+    "mago": {
+      "label": "Mago",
+      "hd": 6,
+      "saves": [
+        "INT",
+        "SAG"
+      ],
+      "speed": 30,
+      "spellAbility": "int",
+      "skills": [
+        "Arcano",
+        "Storia",
+        "Indagare",
+        "Medicina",
+        "Religione",
+        "Intuizione"
+      ]
+    },
+    "monaco": {
+      "label": "Monaco",
+      "hd": 8,
+      "saves": [
+        "FOR",
+        "DES"
+      ],
+      "speed": 30,
+      "spellAbility": null,
+      "skills": [
+        "Acrobazia",
+        "Atletica",
+        "Storia",
+        "Intuizione",
+        "Religione",
+        "Furtivita"
+      ]
+    },
+    "paladino": {
+      "label": "Paladino",
+      "hd": 10,
+      "saves": [
+        "SAG",
+        "CAR"
+      ],
+      "speed": 30,
+      "spellAbility": "cha",
+      "skills": [
+        "Atletica",
+        "Intuizione",
+        "Intimidire",
+        "Medicina",
+        "Persuasione",
+        "Religione"
+      ]
+    },
+    "ranger": {
+      "label": "Ranger",
+      "hd": 10,
+      "saves": [
+        "FOR",
+        "DES"
+      ],
+      "speed": 30,
+      "spellAbility": "wis",
+      "skills": [
+        "Addestrare Animali",
+        "Atletica",
+        "Intuizione",
+        "Indagare",
+        "Natura",
+        "Percezione",
+        "Furtivita",
+        "Sopravvivenza"
+      ]
+    },
+    "stregone": {
+      "label": "Stregone",
+      "hd": 6,
+      "saves": [
+        "COS",
+        "CAR"
+      ],
+      "speed": 30,
+      "spellAbility": "cha",
+      "skills": [
+        "Arcano",
+        "Inganno",
+        "Intuizione",
+        "Intimidire",
+        "Persuasione",
+        "Religione"
+      ]
+    },
+    "warlock": {
+      "label": "Warlock",
+      "hd": 8,
+      "saves": [
+        "SAG",
+        "CAR"
+      ],
+      "speed": 30,
+      "spellAbility": "cha",
+      "skills": [
+        "Arcano",
+        "Inganno",
+        "Storia",
+        "Intimidire",
+        "Indagare",
+        "Natura",
+        "Religione"
+      ]
+    },
+    "artefice": {
+      "label": "Artefice",
+      "hd": 8,
+      "saves": [
+        "COS",
+        "INT"
+      ],
+      "speed": 30,
+      "spellAbility": "int",
+      "skills": [
+        "Arcano",
+        "Storia",
+        "Indagare",
+        "Medicina",
+        "Natura",
+        "Percezione",
+        "Prestidigitazione"
+      ]
+    }
+  }
+}

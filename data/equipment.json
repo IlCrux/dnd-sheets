@@ -1,1 +1,109 @@
-
+{
+  "armor": {
+    "Nessuna armatura": {
+      "type": "none",
+      "ac": 10,
+      "dexCap": "Infinity",
+      "stealth": false,
+      "str": 0
+    },
+    "Imbottita": {
+      "type": "light",
+      "ac": 11,
+      "dexCap": "Infinity",
+      "stealth": true,
+      "str": 0
+    },
+    "Cuoio": {
+      "type": "light",
+      "ac": 11,
+      "dexCap": "Infinity",
+      "stealth": false,
+      "str": 0
+    },
+    "Cuoio borchiato": {
+      "type": "light",
+      "ac": 12,
+      "dexCap": "Infinity",
+      "stealth": false,
+      "str": 0
+    },
+    "Pelliccia": {
+      "type": "medium",
+      "ac": 12,
+      "dexCap": 2,
+      "stealth": false,
+      "str": 0
+    },
+    "Camaglio": {
+      "type": "medium",
+      "ac": 13,
+      "dexCap": 2,
+      "stealth": false,
+      "str": 0
+    },
+    "Corazza": {
+      "type": "medium",
+      "ac": 14,
+      "dexCap": 2,
+      "stealth": false,
+      "str": 0
+    },
+    "Pelle di drago": {
+      "type": "medium",
+      "ac": 14,
+      "dexCap": 2,
+      "stealth": false,
+      "str": 0
+    },
+    "Squame": {
+      "type": "medium",
+      "ac": 14,
+      "dexCap": 2,
+      "stealth": true,
+      "str": 0
+    },
+    "Mezzapiastra": {
+      "type": "medium",
+      "ac": 15,
+      "dexCap": 2,
+      "stealth": true,
+      "str": 0
+    },
+    "Anelli": {
+      "type": "heavy",
+      "ac": 14,
+      "dexCap": 0,
+      "stealth": true,
+      "str": 0
+    },
+    "Maglia": {
+      "type": "heavy",
+      "ac": 16,
+      "dexCap": 0,
+      "stealth": true,
+      "str": 13
+    },
+    "Striscia": {
+      "type": "heavy",
+      "ac": 17,
+      "dexCap": 0,
+      "stealth": true,
+      "str": 15
+    },
+    "Piastre": {
+      "type": "heavy",
+      "ac": 18,
+      "dexCap": 0,
+      "stealth": true,
+      "str": 15
+    },
+    "Scudo": {
+      "type": "shield",
+      "ac": 2,
+      "dexCap": "Infinity",
+      "stealth": false,
+      "str": 0
+    }
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "skills": [
+    {
+      "name": "Acrobazia",
+      "attr": "DES"
+    },
+    {
+      "name": "Addestrare Animali",
+      "attr": "SAG"
+    },
+    {
+      "name": "Arcano",
+      "attr": "INT"
+    },
+    {
+      "name": "Atletica",
+      "attr": "FOR"
+    },
+    {
+      "name": "Furtivita",
+      "attr": "DES"
+    },
+    {
+      "name": "Indagare",
+      "attr": "INT"
+    },
+    {
+      "name": "Inganno",
+      "attr": "CAR"
+    },
+    {
+      "name": "Intimidire",
+      "attr": "CAR"
+    },
+    {
+      "name": "Intuizione",
+      "attr": "SAG"
+    },
+    {
+      "name": "Medicina",
+      "attr": "SAG"
+    },
+    {
+      "name": "Natura",
+      "attr": "INT"
+    },
+    {
+      "name": "Percezione",
+      "attr": "SAG"
+    },
+    {
+      "name": "Persuasione",
+      "attr": "CAR"
+    },
+    {
+      "name": "Prestidigitazione",
+      "attr": "DES"
+    },
+    {
+      "name": "Religione",
+      "attr": "INT"
+    },
+    {
+      "name": "Sopravvivenza",
+      "attr": "SAG"
+    },
+    {
+      "name": "Storia",
+      "attr": "INT"
+    }
+  ]
+}

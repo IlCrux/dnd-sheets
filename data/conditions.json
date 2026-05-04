@@ -1,1 +1,16 @@
-
+{
+  "conditions": {
+    "Accecato": "Attacchi contro di lui con vantaggio. Suoi attacchi con svantaggio.",
+    "Affascinato": "Non puo attaccare il fascinatore. Vantaggio prove sociali del fascinatore.",
+    "Assordato": "Non puo sentire. Fallisce prove basate sull'udito.",
+    "Avvelenato": "Svantaggio ad attacchi e prove caratteristica.",
+    "Esausto": "1:Svan prove. 2:Vel/2. 3:Svan att+TS. 4:Max PF/2. 5:Vel 0. 6:Morte.",
+    "Grappled": "Velocita 0.",
+    "Incapacitato": "Niente azioni o reazioni.",
+    "Invisibile": "Attacchi contro di lui con svantaggio. Suoi attacchi con vantaggio.",
+    "Paralizzato": "Incapacitato. Fallisce TS FOR/DES. Critici da meno 5 ft.",
+    "Prono": "Solo strisciare. Svantaggio attacchi. Attacchi in mischia contro di lui con vantaggio.",
+    "Spaventato": "Svantaggio a prove e attacchi. Non puo avvicinarsi alla fonte.",
+    "Stordito": "Incapacitato, non puo muoversi, parla a fatica. Fallisce TS FOR/DES."
+  }
+}

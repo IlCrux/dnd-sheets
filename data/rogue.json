@@ -1,0 +1,476 @@
+{
+  "rogueSneakAttackTable": [
+    1,
+    1,
+    2,
+    2,
+    3,
+    3,
+    4,
+    4,
+    5,
+    5,
+    6,
+    6,
+    7,
+    7,
+    8,
+    8,
+    9,
+    9,
+    10,
+    10
+  ],
+  "rogueProgress": [
+    {
+      "lv": 1,
+      "name": "Expertise",
+      "desc": "Scegli 2 competenze/strumenti in cui raddoppiare il bonus competenza."
+    },
+    {
+      "lv": 1,
+      "name": "Attacco furtivo",
+      "desc": "Danno extra una volta per turno se hai vantaggio o una condizione valida."
+    },
+    {
+      "lv": 1,
+      "name": "Gergo ladresco",
+      "desc": "Codice segreto per comunicare con altri ladri."
+    },
+    {
+      "lv": 2,
+      "name": "Azione scaltra",
+      "desc": "Azione bonus per Scatto, Disimpegno o Nascondersi."
+    },
+    {
+      "lv": 3,
+      "name": "Archetipo ladresco",
+      "desc": "Scegli la sottoclasse del Ladro."
+    },
+    {
+      "lv": 4,
+      "name": "Incremento caratteristica / talento",
+      "desc": "Aumenti caratteristiche o scegli un talento."
+    },
+    {
+      "lv": 5,
+      "name": "Schivata prodigiosa",
+      "desc": "Reazione per dimezzare un danno da attacco che ti colpisce."
+    },
+    {
+      "lv": 6,
+      "name": "Expertise",
+      "desc": "Scegli altre 2 competenze/strumenti da raddoppiare."
+    },
+    {
+      "lv": 7,
+      "name": "Elusione",
+      "desc": "Sui TS DES per dimezzare: successo = 0 danni, fallimento = meta."
+    },
+    {
+      "lv": 8,
+      "name": "Incremento caratteristica / talento",
+      "desc": "Aumenti caratteristiche o scegli un talento."
+    },
+    {
+      "lv": 9,
+      "name": "Caratteristica di archetipo",
+      "desc": "Ottieni una capacita della sottoclasse."
+    },
+    {
+      "lv": 10,
+      "name": "Incremento caratteristica / talento",
+      "desc": "Aumenti caratteristiche o scegli un talento."
+    },
+    {
+      "lv": 11,
+      "name": "Talento affidabile",
+      "desc": "Con competenza, ogni tiro d20 sotto 10 conta come 10."
+    },
+    {
+      "lv": 12,
+      "name": "Incremento caratteristica / talento",
+      "desc": "Aumenti caratteristiche o scegli un talento."
+    },
+    {
+      "lv": 13,
+      "name": "Caratteristica di archetipo",
+      "desc": "Ottieni una capacita della sottoclasse."
+    },
+    {
+      "lv": 14,
+      "name": "Senso cieco",
+      "desc": "Percepisci creature nascoste/invisibili entro breve distanza se puoi sentire."
+    },
+    {
+      "lv": 15,
+      "name": "Mente sfuggente",
+      "desc": "Ottieni competenza nei tiri salvezza su Saggezza."
+    },
+    {
+      "lv": 16,
+      "name": "Incremento caratteristica / talento",
+      "desc": "Aumenti caratteristiche o scegli un talento."
+    },
+    {
+      "lv": 17,
+      "name": "Caratteristica di archetipo",
+      "desc": "Ottieni la capacita finale della sottoclasse."
+    },
+    {
+      "lv": 18,
+      "name": "Inafferrabile",
+      "desc": "Nessun attacco contro di te ha vantaggio, se non sei incapacitato."
+    },
+    {
+      "lv": 19,
+      "name": "Incremento caratteristica / talento",
+      "desc": "Aumenti caratteristiche o scegli un talento."
+    },
+    {
+      "lv": 20,
+      "name": "Colpo di fortuna",
+      "desc": "Puoi trasformare un fallimento importante in successo una volta per riposo."
+    }
+  ],
+  "rogueSubclasses": {
+    "thief": {
+      "label": "Thief / Ladro",
+      "source": "PHB",
+      "tools": [
+        "Mani veloci",
+        "Arrampicata migliorata",
+        "Uso oggetti magici",
+        "Riflessi da ladro"
+      ],
+      "features": [
+        {
+          "lv": 3,
+          "name": "Mani veloci",
+          "desc": "Azione bonus per usare oggetti, strumenti da ladro o interazioni rapide."
+        },
+        {
+          "lv": 3,
+          "name": "Lavoro al secondo piano",
+          "desc": "Arrampicata piu facile e salti migliorati."
+        },
+        {
+          "lv": 9,
+          "name": "Furtivita suprema",
+          "desc": "Se ti muovi lentamente, diventi molto piu difficile da individuare."
+        },
+        {
+          "lv": 13,
+          "name": "Usare oggetti magici",
+          "desc": "Ignori varie restrizioni di classe/razza/livello per gli oggetti magici."
+        },
+        {
+          "lv": 17,
+          "name": "Riflessi da ladro",
+          "desc": "Ottieni un turno extra nel primo round di combattimento."
+        }
+      ]
+    },
+    "assassin": {
+      "label": "Assassin / Assassino",
+      "source": "PHB",
+      "tools": [
+        "Kit da travestimento",
+        "Kit da avvelenatore",
+        "Assassinare",
+        "Identita false"
+      ],
+      "features": [
+        {
+          "lv": 3,
+          "name": "Competenze bonus",
+          "desc": "Ottieni kit da travestimento e kit da avvelenatore."
+        },
+        {
+          "lv": 3,
+          "name": "Assassinare",
+          "desc": "Vantaggio contro creature che non hanno ancora agito; critico contro creature sorprese."
+        },
+        {
+          "lv": 9,
+          "name": "Esperto infiltratore",
+          "desc": "Puoi costruire identita false credibili nel tempo."
+        },
+        {
+          "lv": 13,
+          "name": "Impostore",
+          "desc": "Puoi imitare parlata, scrittura e comportamento di altri."
+        },
+        {
+          "lv": 17,
+          "name": "Colpo mortale",
+          "desc": "Contro creature sorprese puoi raddoppiare i danni se falliscono il TS."
+        }
+      ]
+    },
+    "arcane": {
+      "label": "Arcane Trickster / Ingannatore Arcano",
+      "source": "PHB",
+      "tools": [
+        "Spellcasting INT",
+        "Mano magica",
+        "Imboscata magica",
+        "Furto incantesimo"
+      ],
+      "features": [
+        {
+          "lv": 3,
+          "name": "Incantesimi",
+          "desc": "Ottieni spellcasting da Mago basato su Intelligenza."
+        },
+        {
+          "lv": 3,
+          "name": "Mano magica furtiva",
+          "desc": "La tua Mano Magica diventa invisibile e puo fare azioni ladresche."
+        },
+        {
+          "lv": 9,
+          "name": "Imboscata magica",
+          "desc": "Se sei nascosto, le creature hanno svantaggio ai TS contro i tuoi incantesimi."
+        },
+        {
+          "lv": 13,
+          "name": "Ingannatore versatile",
+          "desc": "Puoi usare Mano Magica per ottenere vantaggio contro un nemico."
+        },
+        {
+          "lv": 17,
+          "name": "Furto incantesimo",
+          "desc": "Puoi rubare temporaneamente un incantesimo lanciato contro di te."
+        }
+      ]
+    },
+    "inquisitive": {
+      "label": "Inquisitive / Inquisitore",
+      "source": "XGtE",
+      "tools": [
+        "Occhio per dettagli",
+        "Combattimento perspicace",
+        "Individuare inganni",
+        "Furtivo senza vantaggio"
+      ],
+      "features": [
+        {
+          "lv": 3,
+          "name": "Orecchio per la menzogna",
+          "desc": "Ottimo nel capire quando qualcuno sta mentendo."
+        },
+        {
+          "lv": 3,
+          "name": "Occhio per i dettagli",
+          "desc": "Usi azione bonus per cercare dettagli o scoprire creature nascoste."
+        },
+        {
+          "lv": 3,
+          "name": "Combattimento perspicace",
+          "desc": "Studi un nemico per usare furtivo anche senza vantaggio."
+        },
+        {
+          "lv": 9,
+          "name": "Occhio saldo",
+          "desc": "Vantaggio a Percezione/Indagare se ti muovi poco."
+        },
+        {
+          "lv": 13,
+          "name": "Occhio infallibile",
+          "desc": "Percepisci illusioni, metamorfosi o inganni magici vicini."
+        },
+        {
+          "lv": 17,
+          "name": "Occhio per la debolezza",
+          "desc": "Contro bersagli studiati aggiungi danno furtivo extra."
+        }
+      ]
+    },
+    "mastermind": {
+      "label": "Mastermind",
+      "source": "XGtE",
+      "tools": [
+        "Kit travestimento",
+        "Kit falsificazione",
+        "Aiutare a 30 ft",
+        "Intrigo"
+      ],
+      "features": [
+        {
+          "lv": 3,
+          "name": "Maestro dell'intrigo",
+          "desc": "Ottieni kit, lingue e capacita sociali utili a infiltrazione e inganno."
+        },
+        {
+          "lv": 3,
+          "name": "Maestro della tattica",
+          "desc": "Puoi usare Aiutare come azione bonus a distanza aumentata."
+        },
+        {
+          "lv": 9,
+          "name": "Manipolatore intuitivo",
+          "desc": "Studi una creatura per capirne capacita e statistiche generali."
+        },
+        {
+          "lv": 13,
+          "name": "Depistaggio",
+          "desc": "Puoi far colpire un'altra creatura vicina al posto tuo in certe situazioni."
+        },
+        {
+          "lv": 17,
+          "name": "Anima dell'inganno",
+          "desc": "La tua mente e identita sono estremamente difficili da leggere o forzare."
+        }
+      ]
+    },
+    "scout": {
+      "label": "Scout / Esploratore",
+      "source": "XGtE",
+      "tools": [
+        "Natura expertise",
+        "Sopravvivenza expertise",
+        "Schermagliatore",
+        "Mobilita"
+      ],
+      "features": [
+        {
+          "lv": 3,
+          "name": "Schermagliatore",
+          "desc": "Reazione per muoverti quando un nemico finisce il turno vicino a te."
+        },
+        {
+          "lv": 3,
+          "name": "Survivalist",
+          "desc": "Competenza/expertise in Natura e Sopravvivenza."
+        },
+        {
+          "lv": 9,
+          "name": "Mobilita superiore",
+          "desc": "Velocita aumentata."
+        },
+        {
+          "lv": 13,
+          "name": "Maestro dell'imboscata",
+          "desc": "Bonus iniziativa e vantaggi tattici nel primo round."
+        },
+        {
+          "lv": 17,
+          "name": "Colpo improvviso",
+          "desc": "Puoi effettuare un attacco extra come azione bonus e applicare furtivo a bersagli diversi."
+        }
+      ]
+    },
+    "swashbuckler": {
+      "label": "Swashbuckler / Spadaccino",
+      "source": "XGtE",
+      "tools": [
+        "Carisma iniziativa",
+        "Furtivo 1v1",
+        "No AdO dal bersaglio",
+        "Duellante"
+      ],
+      "features": [
+        {
+          "lv": 3,
+          "name": "Gioco di gambe elegante",
+          "desc": "Se attacchi una creatura, non subisci AdO da lei per quel turno."
+        },
+        {
+          "lv": 3,
+          "name": "Audacia spavalda",
+          "desc": "Aggiungi CAR all'iniziativa e puoi fare furtivo in duello 1v1."
+        },
+        {
+          "lv": 9,
+          "name": "Panache",
+          "desc": "Usi fascino/provocazione per controllare il comportamento dei bersagli."
+        },
+        {
+          "lv": 13,
+          "name": "Manovra elegante",
+          "desc": "Azione bonus per vantaggio ad Acrobazia o Atletica."
+        },
+        {
+          "lv": 17,
+          "name": "Maestro duellante",
+          "desc": "Puoi ritirare un attacco mancato con vantaggio."
+        }
+      ]
+    },
+    "soulknife": {
+      "label": "Soulknife / Lama dell'Anima",
+      "source": "TCoE",
+      "tools": [
+        "Dadi psionici",
+        "Lame psichiche",
+        "Telepatia",
+        "Teletrasporto"
+      ],
+      "features": [
+        {
+          "lv": 3,
+          "name": "Potere psionico",
+          "desc": "Ottieni dadi psionici per skill e comunicazione mentale."
+        },
+        {
+          "lv": 3,
+          "name": "Lame psichiche",
+          "desc": "Crei lame mentali per attaccare, anche come azione bonus."
+        },
+        {
+          "lv": 9,
+          "name": "Lame dell'anima",
+          "desc": "Migliori precisione e mobilita delle lame psichiche."
+        },
+        {
+          "lv": 13,
+          "name": "Velo psichico",
+          "desc": "Diventi invisibile temporaneamente."
+        },
+        {
+          "lv": 17,
+          "name": "Squarciare la mente",
+          "desc": "Puoi stordire o disorientare con attacchi psichici."
+        }
+      ]
+    },
+    "phantom": {
+      "label": "Phantom / Fantasma",
+      "source": "TCoE",
+      "tools": [
+        "Competenza flessibile",
+        "Danno necrotico secondario",
+        "Token anime",
+        "Forma spettrale"
+      ],
+      "features": [
+        {
+          "lv": 3,
+          "name": "Sussurri dei morti",
+          "desc": "Ottieni una competenza temporanea dopo ogni riposo."
+        },
+        {
+          "lv": 3,
+          "name": "Lamenti dalla tomba",
+          "desc": "Dopo furtivo puoi danneggiare una seconda creatura con energia necrotica."
+        },
+        {
+          "lv": 9,
+          "name": "Token dei defunti",
+          "desc": "Ottieni token spirituali con effetti difensivi e offensivi."
+        },
+        {
+          "lv": 13,
+          "name": "Passeggiata spettrale",
+          "desc": "Assumi forma spettrale e migliori movimento/difesa."
+        },
+        {
+          "lv": 17,
+          "name": "Amico della morte",
+          "desc": "Potenzia i Lamenti e recuperi piu facilmente risorse."
+        }
+      ]
+    }
+  }
+}

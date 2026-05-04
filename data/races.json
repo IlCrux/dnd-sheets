@@ -1,1 +1,326 @@
-
+{
+  "races": {
+    "umano": {
+      "label": "Umano",
+      "speed": 30,
+      "asi": "+1 a tutte le caratteristiche",
+      "traits": "Versatile. Lingua extra.",
+      "source": "PHB",
+      "size": "Medium"
+    },
+    "umano_var": {
+      "label": "Umano variante",
+      "speed": 30,
+      "asi": "+1 a 2 caratteristiche a scelta",
+      "traits": "Talento al lv 1, competenza in 1 abilita.",
+      "source": "PHB",
+      "size": "Medium"
+    },
+    "elfo_alto": {
+      "label": "Elfo alto",
+      "speed": 30,
+      "asi": "+2 DES, +1 INT",
+      "traits": "Visione del buio 60 ft. Trance. Vantaggio vs Ammaliamento. Trucchetto da Mago.",
+      "source": "PHB",
+      "size": "Medium"
+    },
+    "elfo_silvano": {
+      "label": "Elfo silvano",
+      "speed": 35,
+      "asi": "+2 DES, +1 SAG",
+      "traits": "Visione del buio 60 ft. Mascherarsi nella natura. Velocita 35 ft.",
+      "source": "PHB",
+      "size": "Medium"
+    },
+    "drow": {
+      "label": "Drow",
+      "speed": 30,
+      "asi": "+2 DES, +1 CAR",
+      "traits": "Scurovisione superiore 120 ft. Sensibilita alla luce solare. Magia Drow.",
+      "source": "PHB",
+      "size": "Medium"
+    },
+    "nano_collina": {
+      "label": "Nano delle colline",
+      "speed": 25,
+      "asi": "+2 COS, +1 SAG",
+      "traits": "Visione del buio. Resistenza al veleno. +1 PF per livello.",
+      "source": "PHB",
+      "size": "Medium"
+    },
+    "nano_montagna": {
+      "label": "Nano delle montagne",
+      "speed": 25,
+      "asi": "+2 COS, +2 FOR",
+      "traits": "Visione del buio. Resistenza al veleno. Competenza armature leggere/medie.",
+      "source": "PHB",
+      "size": "Medium"
+    },
+    "halfling": {
+      "label": "Halfling",
+      "speed": 25,
+      "asi": "+2 DES",
+      "traits": "Fortunato. Coraggioso. Agile.",
+      "source": "PHB",
+      "size": "Small"
+    },
+    "gnomo": {
+      "label": "Gnomo",
+      "speed": 25,
+      "asi": "+2 INT",
+      "traits": "Visione del buio. Astuzia gnomica.",
+      "source": "PHB",
+      "size": "Small"
+    },
+    "mezzelfo": {
+      "label": "Mezzelfo",
+      "speed": 30,
+      "asi": "+2 CAR, +1 a 2 altre",
+      "traits": "Visione del buio. Vantaggio vs Ammaliamento. 2 abilita a scelta.",
+      "source": "PHB",
+      "size": "Medium"
+    },
+    "mezzorco": {
+      "label": "Mezzorco",
+      "speed": 30,
+      "asi": "+2 FOR, +1 COS",
+      "traits": "Visione del buio. Tenacia. Critico brutale.",
+      "source": "PHB",
+      "size": "Medium"
+    },
+    "tiefling": {
+      "label": "Tiefling",
+      "speed": 30,
+      "asi": "+2 CAR, +1 INT",
+      "traits": "Visione del buio. Resistenza al fuoco. Discendenza infernale.",
+      "source": "PHB",
+      "size": "Medium"
+    },
+    "dragonide": {
+      "label": "Dragonide",
+      "speed": 30,
+      "asi": "+2 FOR, +1 CAR",
+      "traits": "Soffio draconico. Resistenza al danno del retaggio.",
+      "source": "PHB",
+      "size": "Medium"
+    },
+    "tabaxi": {
+      "label": "Tabaxi",
+      "speed": 30,
+      "asi": "+2 DES, +1 CAR / oppure bonus flessibili secondo la campagna",
+      "traits": "Visione del buio. Andatura felina. Arrampicata. Sensi felini.",
+      "source": "VGtM / MPMM",
+      "size": "Medium"
+    },
+    "goliath": {
+      "label": "Goliath",
+      "speed": 30,
+      "asi": "+2 FOR, +1 COS / oppure bonus flessibili secondo la campagna",
+      "traits": "Corporatura poderosa. Resistenza della pietra. Nato in montagna.",
+      "source": "VGtM / MPMM",
+      "size": "Medium"
+    },
+    "bugbear": {
+      "label": "Bugbear",
+      "speed": 30,
+      "asi": "Bonus caratteristiche flessibili secondo Monsters of the Multiverse",
+      "traits": "Scurovisione. Retaggio fatato. Arti lunghi. Corporatura poderosa. Furtivo. Attacco di sorpresa.",
+      "source": "Mordenkainen Presents: Monsters of the Multiverse",
+      "size": "Medium"
+    },
+    "goblin": {
+      "label": "Goblin",
+      "speed": 30,
+      "asi": "Bonus caratteristiche flessibili secondo Monsters of the Multiverse",
+      "traits": "Goblinoide. Scurovisione. Retaggio fatato. Furia del piccolo. Fuga agile.",
+      "source": "Mordenkainen Presents: Monsters of the Multiverse",
+      "size": "Small"
+    },
+    "hobgoblin": {
+      "label": "Hobgoblin",
+      "speed": 30,
+      "asi": "Bonus caratteristiche flessibili secondo Monsters of the Multiverse",
+      "traits": "Scurovisione. Retaggio fatato. Dono fatato. Fortuna dai molti.",
+      "source": "Mordenkainen Presents: Monsters of the Multiverse",
+      "size": "Medium"
+    },
+    "kobold": {
+      "label": "Kobold",
+      "speed": 30,
+      "asi": "Bonus caratteristiche flessibili secondo Monsters of the Multiverse",
+      "traits": "Scurovisione. Grido draconico. Eredita kobold.",
+      "source": "Mordenkainen Presents: Monsters of the Multiverse",
+      "size": "Small"
+    },
+    "lizardfolk": {
+      "label": "Lizardfolk",
+      "speed": 30,
+      "asi": "Bonus caratteristiche flessibili secondo Monsters of the Multiverse",
+      "traits": "Morso. Trattenere il fiato. Fame predatoria. Armatura naturale. Intuizione naturale.",
+      "source": "Mordenkainen Presents: Monsters of the Multiverse",
+      "size": "Medium"
+    },
+    "firbolg": {
+      "label": "Firbolg",
+      "speed": 30,
+      "asi": "Bonus caratteristiche flessibili secondo Monsters of the Multiverse",
+      "traits": "Magia firbolg. Passo nascosto. Corporatura poderosa. Parlata con bestie e foglie.",
+      "source": "VGtM / MPMM",
+      "size": "Medium"
+    },
+    "fairy": {
+      "label": "Fairy / Fata",
+      "speed": 30,
+      "asi": "Bonus caratteristiche flessibili secondo Monsters of the Multiverse",
+      "traits": "Tipo creatura Folletto. Volo. Magia fatata.",
+      "source": "The Wild Beyond the Witchlight / MPMM",
+      "size": "Small"
+    },
+    "genasi_aria": {
+      "label": "Genasi dell'Aria",
+      "speed": 35,
+      "asi": "Bonus caratteristiche flessibili secondo Monsters of the Multiverse",
+      "traits": "Scurovisione. Resistenza al fulmine. Respiro infinito. Magia del vento.",
+      "source": "Elemental Evil / MPMM",
+      "size": "Small o Medium"
+    },
+    "genasi_terra": {
+      "label": "Genasi della Terra",
+      "speed": 30,
+      "asi": "Bonus caratteristiche flessibili secondo Monsters of the Multiverse",
+      "traits": "Scurovisione. Camminata sulla terra. Magia della terra. Resistenza legata alla stirpe.",
+      "source": "Elemental Evil / MPMM",
+      "size": "Small o Medium"
+    },
+    "genasi_fuoco": {
+      "label": "Genasi del Fuoco",
+      "speed": 30,
+      "asi": "Bonus caratteristiche flessibili secondo Monsters of the Multiverse",
+      "traits": "Scurovisione. Resistenza al fuoco. Magia della fiamma.",
+      "source": "Elemental Evil / MPMM",
+      "size": "Small o Medium"
+    },
+    "genasi_acqua": {
+      "label": "Genasi dell'Acqua",
+      "speed": 30,
+      "swim": 30,
+      "asi": "Bonus caratteristiche flessibili secondo Monsters of the Multiverse",
+      "traits": "Scurovisione. Resistenza all'acido. Anfibio. Nuoto. Magia dell'acqua.",
+      "source": "Elemental Evil / MPMM",
+      "size": "Small o Medium"
+    },
+    "githyanki": {
+      "label": "Githyanki",
+      "speed": 30,
+      "asi": "Bonus caratteristiche flessibili secondo Monsters of the Multiverse",
+      "traits": "Conoscenza astrale. Psionica githyanki. Resilienza psichica.",
+      "source": "Mordenkainen Presents: Monsters of the Multiverse",
+      "size": "Medium"
+    },
+    "githzerai": {
+      "label": "Githzerai",
+      "speed": 30,
+      "asi": "Bonus caratteristiche flessibili secondo Monsters of the Multiverse",
+      "traits": "Psionica githzerai. Disciplina mentale. Resilienza psichica.",
+      "source": "Mordenkainen Presents: Monsters of the Multiverse",
+      "size": "Medium"
+    },
+    "kenku": {
+      "label": "Kenku",
+      "speed": 30,
+      "asi": "Bonus caratteristiche flessibili secondo Monsters of the Multiverse",
+      "traits": "Esperto falsario. Addestramento kenku. Mimicry / imitazione.",
+      "source": "VGtM / MPMM",
+      "size": "Small o Medium"
+    },
+    "orc": {
+      "label": "Orc",
+      "speed": 30,
+      "asi": "Bonus caratteristiche flessibili secondo Monsters of the Multiverse",
+      "traits": "Scurovisione. Scarica di adrenalina. Corporatura poderosa. Resistenza implacabile.",
+      "source": "Mordenkainen Presents: Monsters of the Multiverse",
+      "size": "Medium"
+    },
+    "tortle": {
+      "label": "Tortle",
+      "speed": 30,
+      "asi": "Bonus caratteristiche flessibili secondo la campagna",
+      "traits": "Armatura naturale. Guscio difensivo. Artigli. Trattenere il fiato. Istinto di sopravvivenza.",
+      "source": "The Tortle Package / MPMM",
+      "size": "Medium"
+    },
+    "yuan_ti": {
+      "label": "Yuan-ti",
+      "speed": 30,
+      "asi": "Bonus caratteristiche flessibili secondo Monsters of the Multiverse",
+      "traits": "Scurovisione. Resistenza magica. Resistenza al veleno. Magia serpentina.",
+      "source": "VGtM / MPMM",
+      "size": "Small o Medium"
+    },
+    "shadar_kai": {
+      "label": "Shadar-kai",
+      "speed": 30,
+      "asi": "Bonus caratteristiche flessibili secondo Monsters of the Multiverse",
+      "traits": "Scurovisione. Ascendenza fatata. Trance. Benedizione della Regina Corvo. Resistenza necrotica.",
+      "source": "Mordenkainen Presents: Monsters of the Multiverse",
+      "size": "Medium"
+    },
+    "eladrin": {
+      "label": "Eladrin",
+      "speed": 30,
+      "asi": "Bonus caratteristiche flessibili secondo Monsters of the Multiverse",
+      "traits": "Scurovisione. Ascendenza fatata. Trance. Passo fatato legato alle stagioni.",
+      "source": "Mordenkainen Presents: Monsters of the Multiverse",
+      "size": "Medium"
+    },
+    "aarakocra": {
+      "label": "Aarakocra",
+      "speed": 30,
+      "fly": 30,
+      "asi": "Bonus caratteristiche flessibili secondo Monsters of the Multiverse",
+      "traits": "Volo. Artigli. Richiamo del vento / legame elementale secondo versione usata.",
+      "source": "Elemental Evil / MPMM",
+      "size": "Medium"
+    },
+    "aasimar": {
+      "label": "Aasimar",
+      "speed": 30,
+      "asi": "Bonus caratteristiche flessibili secondo Monsters of the Multiverse",
+      "traits": "Scurovisione. Resistenza celestiale. Mani curative. Portatore di luce. Rivelazione celestiale.",
+      "source": "VGtM / MPMM",
+      "size": "Small o Medium"
+    },
+    "changeling": {
+      "label": "Changeling",
+      "speed": 30,
+      "asi": "Bonus caratteristiche flessibili secondo Monsters of the Multiverse",
+      "traits": "Tipo Folletto. Mutaforma. Istinti da changeling.",
+      "source": "Eberron / MPMM",
+      "size": "Small o Medium"
+    },
+    "centaur": {
+      "label": "Centaur",
+      "speed": 40,
+      "asi": "Bonus caratteristiche flessibili secondo Monsters of the Multiverse",
+      "traits": "Tipo Folletto. Carica. Zoccoli. Corporatura equina. Affinita naturale.",
+      "source": "Guildmasters' Guide to Ravnica / MPMM",
+      "size": "Medium"
+    },
+    "minotaur": {
+      "label": "Minotaur",
+      "speed": 30,
+      "asi": "Bonus caratteristiche flessibili secondo Monsters of the Multiverse",
+      "traits": "Corna. Incornata. Carica a martello. Richiamo del labirinto.",
+      "source": "Guildmasters' Guide to Ravnica / MPMM",
+      "size": "Medium"
+    },
+    "satyr": {
+      "label": "Satyr",
+      "speed": 35,
+      "asi": "Bonus caratteristiche flessibili secondo Monsters of the Multiverse",
+      "traits": "Tipo Folletto. Ariete. Resistenza magica. Saltatore allegro. Competenza musicale/sociale.",
+      "source": "Mythic Odysseys of Theros / MPMM",
+      "size": "Medium"
+    }
+  }
+}
