@@ -264,11 +264,7 @@ textarea{resize:vertical;min-height:70px}
     <button class="btn btn-green" onclick="openNewCharModal()">+ Crea nuovo personaggio</button>
   </div>
 
-  <div style="display:flex;justify-content:center;margin:18px 0 22px;">
-  <button class="btn btn-green" onclick="openNewCharModal()">+ Crea nuovo personaggio</button>
-</div>
-
-<div class="char-card-grid" id="char-card-grid"></div>
+  <div class="char-card-grid" id="char-card-grid"></div>
 
   <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px;">
     <button class="btn" onclick="exportAllChars()">⬇ Esporta tutti JSON</button>
@@ -715,7 +711,15 @@ function emptyChar(name){
 
 function state(){ return characters[currentCharId]; }
 function saveCharacters(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(characters)); }
-function loadCharacters(){ try{ characters = JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}") || {}; }catch(e){ characters={}; } }
+function loadCharacters(){
+  try{
+    characters = JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}") || {};
+    characters = normalizeCloudPayload(characters);
+  }catch(e){
+    console.warn("Dati locali non validi, riparto da vuoto", e);
+    characters={};
+  }
+}
 
 let cloudSaveTimer = null;
 let cloudSaveInProgress = false;
@@ -802,16 +806,18 @@ function mod(s){ return Math.floor(((parseInt(s)||10)-10)/2); }
 function modStr(s){ const m=mod(s); return (m>=0?"+":"")+m; }
 function calcProfBonus(level){ const lv=Math.max(1,Math.min(20,parseInt(level)||1)); return Math.ceil(lv/4)+1; }
 function getPB(){ return calcProfBonus(state().charLevel); }
-function getAM(attr){ return mod(state().abilities[attr]||10); }
+function getAM(attr){ const c=state(); return mod((c.abilities || {})[attr] || 10); }
 function feetToMeters(ft){ const v=parseFloat(ft)||0; return (v*0.3048).toFixed(1); }
 
 function calcAC(c){
   c=c||state(); if(!c) return 10;
+  c.abilities ||= {FOR:10,DES:10,COS:10,INT:10,SAG:10,CAR:10};
+  c.equipment ||= [];
   const armor=ARMOR_DATA[c.armorEquipped] || ARMOR_DATA["Nessuna armatura"];
-  const dexMod=mod(c.abilities.DES||10);
+  const dexMod=mod((c.abilities || {}).DES || 10);
   let ac=armor.ac + Math.min(dexMod, armor.dexCap);
   if(c.shieldEquipped==="Scudo") ac+=2;
-  (c.equipment||[]).forEach(e=>{ if(e.equipped) ac += parseInt(e.acBonus)||0; });
+  (c.equipment||[]).forEach(e=>{ if(e && e.equipped) ac += parseInt(e.acBonus)||0; });
   ac += parseInt(c.acCustom)||0;
   return ac;
 }
@@ -819,6 +825,7 @@ function calcAC(c){
 function renderCharSelector(){
   const grid=document.getElementById("char-card-grid"); grid.innerHTML="";
   Object.values(characters).forEach(c=>{
+    migrateChar(c);
     const card=document.createElement("div"); card.className="char-card";
     const cls=c.charClass||"Senza classe";
     const race=c.charRace ? (RACES_DATA[c.charRace]?.label || c.charRace) : "—";
@@ -875,8 +882,23 @@ function clearCloudConfig(){
 function cloudPayload(){ return {version:1,updatedAt:new Date().toISOString(),characters}; }
 function normalizeCloudPayload(data){
   if(!data || typeof data !== "object") throw new Error("Payload non valido");
-  if(data.characters && typeof data.characters==="object") return data.characters;
-  return data;
+  let chars = data.characters && typeof data.characters === "object" ? data.characters : data;
+
+  // Se per errore il Gist contiene un singolo personaggio invece della mappa {id: personaggio}, lo trasformo in mappa.
+  if(chars.id && (chars.charName !== undefined || chars.abilities !== undefined)) {
+    chars = {[chars.id]: chars};
+  }
+
+  if(!chars || typeof chars !== "object") throw new Error("Nessun personaggio valido nel JSON cloud");
+
+  Object.keys(chars).forEach(id => {
+    if(!chars[id] || typeof chars[id] !== "object") delete chars[id];
+    else {
+      if(!chars[id].id) chars[id].id = id;
+      migrateChar(chars[id]);
+    }
+  });
+  return chars;
 }
 
 async function cloudCreateOrSave(){
@@ -1068,12 +1090,34 @@ function loadCurrentCharIntoUI(){
   updateClassDefaults(); updateRaceInfo(); updateClassInfo(); updateProfBonus(); updateSpeed(); updateSpellStats(); updateAC(); updateInspirationUI(); restoreDeathSaves(); showConditionInfo(); renderRollHistory(); saveState();
 }
 function migrateChar(c){
-  c.saves ||= {FOR:false,DES:false,COS:false,INT:false,SAG:false,CAR:false};
-  c.skills ||= {}; c.abilities ||= {FOR:10,DES:10,COS:10,INT:10,SAG:10,CAR:10};
+  c.id ||= "char_" + Date.now() + "_" + Math.random().toString(36).slice(2,7);
+  c.charName ||= "Senza nome";
+  c.charClass ||= ""; c.charLevel = Math.max(1, Math.min(20, parseInt(c.charLevel) || 1)); c.charRace ||= "";
+  c.charSubclass ||= ""; c.charBackground ||= ""; c.charAlignment ||= ""; c.charXP ||= 0;
+  c.statInit ||= "+0"; c.statSpeedFt ||= 30;
+  c.abilities ||= {};
+  ABILITIES.forEach(a => { if(c.abilities[a] === undefined || c.abilities[a] === null || c.abilities[a] === "") c.abilities[a] = 10; });
+  c.saves ||= {};
+  ABILITIES.forEach(a => { if(typeof c.saves[a] !== "boolean") c.saves[a] = false; });
+  c.skills ||= {};
+  c.inspiration = !!c.inspiration;
+  c.hpCurrent = parseInt(c.hpCurrent); if(isNaN(c.hpCurrent)) c.hpCurrent = 10;
+  c.hpMax = parseInt(c.hpMax); if(isNaN(c.hpMax)) c.hpMax = 10;
+  c.hpTemp = parseInt(c.hpTemp) || 0;
   c.deathSaves ||= {s:[false,false,false],f:[false,false,false]};
+  c.deathSaves.s ||= [false,false,false]; c.deathSaves.f ||= [false,false,false];
+  c.hdUsed = parseInt(c.hdUsed) || 0; c.hdTotal = parseInt(c.hdTotal) || c.charLevel || 1;
+  c.armorEquipped ||= "Nessuna armatura"; c.shieldEquipped ||= ""; c.acCustom = parseInt(c.acCustom) || 0;
   c.equipment ||= []; c.attacks ||= []; c.conditions ||= {}; c.spellSlots ||= {}; c.cantrips ||= []; c.spells ||= [];
-  c.coins ||= {cp:0,sp:0,ep:0,gp:0,pp:0}; c.inventory ||= [];
-  c.traits ||= {personality:"",ideals:"",bonds:"",flaws:""}; c.notes ||= {session:"",npcs:"",abilities:"",langs:"",proficiencies:""}; c.rollHistory ||= [];
+  c.spellAbility ||= "";
+  c.coins ||= {cp:0,sp:0,ep:0,gp:0,pp:0};
+  ["cp","sp","ep","gp","pp"].forEach(k => c.coins[k] = parseInt(c.coins[k]) || 0);
+  c.inventory ||= [];
+  c.traits ||= {personality:"",ideals:"",bonds:"",flaws:""};
+  ["personality","ideals","bonds","flaws"].forEach(k => c.traits[k] ||= "");
+  c.notes ||= {session:"",npcs:"",abilities:"",langs:"",proficiencies:""};
+  ["session","npcs","abilities","langs","proficiencies"].forEach(k => c.notes[k] ||= "");
+  c.rollHistory ||= [];
 }
 
 function updateRaceInfo(){
