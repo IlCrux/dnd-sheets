@@ -19,317 +19,6 @@
       "featureName": "Shelter of the Faithful",
       "featureSummary": "Puoi ricevere supporto di base, ospitalita e assistenza da comunita o luoghi legati alla tua fede, se sei in buoni rapporti."
     },
-    "charlatan_2014": {
-      "label": "Charlatan / Ciarlatano (2014)",
-      "ruleset": "5e 2014 legacy",
-      "source": "PHB 2014",
-      "skillProficiencies": [
-        "Inganno",
-        "Prestidigitazione"
-      ],
-      "toolProficiencies": [
-        "Kit da travestimento",
-        "Kit da falsificazione"
-      ],
-      "languages": [],
-      "equipmentSummary": "Abiti eleganti, kit da travestimento, strumenti per truffa o falsificazione e monete iniziali.",
-      "startingGoldGp": 15,
-      "featureName": "False Identity",
-      "featureSummary": "Hai una seconda identita credibile con documenti, contatti e copertura sociale di base."
-    },
-    "criminal_2014": {
-      "label": "Criminal / Criminale (2014)",
-      "ruleset": "5e 2014 legacy",
-      "source": "PHB 2014",
-      "skillProficiencies": [
-        "Inganno",
-        "Furtivita"
-      ],
-      "toolProficiencies": [
-        "Un tipo di set da gioco",
-        "Strumenti da ladro"
-      ],
-      "languages": [],
-      "equipmentSummary": "Piede di porco, abiti scuri con cappuccio e monete iniziali.",
-      "startingGoldGp": 15,
-      "featureName": "Criminal Contact",
-      "featureSummary": "Hai un contatto affidabile nel mondo criminale e sai come scambiare messaggi attraverso intermediari."
-    },
-    "spy_2014": {
-      "label": "Spy / Spia (variante Criminale, 2014)",
-      "ruleset": "5e 2014 legacy",
-      "source": "PHB 2014",
-      "skillProficiencies": [
-        "Inganno",
-        "Furtivita"
-      ],
-      "toolProficiencies": [
-        "Un tipo di set da gioco",
-        "Strumenti da ladro"
-      ],
-      "languages": [],
-      "equipmentSummary": "Come Criminale, adattato a spionaggio e infiltrazione.",
-      "startingGoldGp": 15,
-      "featureName": "Criminal Contact",
-      "featureSummary": "Hai una rete di contatti, informatori o agenti con cui comunicare discretamente."
-    },
-    "entertainer_2014": {
-      "label": "Entertainer / Intrattenitore (2014)",
-      "ruleset": "5e 2014 legacy",
-      "source": "PHB 2014",
-      "skillProficiencies": [
-        "Acrobazia",
-        "Intrattenere"
-      ],
-      "toolProficiencies": [
-        "Kit da travestimento",
-        "Uno strumento musicale"
-      ],
-      "languages": [],
-      "equipmentSummary": "Strumento musicale, favore di un ammiratore, costume e monete iniziali.",
-      "startingGoldGp": 15,
-      "featureName": "By Popular Demand",
-      "featureSummary": "Puoi trovare vitto e alloggio esibendoti in luoghi adatti, ottenendo anche una certa accoglienza dal pubblico."
-    },
-    "gladiator_2014": {
-      "label": "Gladiator / Gladiatore (variante Intrattenitore, 2014)",
-      "ruleset": "5e 2014 legacy",
-      "source": "PHB 2014",
-      "skillProficiencies": [
-        "Acrobazia",
-        "Intrattenere"
-      ],
-      "toolProficiencies": [
-        "Kit da travestimento",
-        "Un tipo di strumento o arma scenica a scelta del DM"
-      ],
-      "languages": [],
-      "equipmentSummary": "Equipaggiamento da esibizione marziale, costume e monete iniziali.",
-      "startingGoldGp": 15,
-      "featureName": "By Popular Demand",
-      "featureSummary": "Puoi ottenere ospitalita e attenzione grazie alla tua fama di combattente scenico o d'arena."
-    },
-    "folk_hero_2014": {
-      "label": "Folk Hero / Eroe del Popolo (2014)",
-      "ruleset": "5e 2014 legacy",
-      "source": "PHB 2014",
-      "skillProficiencies": [
-        "Addestrare Animali",
-        "Sopravvivenza"
-      ],
-      "toolProficiencies": [
-        "Un tipo di strumenti da artigiano",
-        "Veicoli terrestri"
-      ],
-      "languages": [],
-      "equipmentSummary": "Strumenti da artigiano, pala, pentola di ferro, abiti comuni e monete iniziali.",
-      "startingGoldGp": 10,
-      "featureName": "Rustic Hospitality",
-      "featureSummary": "La gente comune tende ad aiutarti, nasconderti o offrirti rifugio se la tua causa sembra giusta."
-    },
-    "guild_artisan_2014": {
-      "label": "Guild Artisan / Artigiano di Gilda (2014)",
-      "ruleset": "5e 2014 legacy",
-      "source": "PHB 2014",
-      "skillProficiencies": [
-        "Intuizione",
-        "Persuasione"
-      ],
-      "toolProficiencies": [
-        "Un tipo di strumenti da artigiano"
-      ],
-      "languages": [
-        "Una lingua a scelta"
-      ],
-      "equipmentSummary": "Strumenti da artigiano, lettera di presentazione della gilda, abiti da viaggiatore e monete iniziali.",
-      "startingGoldGp": 15,
-      "featureName": "Guild Membership",
-      "featureSummary": "La tua gilda puo offrirti contatti, supporto sociale, opportunita di lavoro e accesso a membri influenti."
-    },
-    "guild_merchant_2014": {
-      "label": "Guild Merchant / Mercante di Gilda (variante, 2014)",
-      "ruleset": "5e 2014 legacy",
-      "source": "PHB 2014",
-      "skillProficiencies": [
-        "Intuizione",
-        "Persuasione"
-      ],
-      "toolProficiencies": [
-        "Un tipo di strumenti da artigiano o strumenti/veicoli commerciali"
-      ],
-      "languages": [
-        "Una lingua a scelta"
-      ],
-      "equipmentSummary": "Materiale da commercio, documenti di gilda, abiti da viaggiatore e monete iniziali.",
-      "startingGoldGp": 15,
-      "featureName": "Guild Membership",
-      "featureSummary": "Hai accesso a una rete commerciale e reputazione professionale presso gilde o mercanti."
-    },
-    "hermit_2014": {
-      "label": "Hermit / Eremita (2014)",
-      "ruleset": "5e 2014 legacy",
-      "source": "PHB 2014",
-      "skillProficiencies": [
-        "Medicina",
-        "Religione"
-      ],
-      "toolProficiencies": [
-        "Kit da erborista"
-      ],
-      "languages": [
-        "Una lingua a scelta"
-      ],
-      "equipmentSummary": "Custodia per pergamene, coperta, abiti comuni, kit da erborista e monete iniziali.",
-      "startingGoldGp": 5,
-      "featureName": "Discovery",
-      "featureSummary": "Hai scoperto una verita, luogo, segreto o rivelazione importante da definire col DM."
-    },
-    "noble_2014": {
-      "label": "Noble / Nobile (2014)",
-      "ruleset": "5e 2014 legacy",
-      "source": "PHB 2014",
-      "skillProficiencies": [
-        "Storia",
-        "Persuasione"
-      ],
-      "toolProficiencies": [
-        "Un tipo di set da gioco"
-      ],
-      "languages": [
-        "Una lingua a scelta"
-      ],
-      "equipmentSummary": "Abiti raffinati, anello con sigillo, pergamena genealogica e monete iniziali.",
-      "startingGoldGp": 25,
-      "featureName": "Position of Privilege",
-      "featureSummary": "La tua posizione sociale ti apre porte, rispetto formale e accesso ad ambienti nobiliari."
-    },
-    "knight_2014": {
-      "label": "Knight / Cavaliere (variante Nobile, 2014)",
-      "ruleset": "5e 2014 legacy",
-      "source": "PHB 2014",
-      "skillProficiencies": [
-        "Storia",
-        "Persuasione"
-      ],
-      "toolProficiencies": [
-        "Un tipo di set da gioco"
-      ],
-      "languages": [
-        "Una lingua a scelta"
-      ],
-      "equipmentSummary": "Simboli del rango, abiti raffinati, prova della casata e monete iniziali.",
-      "startingGoldGp": 25,
-      "featureName": "Retainers / Position of Privilege",
-      "featureSummary": "Puoi avere seguito o riconoscimento cavalleresco, da adattare alla campagna."
-    },
-    "outlander_2014": {
-      "label": "Outlander / Forestiero (2014)",
-      "ruleset": "5e 2014 legacy",
-      "source": "PHB 2014",
-      "skillProficiencies": [
-        "Atletica",
-        "Sopravvivenza"
-      ],
-      "toolProficiencies": [
-        "Uno strumento musicale"
-      ],
-      "languages": [
-        "Una lingua a scelta"
-      ],
-      "equipmentSummary": "Bastone, trappola da caccia, trofeo di viaggio, abiti da viaggiatore e monete iniziali.",
-      "startingGoldGp": 10,
-      "featureName": "Wanderer",
-      "featureSummary": "Hai ottima memoria geografica e puoi trovare cibo/acqua per piccoli gruppi in terre selvagge adatte."
-    },
-    "sage_2014": {
-      "label": "Sage / Sapiente (2014)",
-      "ruleset": "5e 2014 legacy",
-      "source": "PHB 2014",
-      "skillProficiencies": [
-        "Arcano",
-        "Storia"
-      ],
-      "toolProficiencies": [],
-      "languages": [
-        "Due lingue a scelta"
-      ],
-      "equipmentSummary": "Inchiostro, penna, coltello, lettera da un collega, abiti comuni e monete iniziali.",
-      "startingGoldGp": 10,
-      "featureName": "Researcher",
-      "featureSummary": "Se non conosci un'informazione, spesso sai dove o da chi potresti trovarla."
-    },
-    "sailor_2014": {
-      "label": "Sailor / Marinaio (2014)",
-      "ruleset": "5e 2014 legacy",
-      "source": "PHB 2014",
-      "skillProficiencies": [
-        "Atletica",
-        "Percezione"
-      ],
-      "toolProficiencies": [
-        "Strumenti da navigatore",
-        "Veicoli acquatici"
-      ],
-      "languages": [],
-      "equipmentSummary": "Caviglia da marinaio, corda, portafortuna, abiti comuni e monete iniziali.",
-      "startingGoldGp": 10,
-      "featureName": "Ship's Passage",
-      "featureSummary": "Puoi ottenere passaggio su una nave per te e il gruppo, in cambio di aiuto o buoni rapporti."
-    },
-    "pirate_2014": {
-      "label": "Pirate / Pirata (variante Marinaio, 2014)",
-      "ruleset": "5e 2014 legacy",
-      "source": "PHB 2014",
-      "skillProficiencies": [
-        "Atletica",
-        "Percezione"
-      ],
-      "toolProficiencies": [
-        "Strumenti da navigatore",
-        "Veicoli acquatici"
-      ],
-      "languages": [],
-      "equipmentSummary": "Equipaggiamento da marinaio/pirata, portafortuna e monete iniziali.",
-      "startingGoldGp": 10,
-      "featureName": "Bad Reputation",
-      "featureSummary": "La tua reputazione intimidisce abbastanza da farti evitare problemi minori in certi luoghi."
-    },
-    "soldier_2014": {
-      "label": "Soldier / Soldato (2014)",
-      "ruleset": "5e 2014 legacy",
-      "source": "PHB 2014",
-      "skillProficiencies": [
-        "Atletica",
-        "Intimidire"
-      ],
-      "toolProficiencies": [
-        "Un tipo di set da gioco",
-        "Veicoli terrestri"
-      ],
-      "languages": [],
-      "equipmentSummary": "Insegna del grado, trofeo nemico, set da gioco, abiti comuni e monete iniziali.",
-      "startingGoldGp": 10,
-      "featureName": "Military Rank",
-      "featureSummary": "Il tuo grado militare ti garantisce riconoscimento, accesso a strutture militari e possibile supporto logistico."
-    },
-    "urchin_2014": {
-      "label": "Urchin / Monello (2014)",
-      "ruleset": "5e 2014 legacy",
-      "source": "PHB 2014",
-      "skillProficiencies": [
-        "Furtivita",
-        "Prestidigitazione"
-      ],
-      "toolProficiencies": [
-        "Kit da travestimento",
-        "Strumenti da ladro"
-      ],
-      "languages": [],
-      "equipmentSummary": "Coltellino, mappa della citta, topo domestico, ricordo dei genitori, abiti comuni e monete iniziali.",
-      "startingGoldGp": 10,
-      "featureName": "City Secrets",
-      "featureSummary": "Conosci scorciatoie urbane e passaggi nascosti che ti permettono di muoverti piu rapidamente in citta."
-    },
     "acolyte_2024": {
       "label": "Acolyte / Accolito (2024)",
       "ruleset": "D&D 2024",
@@ -376,6 +65,24 @@
       "featureName": "Origin Feat",
       "featureSummary": "Ottieni il talento Crafter e benefici legati alla creazione/uso di strumenti."
     },
+    "charlatan_2014": {
+      "label": "Charlatan / Ciarlatano (2014)",
+      "ruleset": "5e 2014 legacy",
+      "source": "PHB 2014",
+      "skillProficiencies": [
+        "Inganno",
+        "Prestidigitazione"
+      ],
+      "toolProficiencies": [
+        "Kit da travestimento",
+        "Kit da falsificazione"
+      ],
+      "languages": [],
+      "equipmentSummary": "Abiti eleganti, kit da travestimento, strumenti per truffa o falsificazione e monete iniziali.",
+      "startingGoldGp": 15,
+      "featureName": "False Identity",
+      "featureSummary": "Hai una seconda identita credibile con documenti, contatti e copertura sociale di base."
+    },
     "charlatan_2024": {
       "label": "Charlatan / Ciarlatano (2024)",
       "ruleset": "D&D 2024",
@@ -399,6 +106,24 @@
       "featureName": "Origin Feat",
       "featureSummary": "Ottieni Skilled e benefici flessibili su competenze."
     },
+    "criminal_2014": {
+      "label": "Criminal / Criminale (2014)",
+      "ruleset": "5e 2014 legacy",
+      "source": "PHB 2014",
+      "skillProficiencies": [
+        "Inganno",
+        "Furtivita"
+      ],
+      "toolProficiencies": [
+        "Un tipo di set da gioco",
+        "Strumenti da ladro"
+      ],
+      "languages": [],
+      "equipmentSummary": "Piede di porco, abiti scuri con cappuccio e monete iniziali.",
+      "startingGoldGp": 15,
+      "featureName": "Criminal Contact",
+      "featureSummary": "Hai un contatto affidabile nel mondo criminale e sai come scambiare messaggi attraverso intermediari."
+    },
     "criminal_2024": {
       "label": "Criminal / Criminale (2024)",
       "ruleset": "D&D 2024",
@@ -421,6 +146,24 @@
       "startingGoldGp": 50,
       "featureName": "Origin Feat",
       "featureSummary": "Ottieni Alert e competenze orientate a infiltrazione e prontezza."
+    },
+    "entertainer_2014": {
+      "label": "Entertainer / Intrattenitore (2014)",
+      "ruleset": "5e 2014 legacy",
+      "source": "PHB 2014",
+      "skillProficiencies": [
+        "Acrobazia",
+        "Intrattenere"
+      ],
+      "toolProficiencies": [
+        "Kit da travestimento",
+        "Uno strumento musicale"
+      ],
+      "languages": [],
+      "equipmentSummary": "Strumento musicale, favore di un ammiratore, costume e monete iniziali.",
+      "startingGoldGp": 15,
+      "featureName": "By Popular Demand",
+      "featureSummary": "Puoi trovare vitto e alloggio esibendoti in luoghi adatti, ottenendo anche una certa accoglienza dal pubblico."
     },
     "entertainer_2024": {
       "label": "Entertainer / Intrattenitore (2024)",
@@ -468,6 +211,42 @@
       "featureName": "Origin Feat",
       "featureSummary": "Ottieni Tough e benefici legati a resistenza fisica e vita rurale."
     },
+    "folk_hero_2014": {
+      "label": "Folk Hero / Eroe del Popolo (2014)",
+      "ruleset": "5e 2014 legacy",
+      "source": "PHB 2014",
+      "skillProficiencies": [
+        "Addestrare Animali",
+        "Sopravvivenza"
+      ],
+      "toolProficiencies": [
+        "Un tipo di strumenti da artigiano",
+        "Veicoli terrestri"
+      ],
+      "languages": [],
+      "equipmentSummary": "Strumenti da artigiano, pala, pentola di ferro, abiti comuni e monete iniziali.",
+      "startingGoldGp": 10,
+      "featureName": "Rustic Hospitality",
+      "featureSummary": "La gente comune tende ad aiutarti, nasconderti o offrirti rifugio se la tua causa sembra giusta."
+    },
+    "gladiator_2014": {
+      "label": "Gladiator / Gladiatore (variante Intrattenitore, 2014)",
+      "ruleset": "5e 2014 legacy",
+      "source": "PHB 2014",
+      "skillProficiencies": [
+        "Acrobazia",
+        "Intrattenere"
+      ],
+      "toolProficiencies": [
+        "Kit da travestimento",
+        "Un tipo di strumento o arma scenica a scelta del DM"
+      ],
+      "languages": [],
+      "equipmentSummary": "Equipaggiamento da esibizione marziale, costume e monete iniziali.",
+      "startingGoldGp": 15,
+      "featureName": "By Popular Demand",
+      "featureSummary": "Puoi ottenere ospitalita e attenzione grazie alla tua fama di combattente scenico o d'arena."
+    },
     "guard_2024": {
       "label": "Guard / Guardia (2024)",
       "ruleset": "D&D 2024",
@@ -514,6 +293,84 @@
       "featureName": "Origin Feat",
       "featureSummary": "Ottieni Magic Initiate (Druid) e competenze per esplorazione/sopravvivenza."
     },
+    "guild_artisan_2014": {
+      "label": "Guild Artisan / Artigiano di Gilda (2014)",
+      "ruleset": "5e 2014 legacy",
+      "source": "PHB 2014",
+      "skillProficiencies": [
+        "Intuizione",
+        "Persuasione"
+      ],
+      "toolProficiencies": [
+        "Un tipo di strumenti da artigiano"
+      ],
+      "languages": [
+        "Una lingua a scelta"
+      ],
+      "equipmentSummary": "Strumenti da artigiano, lettera di presentazione della gilda, abiti da viaggiatore e monete iniziali.",
+      "startingGoldGp": 15,
+      "featureName": "Guild Membership",
+      "featureSummary": "La tua gilda puo offrirti contatti, supporto sociale, opportunita di lavoro e accesso a membri influenti."
+    },
+    "guild_merchant_2014": {
+      "label": "Guild Merchant / Mercante di Gilda (variante, 2014)",
+      "ruleset": "5e 2014 legacy",
+      "source": "PHB 2014",
+      "skillProficiencies": [
+        "Intuizione",
+        "Persuasione"
+      ],
+      "toolProficiencies": [
+        "Un tipo di strumenti da artigiano o strumenti/veicoli commerciali"
+      ],
+      "languages": [
+        "Una lingua a scelta"
+      ],
+      "equipmentSummary": "Materiale da commercio, documenti di gilda, abiti da viaggiatore e monete iniziali.",
+      "startingGoldGp": 15,
+      "featureName": "Guild Membership",
+      "featureSummary": "Hai accesso a una rete commerciale e reputazione professionale presso gilde o mercanti."
+    },
+    "haunted_one_2014": {
+      "label": "Haunted One / Tormentato (Curse of Strahd)",
+      "ruleset": "5e 2014 legacy",
+      "source": "Curse of Strahd",
+      "skillProficiencies": [
+        "Due a scelta tra Arcano, Indagare, Religione o Sopravvivenza"
+      ],
+      "toolProficiencies": [],
+      "languages": [
+        "Due lingue a scelta",
+        "Almeno una dovrebbe essere esotica: Abissale, Celestiale, Gergo delle Profondità, Draconico, Infernale, Primordiale, Silvano o Sottocomune"
+      ],
+      "equipmentSummary": "Pacchetto da cacciatore di mostri, abiti comuni, un gingillo gotico o oggetto personale significativo e una piccola somma iniziale.",
+      "startingGoldGp": 0.1,
+      "featureName": "Heart of Darkness / Cuore di Tenebra",
+      "featureSummary": "La gente comune percepisce che hai affrontato orrori indicibili. Anche se puoi incutere timore, tende ad aiutarti e, se non ti considera una minaccia, potrebbe offrirti supporto concreto contro il male.",
+      "extraNotes": [
+        "Evento tormentoso: definisci con il DM il trauma, la maledizione, l'apparizione o l'orrore che perseguita il personaggio.",
+        "Adatto a campagne gotiche, horror, caccia ai mostri, maledizioni e redenzione personale."
+      ]
+    },
+    "hermit_2014": {
+      "label": "Hermit / Eremita (2014)",
+      "ruleset": "5e 2014 legacy",
+      "source": "PHB 2014",
+      "skillProficiencies": [
+        "Medicina",
+        "Religione"
+      ],
+      "toolProficiencies": [
+        "Kit da erborista"
+      ],
+      "languages": [
+        "Una lingua a scelta"
+      ],
+      "equipmentSummary": "Custodia per pergamene, coperta, abiti comuni, kit da erborista e monete iniziali.",
+      "startingGoldGp": 5,
+      "featureName": "Discovery",
+      "featureSummary": "Hai scoperto una verita, luogo, segreto o rivelazione importante da definire col DM."
+    },
     "hermit_2024": {
       "label": "Hermit / Eremita (2024)",
       "ruleset": "D&D 2024",
@@ -536,6 +393,25 @@
       "startingGoldGp": 50,
       "featureName": "Origin Feat",
       "featureSummary": "Ottieni Healer e benefici orientati a cure e isolamento."
+    },
+    "knight_2014": {
+      "label": "Knight / Cavaliere (variante Nobile, 2014)",
+      "ruleset": "5e 2014 legacy",
+      "source": "PHB 2014",
+      "skillProficiencies": [
+        "Storia",
+        "Persuasione"
+      ],
+      "toolProficiencies": [
+        "Un tipo di set da gioco"
+      ],
+      "languages": [
+        "Una lingua a scelta"
+      ],
+      "equipmentSummary": "Simboli del rango, abiti raffinati, prova della casata e monete iniziali.",
+      "startingGoldGp": 25,
+      "featureName": "Retainers / Position of Privilege",
+      "featureSummary": "Puoi avere seguito o riconoscimento cavalleresco, da adattare alla campagna."
     },
     "merchant_2024": {
       "label": "Merchant / Mercante (2024)",
@@ -560,6 +436,25 @@
       "featureName": "Origin Feat",
       "featureSummary": "Ottieni Lucky e competenze utili a trattative e viaggi."
     },
+    "noble_2014": {
+      "label": "Noble / Nobile (2014)",
+      "ruleset": "5e 2014 legacy",
+      "source": "PHB 2014",
+      "skillProficiencies": [
+        "Storia",
+        "Persuasione"
+      ],
+      "toolProficiencies": [
+        "Un tipo di set da gioco"
+      ],
+      "languages": [
+        "Una lingua a scelta"
+      ],
+      "equipmentSummary": "Abiti raffinati, anello con sigillo, pergamena genealogica e monete iniziali.",
+      "startingGoldGp": 25,
+      "featureName": "Position of Privilege",
+      "featureSummary": "La tua posizione sociale ti apre porte, rispetto formale e accesso ad ambienti nobiliari."
+    },
     "noble_2024": {
       "label": "Noble / Nobile (2024)",
       "ruleset": "D&D 2024",
@@ -583,6 +478,60 @@
       "featureName": "Origin Feat",
       "featureSummary": "Ottieni Skilled e competenze legate a status, cultura e influenza."
     },
+    "outlander_2014": {
+      "label": "Outlander / Forestiero (2014)",
+      "ruleset": "5e 2014 legacy",
+      "source": "PHB 2014",
+      "skillProficiencies": [
+        "Atletica",
+        "Sopravvivenza"
+      ],
+      "toolProficiencies": [
+        "Uno strumento musicale"
+      ],
+      "languages": [
+        "Una lingua a scelta"
+      ],
+      "equipmentSummary": "Bastone, trappola da caccia, trofeo di viaggio, abiti da viaggiatore e monete iniziali.",
+      "startingGoldGp": 10,
+      "featureName": "Wanderer",
+      "featureSummary": "Hai ottima memoria geografica e puoi trovare cibo/acqua per piccoli gruppi in terre selvagge adatte."
+    },
+    "pirate_2014": {
+      "label": "Pirate / Pirata (variante Marinaio, 2014)",
+      "ruleset": "5e 2014 legacy",
+      "source": "PHB 2014",
+      "skillProficiencies": [
+        "Atletica",
+        "Percezione"
+      ],
+      "toolProficiencies": [
+        "Strumenti da navigatore",
+        "Veicoli acquatici"
+      ],
+      "languages": [],
+      "equipmentSummary": "Equipaggiamento da marinaio/pirata, portafortuna e monete iniziali.",
+      "startingGoldGp": 10,
+      "featureName": "Bad Reputation",
+      "featureSummary": "La tua reputazione intimidisce abbastanza da farti evitare problemi minori in certi luoghi."
+    },
+    "sage_2014": {
+      "label": "Sage / Sapiente (2014)",
+      "ruleset": "5e 2014 legacy",
+      "source": "PHB 2014",
+      "skillProficiencies": [
+        "Arcano",
+        "Storia"
+      ],
+      "toolProficiencies": [],
+      "languages": [
+        "Due lingue a scelta"
+      ],
+      "equipmentSummary": "Inchiostro, penna, coltello, lettera da un collega, abiti comuni e monete iniziali.",
+      "startingGoldGp": 10,
+      "featureName": "Researcher",
+      "featureSummary": "Se non conosci un'informazione, spesso sai dove o da chi potresti trovarla."
+    },
     "sage_2024": {
       "label": "Sage / Sapiente (2024)",
       "ruleset": "D&D 2024",
@@ -605,6 +554,24 @@
       "startingGoldGp": 50,
       "featureName": "Origin Feat",
       "featureSummary": "Ottieni Magic Initiate (Wizard) e benefici da studio arcano."
+    },
+    "sailor_2014": {
+      "label": "Sailor / Marinaio (2014)",
+      "ruleset": "5e 2014 legacy",
+      "source": "PHB 2014",
+      "skillProficiencies": [
+        "Atletica",
+        "Percezione"
+      ],
+      "toolProficiencies": [
+        "Strumenti da navigatore",
+        "Veicoli acquatici"
+      ],
+      "languages": [],
+      "equipmentSummary": "Caviglia da marinaio, corda, portafortuna, abiti comuni e monete iniziali.",
+      "startingGoldGp": 10,
+      "featureName": "Ship's Passage",
+      "featureSummary": "Puoi ottenere passaggio su una nave per te e il gruppo, in cambio di aiuto o buoni rapporti."
     },
     "sailor_2024": {
       "label": "Sailor / Marinaio (2024)",
@@ -652,6 +619,24 @@
       "featureName": "Origin Feat",
       "featureSummary": "Ottieni Skilled e competenze da archivio, ricerca e osservazione."
     },
+    "soldier_2014": {
+      "label": "Soldier / Soldato (2014)",
+      "ruleset": "5e 2014 legacy",
+      "source": "PHB 2014",
+      "skillProficiencies": [
+        "Atletica",
+        "Intimidire"
+      ],
+      "toolProficiencies": [
+        "Un tipo di set da gioco",
+        "Veicoli terrestri"
+      ],
+      "languages": [],
+      "equipmentSummary": "Insegna del grado, trofeo nemico, set da gioco, abiti comuni e monete iniziali.",
+      "startingGoldGp": 10,
+      "featureName": "Military Rank",
+      "featureSummary": "Il tuo grado militare ti garantisce riconoscimento, accesso a strutture militari e possibile supporto logistico."
+    },
     "soldier_2024": {
       "label": "Soldier / Soldato (2024)",
       "ruleset": "D&D 2024",
@@ -674,6 +659,42 @@
       "startingGoldGp": 50,
       "featureName": "Origin Feat",
       "featureSummary": "Ottieni Savage Attacker e competenze da addestramento marziale."
+    },
+    "spy_2014": {
+      "label": "Spy / Spia (variante Criminale, 2014)",
+      "ruleset": "5e 2014 legacy",
+      "source": "PHB 2014",
+      "skillProficiencies": [
+        "Inganno",
+        "Furtivita"
+      ],
+      "toolProficiencies": [
+        "Un tipo di set da gioco",
+        "Strumenti da ladro"
+      ],
+      "languages": [],
+      "equipmentSummary": "Come Criminale, adattato a spionaggio e infiltrazione.",
+      "startingGoldGp": 15,
+      "featureName": "Criminal Contact",
+      "featureSummary": "Hai una rete di contatti, informatori o agenti con cui comunicare discretamente."
+    },
+    "urchin_2014": {
+      "label": "Urchin / Monello (2014)",
+      "ruleset": "5e 2014 legacy",
+      "source": "PHB 2014",
+      "skillProficiencies": [
+        "Furtivita",
+        "Prestidigitazione"
+      ],
+      "toolProficiencies": [
+        "Kit da travestimento",
+        "Strumenti da ladro"
+      ],
+      "languages": [],
+      "equipmentSummary": "Coltellino, mappa della citta, topo domestico, ricordo dei genitori, abiti comuni e monete iniziali.",
+      "startingGoldGp": 10,
+      "featureName": "City Secrets",
+      "featureSummary": "Conosci scorciatoie urbane e passaggi nascosti che ti permettono di muoverti piu rapidamente in citta."
     },
     "wayfarer_2024": {
       "label": "Wayfarer / Viandante (2024)",
