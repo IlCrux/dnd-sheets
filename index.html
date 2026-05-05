@@ -1319,6 +1319,7 @@ function populateBackgroundDropdown(){
   });
 
   if(previous && BACKGROUNDS_DATA[previous]) sel.value=previous;
+  if(sel.value) c.charBackground=sel.value;
   updateFieldLocks();
 }
 
@@ -1405,7 +1406,9 @@ function applyBackgroundBenefits(key){
 function updateBackgroundInfo(){
   const box=document.getElementById("background-info");
   if(!box || !currentCharId || !characters[currentCharId]) return;
-  const key=state().charBackground;
+  const sel=document.getElementById("char-background");
+  const key=(sel && sel.value) ? sel.value : state().charBackground;
+  state().charBackground=key;
   const bg=BACKGROUNDS_DATA[key];
   if(!key || !bg){ box.style.display="none"; box.innerHTML=""; return; }
   box.style.display="block";
@@ -1598,8 +1601,9 @@ function bindAllInputs(){
       if(id==="char-name") document.getElementById("header-name").textContent=val||"Personaggio";
       if(id==="char-level"){ autoFillSlots(); updateProfBonus(); updateHitDiceFromClassAndLevel(); buildSaves(); buildSkills(); updateSpellStats(); renderRogueTab(); }
       if(id==="char-race"){ updateRaceInfo(); updateSpeed(); }
-      if(id==="char-class"){ updateClassDefaults(); applyClassDefaults(true); updateClassInfo(); updateSpellStats(); renderRogueTab(); }
-      if(id==="char-subclass"){ syncRogueSubclassFromText(); renderRogueTab(); }
+      if(id==="char-class"){ updateClassDefaults(); applyClassDefaults(true); updateClassInfo(); updateSpellStats(); populateSubclassDropdown(); renderRogueTab(); }
+      if(id==="char-subclass"){ onSubclassChange ? onSubclassChange() : (syncRogueSubclassFromText(), renderRogueTab()); }
+      if(id==="char-background"){ onBackgroundChange(); return; }
       if(id==="spell-ability") updateSpellStats();
       saveState();
     };
