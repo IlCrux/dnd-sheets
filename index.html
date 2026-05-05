@@ -174,7 +174,7 @@ textarea{resize:vertical;min-height:70px}
 .inv-weight{font-size:.78rem;color:var(--text-muted);min-width:54px;text-align:right}
 .inv-key-toggle{cursor:pointer;font-size:1.1rem;color:var(--border);padding:2px 4px;border-radius:3px;transition:all .15s}
 .inv-key-toggle.active{color:var(--gold)}.inv-key-toggle:hover{background:var(--gold-light)}
-.inv-add-form{display:grid;grid-template-columns:3fr 1fr 1fr auto;gap:6px;margin-top:8px;align-items:end}
+.inv-add-form{display:grid;grid-template-columns:3fr 1fr 1fr 1fr auto;gap:6px;margin-top:8px;align-items:end}
 .gold-inputs{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.gold-field{display:flex;align-items:center;gap:4px}.gold-field label{margin-bottom:0;white-space:nowrap}.gold-field input{width:60px}
 .coin-label{font-size:.72rem;font-weight:600;letter-spacing:1px}.coin-cp{color:#8b6914}.coin-sp{color:#8b8b8b}.coin-ep{color:#6b8b6b}.coin-gp{color:var(--gold)}.coin-pp{color:#7b6eb0}
 
@@ -229,6 +229,22 @@ textarea{resize:vertical;min-height:70px}
 
 
 .header-actions a.btn, .tab-bar a.tab-btn{text-decoration:none}
+
+.lock-field{position:relative}
+.lock-row{display:grid;grid-template-columns:1fr auto;gap:6px;align-items:end}
+.lock-btn{height:36px;min-width:38px;border:1px solid var(--border);border-radius:5px;background:var(--surface2);cursor:pointer;font-size:1rem;transition:all .15s}
+.lock-btn.locked{background:var(--gold-light);border-color:var(--gold);color:var(--gold)}
+.locked-control{opacity:.72;pointer-events:none;background:var(--surface2)!important}
+.ac-effects-list{margin-top:10px;background:var(--gold-light);border:1px solid #e8c87a;border-radius:var(--radius);padding:10px 12px;font-size:.84rem;color:#684710;line-height:1.5}
+.ac-effects-list ul{margin:6px 0 0 18px}
+.hp-temp-badge{margin:6px auto 0;display:flex;justify-content:center;align-items:center;gap:6px;font-size:.85rem;color:var(--gold)}
+.hp-temp-badge strong{background:var(--gold-light);border:1px solid #e8c87a;border-radius:20px;padding:2px 10px}
+.inv-value{font-size:.78rem;color:var(--gold);min-width:58px;text-align:right}
+.diary-empty{color:var(--text-muted);font-size:.9rem;padding:12px;border:1px dashed var(--border);border-radius:var(--radius);background:var(--surface2)}
+.diary-entry-title{font-weight:600;font-size:1rem}
+.diary-entry-date{font-size:.78rem;color:var(--text-muted)}
+.diary-entry-body{white-space:pre-wrap;color:var(--text);font-size:.9rem;line-height:1.55;margin-top:8px}
+
 .diary-compose{display:grid;grid-template-columns:160px 1fr;gap:8px;margin-bottom:10px}
 .diary-compose textarea{grid-column:1 / -1;min-height:120px}
 .diary-list{display:flex;flex-direction:column;gap:10px}
@@ -346,10 +362,28 @@ textarea{resize:vertical;min-height:70px}
       <div class="card-title">🧝 Identita</div>
       <div class="grid-2">
         <div class="field"><label>Nome</label><input type="text" id="char-name" placeholder="Nome personaggio"></div>
-        <div class="field"><label>Razza</label><select id="char-race"><option value="">--- Seleziona razza ---</option></select></div>
-        <div class="field"><label>Classe</label><select id="char-class"><option value="">--- Seleziona classe ---</option></select></div>
+        <div class="field lock-field">
+          <label>Razza</label>
+          <div class="lock-row">
+            <select id="char-race"><option value="">--- Seleziona razza ---</option></select>
+            <button type="button" class="lock-btn" id="lock-race-btn" onclick="toggleFieldLock('race')" title="Blocca/sblocca razza">🔓</button>
+          </div>
+        </div>
+        <div class="field lock-field">
+          <label>Classe</label>
+          <div class="lock-row">
+            <select id="char-class"><option value="">--- Seleziona classe ---</option></select>
+            <button type="button" class="lock-btn" id="lock-class-btn" onclick="toggleFieldLock('class')" title="Blocca/sblocca classe">🔓</button>
+          </div>
+        </div>
         <div class="field"><label>Livello</label><input type="number" id="char-level" min="1" max="20" value="1"></div>
-        <div class="field"><label>Sottoclasse</label><input type="text" id="char-subclass" placeholder="es. Evocazione"></div>
+        <div class="field lock-field">
+          <label>Sottoclasse</label>
+          <div class="lock-row">
+            <select id="char-subclass"><option value="">--- Prima scegli una classe ---</option></select>
+            <button type="button" class="lock-btn" id="lock-subclass-btn" onclick="toggleFieldLock('subclass')" title="Blocca/sblocca sottoclasse">🔓</button>
+          </div>
+        </div>
         <div class="field"><label>Background</label><input type="text" id="char-background" placeholder="es. Eremita"></div>
         <div class="field"><label>Allineamento</label>
           <select id="char-alignment">
@@ -441,6 +475,7 @@ textarea{resize:vertical;min-height:70px}
         <div class="ac-label">Indice CA</div>
       </div>
       <div class="ac-breakdown" id="ac-breakdown"></div>
+      <div id="ac-effects-list" class="ac-effects-list" style="display:none;"></div>
       <div class="info-box">La CA viene calcolata da armatura, scudo, DES, bonus custom e oggetti equipaggiati con bonus CA.</div>
     </div>
 
@@ -451,6 +486,7 @@ textarea{resize:vertical;min-height:70px}
         <div class="hp-sep">/</div>
         <div><div style="font-size:.7rem;color:var(--text-muted);text-align:center;margin-bottom:2px;">MASSIMI</div><div class="hp-max" id="hp-max" contenteditable="true">10</div></div>
       </div>
+      <div class="hp-temp-badge" id="hp-temp-display" style="display:none;">PF temporanei <strong>+0</strong></div>
       <div style="font-size:.75rem;color:var(--text-muted);text-align:center;margin-bottom:4px;">PF Temporanei: <input type="number" id="hp-temp" class="hp-delta" value="0" min="0" style="display:inline-block;width:65px;"></div>
       <div class="hp-buttons">
         <input type="number" id="hp-delta" class="hp-delta" value="1" min="0">
@@ -636,6 +672,7 @@ textarea{resize:vertical;min-height:70px}
       <div class="field" style="margin:0;"><label>Nome</label><input type="text" id="inv-name-input"></div>
       <div class="field" style="margin:0;"><label>Qta</label><input type="number" id="inv-qty-input" value="1" min="1"></div>
       <div class="field" style="margin:0;"><label>Peso</label><input type="number" id="inv-weight-input" value="0" min="0" step="0.5"></div>
+      <div class="field" style="margin:0;"><label>Valore MO</label><input type="number" id="inv-value-input" value="0" min="0" step="0.1"></div>
       <button class="btn btn-sm" onclick="addInventoryItem()">+</button>
     </div>
     <input type="text" id="inv-notes-input" placeholder="Note (es. consumabile, magico...)" style="margin-top:6px;">
@@ -799,6 +836,7 @@ function emptyChar(name){
     inventory:[],
     traits:{personality:"",ideals:"",bonds:"",flaws:""},
     notes:{session:"",npcs:"",abilities:"",langs:"",proficiencies:"",diary:[]},
+    locks:{race:false,class:false,subclass:false},
     rollHistory:[],
     rogue:{subclass:"", insightful:false, steadyAim:false, psychicUsed:0, wailsUsed:0}
   };
@@ -1154,6 +1192,93 @@ function populateRaceClassDropdowns(){
     const opt=document.createElement("option"); opt.value=key; opt.textContent=key.charAt(0).toUpperCase()+key.slice(1); classSel.appendChild(opt);
   });
 }
+
+function populateSubclassDropdown(){
+  const sel = document.getElementById("char-subclass");
+  if(!sel || !currentCharId || !characters[currentCharId]) return;
+  const c = state();
+  const previous = c.charSubclass || "";
+  sel.innerHTML = "";
+
+  const empty = document.createElement("option");
+  empty.value = "";
+  empty.textContent = c.charClass ? "--- Seleziona sottoclasse ---" : "--- Prima scegli una classe ---";
+  sel.appendChild(empty);
+
+  if(c.charClass === "ladro" && ROGUE_SUBCLASSES && Object.keys(ROGUE_SUBCLASSES).length){
+    Object.entries(ROGUE_SUBCLASSES).forEach(([key, sub])=>{
+      const opt=document.createElement("option");
+      opt.value=key;
+      opt.textContent=sub.label || key;
+      sel.appendChild(opt);
+    });
+
+    const r = rogueState();
+    let value = r.subclass || previous;
+    if(value && !ROGUE_SUBCLASSES[value]){
+      const found = Object.entries(ROGUE_SUBCLASSES).find(([,sub]) => sub.label === value);
+      value = found ? found[0] : "";
+    }
+    sel.value = value;
+    c.charSubclass = value;
+    r.subclass = value;
+  } else if(c.charClass) {
+    const opt=document.createElement("option");
+    opt.value = previous || "custom";
+    opt.textContent = previous ? previous : "Nessuna sottoclasse disponibile nei dati";
+    sel.appendChild(opt);
+    sel.value = previous || "";
+  }
+
+  updateFieldLocks();
+}
+
+function onSubclassChange(){
+  const c=state();
+  const sel=document.getElementById("char-subclass");
+  const value=sel ? sel.value : "";
+  c.charSubclass=value;
+  if(c.charClass==="ladro"){
+    rogueState().subclass=value;
+    renderRogueTab();
+  }
+  saveState();
+}
+
+function toggleFieldLock(field){
+  const c=state();
+  c.locks ||= {race:false,class:false,subclass:false};
+  c.locks[field] = !c.locks[field];
+  updateFieldLocks();
+  saveState();
+}
+
+function updateFieldLocks(){
+  if(!currentCharId || !characters[currentCharId]) return;
+  const c=state();
+  c.locks ||= {race:false,class:false,subclass:false};
+  const mapping = {
+    race:["char-race","lock-race-btn"],
+    class:["char-class","lock-class-btn"],
+    subclass:["char-subclass","lock-subclass-btn"]
+  };
+  Object.entries(mapping).forEach(([key,[controlId,btnId]])=>{
+    const control=document.getElementById(controlId);
+    const btn=document.getElementById(btnId);
+    const locked=!!c.locks[key];
+    if(control){
+      control.disabled=locked;
+      control.classList.toggle("locked-control", locked);
+    }
+    if(btn){
+      btn.classList.toggle("locked", locked);
+      btn.textContent = locked ? "🔒" : "🔓";
+      btn.title = locked ? "Sblocca " + key : "Blocca " + key;
+    }
+  });
+}
+
+
 function populateArmorDropdown(){
   const sel=document.getElementById("armor-select"); sel.innerHTML="";
   Object.entries(ARMOR_DATA).forEach(([name,a])=>{
@@ -1166,7 +1291,7 @@ function populateArmorDropdown(){
 function loadCurrentCharIntoUI(){
   const c=state();
   migrateChar(c);
-  populateRaceClassDropdowns(); populateArmorDropdown();
+  populateRaceClassDropdowns(); populateSubclassDropdown(); populateArmorDropdown();
   const map={
     "char-name":c.charName,"char-class":c.charClass,"char-level":c.charLevel,"char-race":c.charRace,"char-subclass":c.charSubclass,
     "char-background":c.charBackground,"char-alignment":c.charAlignment,"char-xp":c.charXP,"hp-temp":c.hpTemp,"hd-used":c.hdUsed,"hd-total":c.hdTotal,
@@ -1176,6 +1301,7 @@ function loadCurrentCharIntoUI(){
     "trait-personality":c.traits.personality,"trait-ideals":c.traits.ideals,"trait-bonds":c.traits.bonds,"trait-flaws":c.traits.flaws
   };
   Object.entries(map).forEach(([id,val])=>{ const el=document.getElementById(id); if(el) el.value = val ?? ""; });
+  populateSubclassDropdown();
   document.getElementById("hp-current").textContent=c.hpCurrent;
   document.getElementById("hp-max").textContent=c.hpMax;
   document.getElementById("stat-init").textContent=c.statInit;
@@ -1355,10 +1481,18 @@ function updateAC(){
   c.armorEquipped=document.getElementById("armor-select").value||"Nessuna armatura";
   c.shieldEquipped=document.getElementById("shield-select").value;
   c.acCustom=parseInt(document.getElementById("ac-custom").value)||0;
+  c.abilities ||= {FOR:10,DES:10,COS:10,INT:10,SAG:10,CAR:10};
   const armor=ARMOR_DATA[c.armorEquipped] || ARMOR_DATA["Nessuna armatura"];
-  const dexMod=mod(c.abilities.DES);
+  const dexMod=mod(c.abilities.DES || 10);
   const dexEff=Math.min(dexMod, armor.dexCap);
-  let equipBonus=0; (c.equipment||[]).forEach(e=>{ if(e.equipped) equipBonus += parseInt(e.acBonus)||0; });
+  let equipBonus=0;
+  const equippedEffects=[];
+  (c.equipment||[]).forEach(e=>{
+    if(e.equipped){
+      equipBonus += parseInt(e.acBonus)||0;
+      if((e.effects||"").trim()) equippedEffects.push({name:e.name, effects:e.effects.trim()});
+    }
+  });
   const ac=armor.ac+dexEff+(c.shieldEquipped==="Scudo"?2:0)+equipBonus+c.acCustom;
   document.getElementById("ac-big").textContent=ac;
   const lines=[];
@@ -1369,6 +1503,17 @@ function updateAC(){
   if(c.acCustom!==0) lines.push(["Bonus custom",(c.acCustom>=0?"+":"")+c.acCustom]);
   lines.push(["TOTALE",ac]);
   document.getElementById("ac-breakdown").innerHTML=lines.map(l=>`<div class="ac-row"><span>${escapeHtml(l[0])}</span><span>${l[1]}</span></div>`).join("");
+
+  const effectsBox=document.getElementById("ac-effects-list");
+  if(effectsBox){
+    if(equippedEffects.length){
+      effectsBox.style.display="block";
+      effectsBox.innerHTML="<strong>Effetti degli oggetti equipaggiati</strong><ul>"+equippedEffects.map(e=>`<li><strong>${escapeHtml(e.name)}:</strong> ${escapeHtml(e.effects)}</li>`).join("")+"</ul>";
+    }else{
+      effectsBox.style.display="none";
+      effectsBox.innerHTML="";
+    }
+  }
   saveState();
 }
 function openEquipModal(idx){
@@ -1408,12 +1553,42 @@ function renderEquipment(){
   });
 }
 
+function updateHPDisplay(){
+  if(!currentCharId || !characters[currentCharId]) return;
+  const c=state();
+  const temp = Math.max(0, parseInt(c.hpTemp)||0);
+  const badge=document.getElementById("hp-temp-display");
+  if(badge){
+    badge.style.display = temp > 0 ? "flex" : "none";
+    badge.innerHTML = `PF temporanei <strong>+${temp}</strong>`;
+  }
+  const input=document.getElementById("hp-temp");
+  if(input && parseInt(input.value||0)!==temp) input.value=temp;
+}
+
 function changeHP(sign){
   const d=parseInt(document.getElementById("hp-delta").value)||0;
+  const c=state();
   let hp=parseInt(document.getElementById("hp-current").textContent)||0;
   const max=parseInt(document.getElementById("hp-max").textContent)||0;
-  hp=Math.max(0,Math.min(max,hp+sign*d));
-  document.getElementById("hp-current").textContent=hp; state().hpCurrent=hp; saveState();
+  let temp=Math.max(0, parseInt(c.hpTemp)||0);
+
+  if(sign < 0){
+    let remaining=d;
+    const absorbed=Math.min(temp, remaining);
+    temp -= absorbed;
+    remaining -= absorbed;
+    hp=Math.max(0, hp-remaining);
+  }else{
+    hp=Math.max(0, Math.min(max, hp+d));
+  }
+
+  c.hpCurrent=hp;
+  c.hpTemp=temp;
+  document.getElementById("hp-current").textContent=hp;
+  document.getElementById("hp-temp").value=temp;
+  updateHPDisplay();
+  saveState();
 }
 function toggleDS(type,idx){ const c=state(); const arr=type==="s"?c.deathSaves.s:c.deathSaves.f; arr[idx]=!arr[idx]; restoreDeathSaves(); saveState(); }
 function restoreDeathSaves(){ const c=state(); document.querySelectorAll(".ds-circle.success").forEach((el,i)=>el.classList.toggle("filled",c.deathSaves.s[i]||false)); document.querySelectorAll(".ds-circle.failure").forEach((el,i)=>el.classList.toggle("filled",c.deathSaves.f[i]||false)); }
@@ -1512,8 +1687,8 @@ function renderSpells(){
 
 function addInventoryItem(){
   const name=document.getElementById("inv-name-input").value.trim(); if(!name) return;
-  state().inventory.push({name,qty:parseInt(document.getElementById("inv-qty-input").value)||1,weight:parseFloat(document.getElementById("inv-weight-input").value)||0,notes:document.getElementById("inv-notes-input").value,used:false,isKey:false});
-  document.getElementById("inv-name-input").value=""; document.getElementById("inv-notes-input").value=""; renderInventory(); saveState();
+  state().inventory.push({name,qty:parseInt(document.getElementById("inv-qty-input").value)||1,weight:parseFloat(document.getElementById("inv-weight-input").value)||0,valueGp:parseFloat(document.getElementById("inv-value-input").value)||0,notes:document.getElementById("inv-notes-input").value,used:false,isKey:false});
+  document.getElementById("inv-name-input").value=""; document.getElementById("inv-notes-input").value=""; document.getElementById("inv-value-input").value="0"; renderInventory(); saveState();
 }
 function setInvFilter(f){
   invFilter=f; ["all","available","used","key"].forEach(x=>{ const btn=document.getElementById("inv-filter-"+x); if(btn){ btn.classList.toggle("btn",x===f); btn.classList.toggle("btn-outline",x!==f); }});
@@ -1531,6 +1706,7 @@ function renderInventory(){
       <div><div class="inv-name-big">${escapeHtml(item.name)}</div>${item.notes?'<div class="inv-meta-small">'+escapeHtml(item.notes)+'</div>':""}</div>
       <input type="number" class="inv-qty" value="${item.qty}" min="0" oninput="state().inventory[${i}].qty=parseInt(this.value)||0;renderInventory();saveState();">
       <div class="inv-weight">${item.weight?(item.weight*item.qty).toFixed(1)+" lb":""}</div>
+      <div class="inv-value">${item.valueGp?((item.valueGp*item.qty).toFixed(1).replace(/\.0$/,"")+" MO"):""}</div>
       <span class="inv-key-toggle ${item.isKey?"active":""}" onclick="toggleInvKey(${i})" title="Oggetto chiave">🔑</span>
       <button class="del-btn" onclick="state().inventory.splice(${i},1);renderInventory();saveState();">×</button>`;
     el.appendChild(d);
@@ -1553,10 +1729,12 @@ function rogueState(){ const c=state(); c.rogue ||= {subclass:"", insightful:fal
 function getRogueLevel(){ return Math.max(1, Math.min(20, parseInt(state().charLevel)||1)); }
 function getSneakDice(){ return ROGUE_SNEAK_ATTACK_TABLE[getRogueLevel()-1] + "d6"; }
 function getRogueSubclassKey(){
+  const c=state();
   const r=rogueState();
   if(r.subclass && ROGUE_SUBCLASSES[r.subclass]) return r.subclass;
-  const txt=(state().charSubclass||"").toLowerCase();
-  const found=Object.entries(ROGUE_SUBCLASSES).find(([k,v]) => txt.includes(k) || txt.includes(v.label.toLowerCase().split(" /")[0]));
+  if(c.charSubclass && ROGUE_SUBCLASSES[c.charSubclass]) return c.charSubclass;
+  const txt=(c.charSubclass||"").toLowerCase();
+  const found=Object.entries(ROGUE_SUBCLASSES).find(([k,v]) => txt.includes(k) || txt.includes((v.label||"").toLowerCase().split(" /")[0]));
   return found ? found[0] : "";
 }
 function syncRogueSubclassFromText(){
@@ -1571,6 +1749,12 @@ function renderRogueTab(){
 
   const sel=document.getElementById("rogue-subclass-select");
   const current=getRogueSubclassKey();
+  if(current){
+    r.subclass=current;
+    c.charSubclass=current;
+    const mainSub=document.getElementById("char-subclass");
+    if(mainSub) mainSub.value=current;
+  }
   sel.innerHTML='<option value="">--- Seleziona sottoclasse Ladro ---</option>';
   Object.entries(ROGUE_SUBCLASSES).forEach(([key,sub])=>{
     const opt=document.createElement("option"); opt.value=key; opt.textContent=sub.label+" ("+sub.source+")"; sel.appendChild(opt);
@@ -1636,8 +1820,8 @@ function selectRogueSubclass(key){
   const c=state(), r=rogueState();
   r.subclass=key;
   if(key && ROGUE_SUBCLASSES[key]){
-    c.charSubclass=ROGUE_SUBCLASSES[key].label;
-    const subInput=document.getElementById("char-subclass"); if(subInput) subInput.value=c.charSubclass;
+    c.charSubclass=key;
+    const subInput=document.getElementById("char-subclass"); if(subInput) subInput.value=key;
   }
   renderRogueTab(); saveState();
 }
@@ -1673,6 +1857,101 @@ function rogueSetArcaneTricksterMagic(){
   const el=document.getElementById("spell-ability"); if(el) el.value="int";
   renderCantrips(); updateSpellStats(); saveState(); alert("Impostata INT come caratteristica magica e aggiunta Mano Magica ai trucchetti.");
 }
+
+
+function prefillDiaryToday(){
+  const el=document.getElementById("diary-date-input");
+  if(el) el.value = new Date().toISOString().slice(0,10);
+}
+
+function addDiaryEntry(){
+  if(!currentCharId || !characters[currentCharId]) return;
+  const c=state();
+  c.notes ||= {};
+  c.notes.diary ||= [];
+
+  const dateEl=document.getElementById("diary-date-input");
+  const titleEl=document.getElementById("diary-title-input");
+  const bodyEl=document.getElementById("diary-body-input");
+
+  const date=(dateEl?.value || new Date().toISOString().slice(0,10)).trim();
+  const title=(titleEl?.value || "").trim() || "Sessione senza titolo";
+  const body=(bodyEl?.value || "").trim();
+
+  if(!body && !confirm("L'appunto e vuoto. Vuoi aggiungerlo comunque?")) return;
+
+  c.notes.diary.unshift({
+    id:"diary_"+Date.now()+"_"+Math.random().toString(36).slice(2,7),
+    date,
+    title,
+    body,
+    updatedAt:new Date().toISOString()
+  });
+
+  if(titleEl) titleEl.value="";
+  if(bodyEl) bodyEl.value="";
+  renderDiary();
+  saveState();
+}
+
+function renderDiary(){
+  const el=document.getElementById("diary-list");
+  if(!el || !currentCharId || !characters[currentCharId]) return;
+  const c=state();
+  c.notes ||= {};
+  c.notes.diary ||= [];
+
+  if(!c.notes.diary.length){
+    el.innerHTML='<div class="diary-empty">Nessun appunto salvato per questo personaggio.</div>';
+    return;
+  }
+
+  el.innerHTML = c.notes.diary.map((entry, i)=>`
+    <div class="diary-entry">
+      <div class="diary-entry-head">
+        <div>
+          <div class="diary-entry-date">${escapeHtml(entry.date || "")}</div>
+          <div class="diary-entry-title">${escapeHtml(entry.title || "Sessione senza titolo")}</div>
+        </div>
+        <div></div>
+        <div style="display:flex;gap:6px;justify-content:flex-end;">
+          <button class="btn btn-sm btn-outline" onclick="editDiaryEntry(${i})">Modifica</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteDiaryEntry(${i})">Elimina</button>
+        </div>
+      </div>
+      <div class="diary-entry-body">${escapeHtml(entry.body || "")}</div>
+    </div>
+  `).join("");
+}
+
+function editDiaryEntry(i){
+  const c=state();
+  const entry=c.notes?.diary?.[i];
+  if(!entry) return;
+  const newDate=prompt("Data sessione", entry.date || "");
+  if(newDate === null) return;
+  const newTitle=prompt("Titolo sessione", entry.title || "");
+  if(newTitle === null) return;
+  const newBody=prompt("Appunti sessione", entry.body || "");
+  if(newBody === null) return;
+
+  entry.date=newDate.trim();
+  entry.title=newTitle.trim() || "Sessione senza titolo";
+  entry.body=newBody;
+  entry.updatedAt=new Date().toISOString();
+  renderDiary();
+  saveState();
+}
+
+function deleteDiaryEntry(i){
+  const c=state();
+  if(!confirm("Eliminare questo appunto dal diario?")) return;
+  c.notes.diary.splice(i,1);
+  renderDiary();
+  saveState();
+}
+
+
 
 document.querySelectorAll(".tab-btn").forEach(btn=>{
   btn.addEventListener("click",()=>{ document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active")); document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active")); btn.classList.add("active"); document.getElementById(btn.dataset.tab).classList.add("active"); });
