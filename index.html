@@ -384,7 +384,13 @@ textarea{resize:vertical;min-height:70px}
             <button type="button" class="lock-btn" id="lock-subclass-btn" onclick="toggleFieldLock('subclass')" title="Blocca/sblocca sottoclasse">🔓</button>
           </div>
         </div>
-        <div class="field"><label>Background</label><input type="text" id="char-background" placeholder="es. Eremita"></div>
+        <div class="field lock-field">
+          <label>Background</label>
+          <div class="lock-row">
+            <select id="char-background"><option value="">--- Seleziona background ---</option></select>
+            <button type="button" class="lock-btn" id="lock-background-btn" onclick="toggleFieldLock('background')" title="Blocca/sblocca background">🔓</button>
+          </div>
+        </div>
         <div class="field"><label>Allineamento</label>
           <select id="char-alignment">
             <option value="">---</option>
@@ -397,6 +403,7 @@ textarea{resize:vertical;min-height:70px}
       </div>
       <div id="race-info" class="info-box" style="display:none;"></div>
       <div id="class-info" class="info-box" style="display:none;"></div>
+      <div id="background-info" class="info-box" style="display:none;"></div>
     </div>
 
     <div>
@@ -756,6 +763,7 @@ let RACES_DATA = {};
 let ARMOR_DATA = {};
 let SKILLS_DATA = [];
 let CONDITIONS_DATA = {};
+let BACKGROUNDS_DATA = {};
 let SLOT_TABLE = [];
 
 async function loadGameData() {
@@ -765,6 +773,7 @@ async function loadGameData() {
     "data/equipment.json",
     "data/skills.json",
     "data/conditions.json",
+    "data/backgrounds.json",
     "data/spell-slots.json",
     "data/rogue.json"
   ];
@@ -804,6 +813,7 @@ function mergeGameData(pack) {
   if (pack.armor) Object.assign(ARMOR_DATA, pack.armor);
   if (pack.skills) SKILLS_DATA = pack.skills;
   if (pack.conditions) Object.assign(CONDITIONS_DATA, pack.conditions);
+  if (pack.backgrounds) Object.assign(BACKGROUNDS_DATA, pack.backgrounds);
   if (pack.spellSlotTable) SLOT_TABLE = pack.spellSlotTable;
 
   if (pack.rogueSneakAttackTable) ROGUE_SNEAK_ATTACK_TABLE = pack.rogueSneakAttackTable;
@@ -836,7 +846,7 @@ function emptyChar(name){
     inventory:[],
     traits:{personality:"",ideals:"",bonds:"",flaws:""},
     notes:{session:"",npcs:"",abilities:"",langs:"",proficiencies:"",diary:[]},
-    locks:{race:false,class:false,subclass:false},
+    locks:{race:false,class:false,subclass:false,background:false},
     rollHistory:[],
     rogue:{subclass:"", insightful:false, steadyAim:false, psychicUsed:0, wailsUsed:0}
   };
@@ -1247,7 +1257,7 @@ function onSubclassChange(){
 
 function toggleFieldLock(field){
   const c=state();
-  c.locks ||= {race:false,class:false,subclass:false};
+  c.locks ||= {race:false,class:false,subclass:false,background:false};
   c.locks[field] = !c.locks[field];
   updateFieldLocks();
   saveState();
@@ -1256,11 +1266,12 @@ function toggleFieldLock(field){
 function updateFieldLocks(){
   if(!currentCharId || !characters[currentCharId]) return;
   const c=state();
-  c.locks ||= {race:false,class:false,subclass:false};
+  c.locks ||= {race:false,class:false,subclass:false,background:false};
   const mapping = {
     race:["char-race","lock-race-btn"],
     class:["char-class","lock-class-btn"],
-    subclass:["char-subclass","lock-subclass-btn"]
+    subclass:["char-subclass","lock-subclass-btn"],
+    background:["char-background","lock-background-btn"]
   };
   Object.entries(mapping).forEach(([key,[controlId,btnId]])=>{
     const control=document.getElementById(controlId);
@@ -1279,6 +1290,135 @@ function updateFieldLocks(){
 }
 
 
+
+function populateBackgroundDropdown(){
+  const sel=document.getElementById("char-background");
+  if(!sel || !currentCharId || !characters[currentCharId]) return;
+  const c=state();
+  const previous=c.charBackground || "";
+  sel.innerHTML='<option value="">--- Seleziona background ---</option>';
+
+  const groups = {};
+  Object.entries(BACKGROUNDS_DATA || {}).forEach(([key,bg])=>{
+    const group = bg.ruleset || "Background";
+    groups[group] ||= [];
+    groups[group].push([key,bg]);
+  });
+
+  Object.entries(groups).forEach(([group,items])=>{
+    const og=document.createElement("optgroup");
+    og.label=group;
+    items.sort((a,b)=>(a[1].label||a[0]).localeCompare(b[1].label||b[0]));
+    items.forEach(([key,bg])=>{
+      const opt=document.createElement("option");
+      opt.value=key;
+      opt.textContent=(bg.label||key) + (bg.source ? " · " + bg.source : "");
+      og.appendChild(opt);
+    });
+    sel.appendChild(og);
+  });
+
+  if(previous && BACKGROUNDS_DATA[previous]) sel.value=previous;
+  updateFieldLocks();
+}
+
+function onBackgroundChange(){
+  const c=state();
+  const sel=document.getElementById("char-background");
+  const key=sel ? sel.value : "";
+  c.charBackground=key;
+  applyBackgroundBenefits(key);
+  updateBackgroundInfo();
+  saveState();
+}
+
+function updateManagedBlock(text, marker, content){
+  const start = `[[${marker}:START]]`;
+  const end = `[[${marker}:END]]`;
+  const safe = (text || "").replace(new RegExp("\\n?\\[\\["+marker+":START\\]\\][\\s\\S]*?\\[\\["+marker+":END\\]\\]\\n?", "g"), "").trim();
+  if(!content || !content.trim()) return safe;
+  return (safe ? safe + "\\n\\n" : "") + start + "\\n" + content.trim() + "\\n" + end;
+}
+
+function applyBackgroundBenefits(key){
+  if(!key || !BACKGROUNDS_DATA[key] || !currentCharId) return;
+  const c=state();
+  const bg=BACKGROUNDS_DATA[key];
+  c.backgroundAppliedKey=key;
+
+  c.skills ||= {};
+  (bg.skillProficiencies || []).forEach(skill=>{
+    if(!c.skills[skill] || c.skills[skill] === "none") c.skills[skill] = "proficient";
+  });
+
+  c.notes ||= {session:"",npcs:"",abilities:"",langs:"",proficiencies:"",diary:[]};
+
+  const profLines = [
+    `Background: ${bg.label || key}`,
+    ...(bg.skillProficiencies?.length ? [`Abilita: ${bg.skillProficiencies.join(", ")}`] : []),
+    ...(bg.toolProficiencies?.length ? [`Strumenti/veicoli: ${bg.toolProficiencies.join(", ")}`] : []),
+    ...(bg.originFeat ? [`Talento origine: ${bg.originFeat}`] : [])
+  ].join("\\n");
+
+  const langLines = [
+    `Background: ${bg.label || key}`,
+    ...(bg.languages?.length ? bg.languages : [])
+  ].join("\\n");
+
+  const featureLines = [
+    `Background: ${bg.label || key}`,
+    ...(bg.abilityScoreOptions?.length ? [`Caratteristiche 2024 disponibili: ${bg.abilityScoreOptions.join(", ")}`] : []),
+    ...(bg.originFeat ? [`Talento origine: ${bg.originFeat}`] : []),
+    ...(bg.featureName ? [`Feature: ${bg.featureName}`] : []),
+    ...(bg.featureSummary ? [bg.featureSummary] : []),
+    ...(bg.equipmentSummary ? [`Equipaggiamento: ${bg.equipmentSummary}`] : [])
+  ].join("\\n");
+
+  c.notes.proficiencies = updateManagedBlock(c.notes.proficiencies, "BACKGROUND_PROF", profLines);
+  c.notes.langs = updateManagedBlock(c.notes.langs, "BACKGROUND_LANG", langLines);
+  c.notes.abilities = updateManagedBlock(c.notes.abilities, "BACKGROUND_FEATURE", featureLines);
+
+  // Aggiunge un solo item riassuntivo del pacchetto background, evitando duplicati.
+  c.inventory ||= [];
+  const already = c.inventory.some(item => item.backgroundKey === key);
+  if(!already && bg.equipmentSummary){
+    c.inventory.push({
+      name: "Pacchetto background: " + (bg.label || key),
+      qty: 1,
+      weight: 0,
+      valueGp: parseFloat(bg.startingGoldGp)||0,
+      notes: bg.equipmentSummary,
+      used: false,
+      isKey: false,
+      backgroundKey: key
+    });
+  }
+
+  const notesProf=document.getElementById("notes-proficiencies"); if(notesProf) notesProf.value=c.notes.proficiencies;
+  const notesLangs=document.getElementById("notes-langs"); if(notesLangs) notesLangs.value=c.notes.langs;
+  const notesAbilities=document.getElementById("notes-abilities"); if(notesAbilities) notesAbilities.value=c.notes.abilities;
+
+  buildSkills();
+  renderInventory();
+}
+
+function updateBackgroundInfo(){
+  const box=document.getElementById("background-info");
+  if(!box || !currentCharId || !characters[currentCharId]) return;
+  const key=state().charBackground;
+  const bg=BACKGROUNDS_DATA[key];
+  if(!key || !bg){ box.style.display="none"; box.innerHTML=""; return; }
+  box.style.display="block";
+  box.innerHTML = `
+    <strong>Background:</strong> ${escapeHtml(bg.label || key)}<br>
+    <strong>Competenze:</strong> ${escapeHtml((bg.skillProficiencies || []).join(", ") || "—")}<br>
+    <strong>Strumenti/Lingue:</strong> ${escapeHtml([...(bg.toolProficiencies||[]), ...(bg.languages||[])].join(", ") || "—")}<br>
+    ${bg.originFeat ? `<strong>Talento origine:</strong> ${escapeHtml(bg.originFeat)}<br>` : ""}
+    ${bg.featureName ? `<strong>${escapeHtml(bg.featureName)}:</strong> ${escapeHtml(bg.featureSummary || "")}` : ""}
+  `;
+}
+
+
 function populateArmorDropdown(){
   const sel=document.getElementById("armor-select"); sel.innerHTML="";
   Object.entries(ARMOR_DATA).forEach(([name,a])=>{
@@ -1291,7 +1431,7 @@ function populateArmorDropdown(){
 function loadCurrentCharIntoUI(){
   const c=state();
   migrateChar(c);
-  populateRaceClassDropdowns(); populateSubclassDropdown(); populateArmorDropdown();
+  populateRaceClassDropdowns(); populateSubclassDropdown(); populateBackgroundDropdown(); populateArmorDropdown();
   const map={
     "char-name":c.charName,"char-class":c.charClass,"char-level":c.charLevel,"char-race":c.charRace,"char-subclass":c.charSubclass,
     "char-background":c.charBackground,"char-alignment":c.charAlignment,"char-xp":c.charXP,"hp-temp":c.hpTemp,"hd-used":c.hdUsed,"hd-total":c.hdTotal,
@@ -1302,13 +1442,14 @@ function loadCurrentCharIntoUI(){
   };
   Object.entries(map).forEach(([id,val])=>{ const el=document.getElementById(id); if(el) el.value = val ?? ""; });
   populateSubclassDropdown();
+  populateBackgroundDropdown();
   document.getElementById("hp-current").textContent=c.hpCurrent;
   document.getElementById("hp-max").textContent=c.hpMax;
   document.getElementById("stat-init").textContent=c.statInit;
   document.getElementById("header-name").textContent=c.charName||"Personaggio";
   buildAbilities(); buildSaves(); buildSkills(); buildConditions(); buildSpellSlots(); bindAllInputs();
   renderAttacks(); renderEquipment(); renderSpells(); renderCantrips(); renderInventory();
-  updateClassDefaults(); updateRaceInfo(); updateClassInfo(); updateProfBonus(); updateSpeed(); updateSpellStats(); updateAC(); updateInspirationUI(); restoreDeathSaves(); showConditionInfo(); renderRollHistory(); renderRogueTab(); renderDiaryEntries(); prefillDiaryToday(false); saveState();
+  updateClassDefaults(); updateRaceInfo(); updateClassInfo(); updateBackgroundInfo(); updateProfBonus(); updateSpeed(); updateSpellStats(); updateAC(); updateInspirationUI(); restoreDeathSaves(); showConditionInfo(); renderRollHistory(); renderRogueTab(); renderDiaryEntries(); prefillDiaryToday(false); saveState();
 }
 function migrateChar(c){
   c.id ||= "char_" + Date.now() + "_" + Math.random().toString(36).slice(2,7);
@@ -1451,7 +1592,7 @@ function bindAllInputs(){
   ];
   map.forEach(([id,key])=>{
     const el=document.getElementById(id); if(!el || el._bound) return; el._bound=true;
-    el.addEventListener("input",()=>{
+    const handler = ()=>{
       const c=state(); const val=el.type==="number" ? (parseFloat(el.value)||0) : el.value;
       setKey(c,key,val);
       if(id==="char-name") document.getElementById("header-name").textContent=val||"Personaggio";
@@ -1461,7 +1602,9 @@ function bindAllInputs(){
       if(id==="char-subclass"){ syncRogueSubclassFromText(); renderRogueTab(); }
       if(id==="spell-ability") updateSpellStats();
       saveState();
-    });
+    };
+    el.addEventListener("input", handler);
+    el.addEventListener("change", handler);
   });
   ["hp-current","hp-max","stat-init"].forEach(id=>{
     const el=document.getElementById(id); if(!el || el._bound) return; el._bound=true;
