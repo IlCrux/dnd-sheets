@@ -227,6 +227,22 @@ textarea{resize:vertical;min-height:70px}
 .rogue-pill-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .rogue-mini-pill{font-size:.72rem;border:1px solid var(--border);background:var(--bg);border-radius:18px;padding:3px 8px;color:var(--text-muted)}
 
+
+.header-actions a.btn, .tab-bar a.tab-btn{text-decoration:none}
+.diary-compose{display:grid;grid-template-columns:160px 1fr;gap:8px;margin-bottom:10px}
+.diary-compose textarea{grid-column:1 / -1;min-height:120px}
+.diary-list{display:flex;flex-direction:column;gap:10px}
+.diary-entry{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px;box-shadow:var(--shadow)}
+.diary-entry-head{display:grid;grid-template-columns:150px 1fr auto;gap:8px;align-items:center;margin-bottom:8px}
+.diary-entry textarea{min-height:120px;background:var(--bg)}
+.diary-empty{color:var(--text-muted);font-size:.9rem;padding:10px;background:var(--surface2);border-radius:var(--radius)}
+.quick-note-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:700px){
+  .diary-compose{grid-template-columns:1fr}
+  .diary-entry-head{grid-template-columns:1fr}
+  .quick-note-grid{grid-template-columns:1fr}
+}
+
 @media(max-width:850px){
   .cloud-row{grid-template-columns:1fr}.cloud-row.npoint{grid-template-columns:1fr}
   .app-header{align-items:flex-start;flex-direction:column;padding:12px 16px}
@@ -296,6 +312,7 @@ textarea{resize:vertical;min-height:70px}
   <div class="char-card-grid" id="char-card-grid"></div>
 
   <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px;">
+    <a class="btn btn-outline" href="rules.html" target="_blank" rel="noopener">📖 Vademecum regole</a>
     <button class="btn" onclick="exportAllChars()">⬇ Esporta tutti JSON</button>
     <label class="btn btn-outline" style="cursor:pointer;">⬆ Importa JSON<input type="file" accept=".json" style="display:none;" onchange="importAllChars(event)"></label>
   </div>
@@ -313,7 +330,8 @@ textarea{resize:vertical;min-height:70px}
     <button class="tab-btn" data-tab="tab-classe">Classe</button>
     <button class="tab-btn" data-tab="tab-magia">Magia</button>
     <button class="tab-btn" data-tab="tab-inventario">Inventario</button>
-    <button class="tab-btn" data-tab="tab-note">Note</button>
+    <button class="tab-btn" data-tab="tab-note">Diario</button>
+    <a class="tab-btn" href="rules.html" target="_blank" rel="noopener">Regole</a>
   </nav>
   <div class="header-actions">
     <button class="btn btn-sm btn-green" onclick="forceSaveCurrentCharacter()">💾 Salva scheda</button>
@@ -625,14 +643,36 @@ textarea{resize:vertical;min-height:70px}
 </div>
 
 <div id="tab-note" class="tab-panel">
-  <div class="grid-2 section-gap">
-    <div class="card"><div class="card-title">📋 Note Sessione</div><textarea id="notes-session" style="min-height:200px;"></textarea></div>
-    <div class="card"><div class="card-title">🗺 PNG &amp; Luoghi</div><textarea id="notes-npcs" style="min-height:200px;"></textarea></div>
-    <div class="card"><div class="card-title">📜 Abilita di Classe</div><textarea id="notes-abilities" style="min-height:200px;"></textarea></div>
+  <div class="card section-gap">
+    <div class="card-title">📓 Diario di sessione</div>
+    <div class="diary-compose">
+      <div class="field" style="margin:0;"><label>Data</label><input type="date" id="diary-date-input"></div>
+      <div class="field" style="margin:0;"><label>Titolo sessione</label><input type="text" id="diary-title-input" placeholder="es. La cripta sotto il ponte"></div>
+      <textarea id="diary-body-input" placeholder="Appunti della sessione: eventi importanti, PNG incontrati, bottino, indizi, promesse, quest aperte..."></textarea>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn btn-green" onclick="addDiaryEntry()">+ Aggiungi al diario</button>
+      <button class="btn btn-outline" onclick="prefillDiaryToday()">Data di oggi</button>
+    </div>
+    <div class="info-box">Gli appunti vengono salvati nel personaggio selezionato e sincronizzati nel cloud quando usi il salvataggio.</div>
+  </div>
+
+  <div class="card section-gap">
+    <div class="card-title">📚 Sessioni salvate</div>
+    <div id="diary-list" class="diary-list"></div>
+  </div>
+
+  <div class="quick-note-grid section-gap">
+    <div class="card"><div class="card-title">🗺 PNG &amp; Luoghi ricorrenti</div><textarea id="notes-npcs" style="min-height:200px;" placeholder="PNG, fazioni, luoghi, relazioni..."></textarea></div>
+    <div class="card"><div class="card-title">📜 Abilita / Promemoria personaggio</div><textarea id="notes-abilities" style="min-height:200px;" placeholder="Combo, privilegi, promemoria di classe..."></textarea></div>
     <div class="card">
       <div class="card-title">⚙️ Lingue &amp; Strumenti</div>
       <div class="field"><label>Lingue</label><textarea id="notes-langs" rows="3"></textarea></div>
       <div class="field"><label>Competenze strumenti/armi</label><textarea id="notes-proficiencies" rows="4"></textarea></div>
+    </div>
+    <div class="card">
+      <div class="card-title">✅ Quest aperte / Cose da ricordare</div>
+      <textarea id="notes-session" style="min-height:200px;" placeholder="Lista rapida di obiettivi, promesse, debiti, misteri ancora aperti..."></textarea>
     </div>
   </div>
 </div>
@@ -758,7 +798,7 @@ function emptyChar(name){
     coins:{cp:0,sp:0,ep:0,gp:0,pp:0},
     inventory:[],
     traits:{personality:"",ideals:"",bonds:"",flaws:""},
-    notes:{session:"",npcs:"",abilities:"",langs:"",proficiencies:""},
+    notes:{session:"",npcs:"",abilities:"",langs:"",proficiencies:"",diary:[]},
     rollHistory:[],
     rogue:{subclass:"", insightful:false, steadyAim:false, psychicUsed:0, wailsUsed:0}
   };
@@ -1142,7 +1182,7 @@ function loadCurrentCharIntoUI(){
   document.getElementById("header-name").textContent=c.charName||"Personaggio";
   buildAbilities(); buildSaves(); buildSkills(); buildConditions(); buildSpellSlots(); bindAllInputs();
   renderAttacks(); renderEquipment(); renderSpells(); renderCantrips(); renderInventory();
-  updateClassDefaults(); updateRaceInfo(); updateClassInfo(); updateProfBonus(); updateSpeed(); updateSpellStats(); updateAC(); updateInspirationUI(); restoreDeathSaves(); showConditionInfo(); renderRollHistory(); renderRogueTab(); saveState();
+  updateClassDefaults(); updateRaceInfo(); updateClassInfo(); updateProfBonus(); updateSpeed(); updateSpellStats(); updateAC(); updateInspirationUI(); restoreDeathSaves(); showConditionInfo(); renderRollHistory(); renderRogueTab(); renderDiaryEntries(); prefillDiaryToday(false); saveState();
 }
 function migrateChar(c){
   c.id ||= "char_" + Date.now() + "_" + Math.random().toString(36).slice(2,7);
@@ -1170,8 +1210,9 @@ function migrateChar(c){
   c.inventory ||= [];
   c.traits ||= {personality:"",ideals:"",bonds:"",flaws:""};
   ["personality","ideals","bonds","flaws"].forEach(k => c.traits[k] ||= "");
-  c.notes ||= {session:"",npcs:"",abilities:"",langs:"",proficiencies:""};
+  c.notes ||= {session:"",npcs:"",abilities:"",langs:"",proficiencies:"",diary:[]};
   ["session","npcs","abilities","langs","proficiencies"].forEach(k => c.notes[k] ||= "");
+  if(!Array.isArray(c.notes.diary)) c.notes.diary = [];
   c.rollHistory ||= [];
 }
 
